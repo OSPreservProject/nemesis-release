@@ -484,7 +484,7 @@ $Id: cgi_module_publisher.py 1.1 Thu, 18 Feb 1999 14:18:34 +0000 dr10009 $"""
 ##########################################################################
 __version__='$Revision: 1.1 $'[11:-2]
 
-import sys, os, string, cgi, regex
+import sys, os, string, cgi, re
 from string import *
 import CGIResponse
 from CGIResponse import Response
@@ -552,7 +552,7 @@ class ModulePublisher:
             fslist=fs.list
             tuple_items={}
 
-            type_re=regex.compile(':[a-zA-Z][a-zA-Z0-9_]+')
+            type_re=re.compile(':[a-zA-Z][a-zA-Z0-9_]+')
             type_search=type_re.search
             lt=type([])
             CGI_name=isCGI_NAME
@@ -652,7 +652,7 @@ class ModulePublisher:
                                   # why reveal that it exists?
 
     def badRequestError(self,name):
-        if regex.match('^[A-Z_0-9]+$',name) >= 0:
+        if re.match('^[A-Z_0-9]+$',name) >= 0:
             raise 'InternalError', self.html(
                 "Internal Error",
                 "Sorry, an internal error occurred in this resource.")
@@ -1070,7 +1070,7 @@ def field2string(v):
     else: v=str(v)
     return v
 
-def field2text(v, nl=regex.compile('\r\n\|\n\r').search):
+def field2text(v, nl=re.compile('\r\n\|\n\r').search):
     if hasattr(v,'read'): v=v.read()
     else: v=str(v)
     l=nl(v)
@@ -1267,8 +1267,8 @@ class Request:
 
     def __getitem__(self,key,
                     default=field2list, # Any special internal marker will do
-                    URLmatch=regex.compile('URL[0-9]$').match,
-                    BASEmatch=regex.compile('BASE[0-9]$').match,
+                    URLmatch=re.compile('URL[0-9]$').match,
+                    BASEmatch=re.compile('BASE[0-9]$').match,
                     ):
         """Get a variable value
 
@@ -1347,12 +1347,12 @@ isCGI_NAME = {
 parse_cookie_lock=allocate_lock()
 def parse_cookie(text,
                  result=None,
-                 qparmre=regex.compile(
+                 qparmre=re.compile(
                      '\([\0- ]*'
                      '\([^\0- ;,=\"]+\)="\([^"]*\)\"'
                      '\([\0- ]*[;,]\)?[\0- ]*\)'
                      ),
-                 parmre=regex.compile(
+                 parmre=re.compile(
                      '\([\0- ]*'
                      '\([^\0- ;,=\"]+\)=\([^\0;-=\"]*\)'
                      '\([\0- ]*[;,]\)?[\0- ]*\)'

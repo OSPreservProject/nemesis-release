@@ -1,1 +1,1 @@
-../../../../tools/source/master/astgen/group.py
+list_group= [ ('NULL',[]),("expression",["n_generic","n_generic","n_type","n_type"]),("identifier",["n_cptr"]),("sco",["n_id","n_id","n_cptr"]),("list",["n_generic","n_list"]),("statement",["n_generic","n_generic","n_generic"]),("type",["n_generic","n_generic","n_generic","n_cptr"]),("spec",["n_generic","n_generic","n_id","n_list"]),("decl",["n_generic","n_generic","n_generic","n_id","n_type"]),("exch",["n_sco","n_statement"]),("proc",["n_decl","n_statement"]),("shortcut",[]),("string",[]),("integer",[]),("real",[])]

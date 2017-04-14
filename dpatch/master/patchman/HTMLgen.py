@@ -43,7 +43,7 @@ populate the TableLite container object.
 .. [Yale Web Style Manual] http://info.med.yale.edu/caim/manual/contents.html
 """
 
-import string, regex, regsub, time, os
+import string, re, time, os
 import UserList, copy
 from imgsize import imgsize
 
@@ -1067,8 +1067,8 @@ class Input:
         onSelect -- script, which is executed, when part of the field 
                     is selected, useful for the text-type
     """
-    re_type = regex.compile('text\|password\|checkbox\|radio\|image\|button\|file\|submit\|reset\|hidden',
-                            regex.casefold)
+    re_type = re.compile('text\|password\|checkbox\|radio\|image\|button\|file\|submit\|reset\|hidden',
+                            re.casefold)
     def __init__(self, **kw):
         self.type = 'TEXT'
         self.name = 'Default_Name'
@@ -2222,9 +2222,9 @@ def markup_regex(text, rex=None, marker=None, collapse=0):
 
     Returns the marked text and the number of matching text groups.
     """
-    if rex is None: rex = regex.compile('(\([^)]*\))')
+    if rex is None: rex = re.compile('(\([^)]*\))')
     if marker is None: marker = Emphasis()
-    if type(rex) == StringType: rex = regex.compile(rex)
+    if type(rex) == StringType: rex = re.compile(rex)
     endpoints = []
     output = []
     i = 0
@@ -2322,7 +2322,7 @@ class URL:
     be altered individually after instantiation. The __str__ method
     simply reassembles the components into a full URL string.
     """
-    pattern = regex.compile('^\([a-z]+\)://\([^/ ]*\)\([^ ]*\)$',regex.casefold)
+    pattern = re.compile('^\([a-z]+\)://\([^/ ]*\)\([^ ]*\)$',re.casefold)
     def __init__(self, url=''):
         self.proto = ''
         self.node = ''

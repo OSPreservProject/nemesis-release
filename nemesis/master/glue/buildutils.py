@@ -7,7 +7,7 @@
 # system calls
 #
 
-import os, posixpath, posix, string, posixpath, sys, errno, regsub
+import os, posixpath, posix, string, posixpath, sys, errno, re
 
 SymLinkFailed = 'SymLinkFailed'
 NonZeroExitStatus = "NonZeroExitStatus"

@@ -4,7 +4,7 @@
 # Copyright (c) 1996 University of Cambridge Computer Laboratory
 # Author: Dickon Reed
 
-import regex,string,sys
+import re,string,sys
 
 
 startpattern = '/\*<---\\*/'

@@ -53,7 +53,7 @@ $Id: CGIResponse.py 1.1 Thu, 18 Feb 1999 14:18:34 +0000 dr10009 $'''
 # 
 __version__='$Revision: 1.1 $'[11:-2]
 
-import string, types, sys, regex
+import string, types, sys, re
 from string import find, rfind, lower, upper, strip, split, join, translate
 
 nl2sp=string.maketrans('\n',' ')
@@ -142,7 +142,7 @@ status_codes={
     'zerodivisionerror':500,
     }
 
-end_of_header_search=regex.compile('</head>',regex.casefold).search
+end_of_header_search=re.compile('</head>',re.casefold).search
 
 accumulate_header={'set-cookie': 1}.has_key
 
@@ -225,7 +225,7 @@ class Response:
     __setitem__=setHeader
 
     def setBody(self, body, title='',
-                bogus_str_search=regex.compile(" [a-fA-F0-9]+>$").search,
+                bogus_str_search=re.compile(" [a-fA-F0-9]+>$").search,
                 ):
         '''\
         Set the body of the response
@@ -274,8 +274,8 @@ class Response:
         self.insertBase()
 
     def insertBase(self,
-                   base_re_search=regex.compile('\(<base[\0- ]+[^>]+>\)',
-                                                regex.casefold).search
+                   base_re_search=re.compile('\(<base[\0- ]+[^>]+>\)',
+                                                re.casefold).search
                    ):
         if (self.headers.has_key('content-type') and
             self.headers['content-type']!='text/html'): return
@@ -429,14 +429,14 @@ class Response:
         return location
 
     def exception(self, fatal=0, info=None,
-                  absuri_match=regex.compile(
+                  absuri_match=re.compile(
                       "^"
                       "\(/\|\([a-zA-Z0-9+.-]+:\)\)"
                       "[^\000- \"\\#<>]*"
                       "\\(#[^\000- \"\\#<>]*\\)?"
                       "$"
                       ).match,
-                  tag_search=regex.compile('[a-zA-Z]>').search,
+                  tag_search=re.compile('[a-zA-Z]>').search,
                   ):
         if type(info) is type(()) and len(info)==3: t,v,tb = info
         elif hasattr(sys, 'exc_info'): t,v,tb = sys.exc_info()
@@ -538,7 +538,7 @@ class Response:
         return cookie_list
 
     def __str__(self,
-                html_search=regex.compile('<html>',regex.casefold).search,
+                html_search=re.compile('<html>',re.casefold).search,
                 ):
         if self._wrote: return ''       # Streaming output was used.
 

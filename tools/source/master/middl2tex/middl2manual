@@ -45,8 +45,7 @@
 
 import sys
 import string
-import regex
-import regsub
+import re
 import time
 
 intfs_by_name = {}

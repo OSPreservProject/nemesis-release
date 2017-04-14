@@ -5,7 +5,7 @@
 # The customizer class, used by blueprint to generate
 # the customized blueprint.
 
-import sys, string, qosutil, posixpath, regex, os, buildutils
+import sys, string, qosutil, posixpath, re, os, buildutils
 from nemclasses import *
 
 archlist = ['ix86', 'alpha', 'arm', 'mips']
@@ -52,19 +52,19 @@ class Customizer:
         self.target_name = target_name
         todo = []
 	for arch in ['ix86', 'alpha', 'arm', 'mips']:
-            todo.append(arch+'_arch', arch_name == arch)
+            todo.append((arch+'_arch', arch_name == arch))
 	for platform in platforms:
-            todo.append(platform+'_plat', platform_name == platform)
+            todo.append((platform+'_plat', platform_name == platform))
 	for target in targets:
-            todo.append(target+'_target', target_name == target)
-	todo.append('isa',
-                    target_name in ['eb164', 'srcit', 'shark', 'intel', 'intel_smp'])
-        todo.append('pci', target_name in ['eb164', 'intel', 'intel_smp'])
-        todo.append('tc_bus', target_name in ['axp3000'])
-        todo.append('ns16550_serial_device', target_name in ['eb164', 'eb64', 'shark', 'intel', 'intel_smp'])
-        todo.append('vga_text_mode', target_name in ['intel', 'intel_smp'])
-        todo.append('timer_rdtsc', target_name in ['intel', 'intel_smp'])
-        todo.append('fp_support',target_name in ['intel', 'intel_smp']) 
+            todo.append((target+'_target', target_name == target))
+	todo.append(('isa',
+                    target_name in ['eb164', 'srcit', 'shark', 'intel', 'intel_smp']))
+        todo.append(('pci', target_name in ['eb164', 'intel', 'intel_smp']))
+        todo.append(('tc_bus', target_name in ['axp3000']))
+        todo.append(('ns16550_serial_device', target_name in ['eb164', 'eb64', 'shark', 'intel', 'intel_smp']))
+        todo.append(('vga_text_mode', target_name in ['intel', 'intel_smp']))
+        todo.append(('timer_rdtsc', target_name in ['intel', 'intel_smp']))
+        todo.append(('fp_support',target_name in ['intel', 'intel_smp']))
 
         for (name, truthvalue) in todo:
             if self.db.has_key(name):
@@ -340,7 +340,7 @@ class Customizer:
 		if not bra and not comment:
 		    bail = 0
 		    try:
-			if len(command) > regex.match('[ \t]*', command): 
+			if len(command) > re.match('[ \t]*', command): 
 			    if verbose: print `linenum`+': ',command
 			    exec('self.'+command, self.aliases)
 		    except Problem, str:

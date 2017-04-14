@@ -2,8 +2,6 @@
 
 import sys
 import os
-import regex
-import regsub
 import re
 import string
 import commands
@@ -23,12 +21,12 @@ breaking_re     = '\([ \t\\.]\)'
 
 # The patterns we're interested in:
 
-whitespace_pat   = regex.compile (whitespace_re)
-comment_line_pat = regex.compile (whitespace_re + comment_re)
-bare_comment_pat = regex.compile (whitespace_re + '--' + whitespace_re + '$')
-blank_line_pat   = regex.compile (whitespace_re + '$')
-quotation_pat    = regex.compile (quotation_re)
-breaking_pat     = regex.compile (breaking_re)
+whitespace_pat   = re.compile (whitespace_re)
+comment_line_pat = re.compile (whitespace_re + comment_re)
+bare_comment_pat = re.compile (whitespace_re + '--' + whitespace_re + '$')
+blank_line_pat   = re.compile (whitespace_re + '$')
+quotation_pat    = re.compile (quotation_re)
+breaking_pat     = re.compile (breaking_re)
 
 #---------------------------------------------------------- The translator:
 

@@ -66,8 +66,7 @@
 
 import sys
 import os
-import regex
-import regsub
+import re
 import string
 import commands
 

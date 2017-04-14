@@ -74,7 +74,7 @@ The module also provides a command-line interface for calling objects.
 """
 __version__='$Revision: 1.1 $'[11:-2]
 
-import sys, regex, socket, mimetools
+import sys, re, socket, mimetools
 from httplib import HTTP
 from os import getpid
 from time import time
@@ -109,8 +109,8 @@ class Function:
         if password is not None: self.password=password
         if timeout is not None: self.timeout=timeout
 
-        if urlregex.match(url) >= 0:
-            host,port,rurl=urlregex.group(1,2,3)
+        if urlre.match(url) >= 0:
+            host,port,rurl=urlre.group(1,2,3)
             if port: port=atoi(port[1:])
             else: port=80
             self.host=host
@@ -311,7 +311,7 @@ def call(url,username=None, password=None, **kw):
 ##############################################################################
 # Implementation details below here
 
-urlregex=regex.compile('http://\([^:/]+\)\(:[0-9]+\)?\(/.+\)?', regex.casefold)
+urlregex=re.compile('http://\([^:/]+\)\(:[0-9]+\)?\(/.+\)?', re.casefold)
 
 dashtrans=maketrans('_','-')
 
@@ -319,11 +319,11 @@ def marshal_float(n,f): return '%s:float=%s' % (n,f)
 def marshal_int(n,f):   return '%s:int=%s' % (n,f)
 def marshal_long(n,f):  return ('%s:long=%s' % (n,f))[:-1]
 
-sample_regex=regex.compile('')
+sample_regex=re.compile('')
 def marshal_regex(n,r):
-    if r.translate is sample_regex.translate:
+    if r.translate is sample_re.translate:
         t='Regex'
-    elif r.translate is regex.casefold:
+    elif r.translate is re.casefold:
         t='regex'
     else:
         raise ValueError, 'regular expression used unsupported translation'
@@ -346,7 +346,7 @@ type2marshal={
     type(1.0):                  marshal_float,
     type(1):                    marshal_int,
     type(1L):                   marshal_long,
-    type(regex.compile('')):    marshal_regex,
+    type(re.compile('')):    marshal_regex,
     type([]):                   marshal_list,
     type(()):                   marshal_tuple,
     }

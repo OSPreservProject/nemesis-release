@@ -604,7 +604,7 @@ void input_close(void) {
 
 #undef malloc
 #undef free
-#define MALLOC_LIMIT 16384
+#define MALLOC_LIMIT (32*1024*1024)
 void *malloc_table[MALLOC_LIMIT] = {0,};
 int malloc_index = 0;
 

@@ -44,7 +44,7 @@ typedef double			float64_t;
 
 typedef uint32_t		word_t;
 typedef int32_t			sword_t;
-typedef uint32_t                pointerval_t;
+typedef uintptr_t                pointerval_t;
 
 
 /* 

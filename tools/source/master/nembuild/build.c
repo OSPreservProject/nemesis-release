@@ -79,24 +79,6 @@ void fatal(char *format, ...)
     exit(1);
 }
 
-void *xmalloc(size_t x)
-{
-    void *v = malloc(x);
-    
-    if (!v)
-	fatal("xmalloc: size %lu, %s", x, strerror(errno));
-    return v;
-}
-
-void *xrealloc(void *ptr, size_t x)
-{
-    void *v = realloc(ptr, x);
-    
-    if (!v)
-	fatal("xrealloc: size %lu, %s", x, strerror(errno));
-    return v;
-}
-
 /* ---------------------------------------------------------------------- */
 
 char *parser_input_file_name;
@@ -141,7 +123,7 @@ static void per_section(bfd *abfd, sec_ptr sec, void *v)
 {
     printf("sec: %-10s size %6lu flags 0x%04x start %#lx\n",
 	   bfd_get_section_name(abfd, sec),
-	   bfd_get_section_size_before_reloc(sec),
+	   bfd_get_section_size(sec),
 	   bfd_get_section_flags(abfd, sec),
 	   bfd_get_section_vma(abfd, sec));
 }
@@ -422,7 +404,7 @@ static size_t write_out_nexus(void *base, size_t address,
     struct nexus_module	**p, *m;
     struct nexus_nexus	*us;
     
-    n = base + address;
+    n = (nexus_ptr_t)(base + address);
 
     n.nu_primal->tag = TE32(nexus_primal);
     n.nu_primal->entry = TEsize(global_proglist->bpl_list[Primal].bp.taddr);
@@ -479,6 +461,7 @@ static size_t write_out_nexus(void *base, size_t address,
 	names->bnl_nexus = n.generic-base; /* XXX void pointers */
 	p = &n.nu_name->mods[0];
 	/* Now for a nice n squared algorithm */
+	break_and_continue:
 	for(k=j=0; j<names->bnl_num;j++)
 	{
 	    if (names->bnl_list[j].bn_type == NAME_TYPE_SYMBOL)
@@ -493,7 +476,6 @@ static size_t write_out_nexus(void *base, size_t address,
 	    
 		p[k++] = m;
 	    }
-	break_and_continue:
 	}
 	
 	n.nu_name->nmods = TE32(k);

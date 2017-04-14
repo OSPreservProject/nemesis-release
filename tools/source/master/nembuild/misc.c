@@ -286,7 +286,7 @@ do {									   \
 	    || (!strcmp(secname, ".xdata"))))				   \
 	/* DEC exception mumblies - ripped out by final link */		   \
 	    return;							   \
-    if (!bfd_get_section_size_before_reloc(sec))			   \
+    if (!bfd_get_section_size(sec))			   \
 	/* Its zero bytes. Must be irrelevant */			   \
 	return;								   \
 } while(0)
@@ -365,9 +365,9 @@ void sec_is_ro(bfd *abfd, sec_ptr sec, void *v)
     secname = bfd_get_section_name(abfd, sec);
     TRC(("sec_is_ro(): got %s section\n", secname));
     if (litsec_p(secname))
-	mod->bm.dsize += bfd_get_section_size_before_reloc(sec);
+	mod->bm.dsize += bfd_get_section_size(sec);
     else
-	mod->bm.tsize += bfd_get_section_size_before_reloc(sec);
+	mod->bm.tsize += bfd_get_section_size(sec);
 }
 
 /* ---------------------------------------------------------------------- */
@@ -421,7 +421,7 @@ void sec_calc_sizes(bfd *abfd, sec_ptr sec, void *v)
     if (litsec_p(secname))
     {
 	/* always count .lit? sections as data: cos the linker does */
-	sizes->dsize += bfd_get_section_size_before_reloc(sec);
+	sizes->dsize += bfd_get_section_size(sec);
     }
     else
     {
@@ -436,13 +436,13 @@ void sec_calc_sizes(bfd *abfd, sec_ptr sec, void *v)
 	case (SEC_CODE | SEC_LOAD):
 	case (SEC_READONLY | SEC_LOAD):
 	case (SEC_READONLY | SEC_LOAD | SEC_CODE): 
-	    sizes->tsize += bfd_get_section_size_before_reloc(sec);
+	    sizes->tsize += bfd_get_section_size(sec);
 	    break;
 	case (SEC_LOAD):
-	    sizes->dsize += bfd_get_section_size_before_reloc(sec);
+	    sizes->dsize += bfd_get_section_size(sec);
 	    break;
 	case (SEC_NO_FLAGS):
-	    sizes->bsize += bfd_get_section_size_before_reloc(sec);
+	    sizes->bsize += bfd_get_section_size(sec);
 	    break;
 	default:
 	    error("%s: section `%s' has bizzare flags %#x\n",
@@ -483,7 +483,7 @@ void sec_fill_in_sizes(bfd *abfd, sec_ptr sec, void *v)
     if (litsec_p(secname))
     {
 	/* always count .lit? sections as data: cos the linker does */
-	sizes->dsize += bfd_get_section_size_before_reloc(sec);
+	sizes->dsize += bfd_get_section_size(sec);
 	if (!sizes->daddr)
 	    sizes->daddr = bfd_get_section_vma(abfd, sec);
     }
@@ -500,19 +500,19 @@ void sec_fill_in_sizes(bfd *abfd, sec_ptr sec, void *v)
 	case (SEC_CODE | SEC_LOAD):
 	case (SEC_READONLY | SEC_LOAD):
 	case (SEC_READONLY | SEC_LOAD | SEC_CODE): 
-	    sizes->tsize += bfd_get_section_size_before_reloc(sec);
+	    sizes->tsize += bfd_get_section_size(sec);
 	    if (!sizes->taddr)
 		sizes->taddr = bfd_get_section_vma(abfd, sec);
 	    break;
 
 	case (SEC_LOAD):
-	    sizes->dsize += bfd_get_section_size_before_reloc(sec);
+	    sizes->dsize += bfd_get_section_size(sec);
 	    if (!sizes->daddr)
 		sizes->daddr = bfd_get_section_vma(abfd, sec);
 	    break;
 
 	case (SEC_NO_FLAGS):
-	    sizes->bsize += bfd_get_section_size_before_reloc(sec);
+	    sizes->bsize += bfd_get_section_size(sec);
 	    if (!sizes->baddr)
 		sizes->baddr = bfd_get_section_vma(abfd, sec);
 	    break;
@@ -540,7 +540,7 @@ static void sec_write_out(bfd *abfd, sec_ptr sec, void *base)
     sec_return_if_irrelevant(abfd, sec, flags);
 
     loc = base + bfd_get_section_vma(abfd, sec);
-    size = bfd_get_section_size_before_reloc(sec);
+    size = bfd_get_section_size(sec);
 
     TRC(("copy to %#lx size %#lx base %#lx\n", loc, size, base));
     
@@ -785,7 +785,7 @@ static void sec_write_out_netbsd(bfd *abfd, sec_ptr sec, char *base)
     else
 	fatal("sec_write_out_netbsd: section %s unknown\n", name);
     
-    size = bfd_get_section_size_before_reloc(sec);
+    size = bfd_get_section_size(sec);
 
     TRC(("copy to %#lx size %#lx base %#lx\n", loc, size, base));
     

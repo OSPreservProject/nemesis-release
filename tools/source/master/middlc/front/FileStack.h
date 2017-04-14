@@ -27,7 +27,7 @@ struct _FileStack_t {
   int     pbsp;			/* Push back stack pointer */
 };
 
-extern FileStack_t fs;
+//extern FileStack_t fs;
 
 extern void FileStack_Init( int pathsize, char **path,
 			    int suffsize, char **suffs );

@@ -9,7 +9,7 @@
 #define PY(x) printf x 
 
 #define new(x) ((x##_t)malloc(sizeof(struct _##x##_t)))
-#define TYPE_DECL(x) typedef struct _##x##_t *##x##_t
+#define TYPE_DECL(x) typedef struct _##x##_t *x##_t
 
 #include <sys/types.h>
 #include <stdlib.h>

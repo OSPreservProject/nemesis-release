@@ -15,8 +15,8 @@
 #undef YY_DECL
 #define YY_DECL int yylex( YYSTYPE *lvalp )
 
-#undef yywrap
-#define yywrap() (1)
+//#undef yywrap
+//#define yywrap() (1)
 
 #include "Middlc.h"
 #include "Grammar.tab.h"
@@ -26,6 +26,7 @@
 DIGIT	[0-9]
 IDENT	[A-Za-z][A-Za-z0-9_]*
 
+%option noyywrap
 %%
 
 "--".*"\n"	FileStack_NewLine();	/* Ignore comments */

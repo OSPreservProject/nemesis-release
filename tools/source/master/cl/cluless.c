@@ -88,7 +88,7 @@ OUTPUT   *messages;
 OUTPUT   *treeout;
 OUTPUT   *pythonout;
 OUTPUT   *deps;
-INPUT    instack[INPUT_STACK_SIZE];
+INPUT    *instack; //[INPUT_STACK_SIZE];
 int      verbosity;
 int      texout;
 int      instackptr;
@@ -584,6 +584,7 @@ int input_open(char *name) {
 
 
   instackptr++;
+  instack = malloc(INPUT_STACK_SIZE*sizeof(INPUT));
   instack[instackptr].file = file;
   strcpy(instack[instackptr].name, name);
   instack[instackptr].line = 1;

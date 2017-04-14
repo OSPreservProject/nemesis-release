@@ -222,6 +222,7 @@ failedcompiles = []
 if allatonce and len(outofdate) > 0:
     compiled = 0
     try:
+	print('HELLO MICHAEL I CAN SEE YOU cl -A -M '+string.join(outofdate, ' '))
 	buildutils.system('cl -A -M '+string.join(outofdate, ' '), 0, verbose)
 	compiled = 1
     except buildutils.NonZeroExitStatus:

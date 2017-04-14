@@ -404,7 +404,9 @@ PVS                     return PVS;
 
 /* Notify lexer of new buffer */ 
 void lex_begin(void) { 
-  yyin = instack[instackptr].file; 
+  yyin = instack[instackptr].file;
+  printf("INPUT: %s\n", instack[instackptr].file);
+  printf("INPUTP: %p\n", instack[instackptr].file);
   yy_switch_to_buffer( yy_create_buffer( yyin, YY_BUF_SIZE )); 
   instack[instackptr].lexdata = (void *) YY_CURRENT_BUFFER; 
 }

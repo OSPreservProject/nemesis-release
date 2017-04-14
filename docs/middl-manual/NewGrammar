@@ -1,0 +1,116 @@
+
+Specification : IntfSpec '.'
+
+Imports :       /* empty */
+                | Imports Import
+
+Import :        IMPORTS ModuleIntf
+
+IntfSpec:       | IntfHeader Extends Needs BEGIN Declarations END
+
+IntfHeader:     IDENTIFIER ':' INTERFACE '='
+
+Extends:        /* empty */
+                EXTENDS IDENTIFIER ';'
+
+Needs:          /* empty */
+                | Needs Need
+
+Need:           NEEDS IDENTIFIER ';'
+
+Declarations:   /* empty */
+                | Declarations Declaration
+
+Declaration:    TypeDecl
+                | ExcDecl
+                | ProcDecl
+                | AnnDecl
+
+ParamDecl:      Arg ';'
+                
+AnnDecl:        IDENTIFIER ':' ANNOUNCEMENT '[' Arguments ']' ';'
+
+ExcDecl:        IDENTIFIER ':' EXCEPTION '[' Arguments ']' ';'
+
+TypeDecl:       IDENTIFIER ':' TYPE '=' Type ';'
+
+ProcDecl:       IDENTIFIER ':' PROC '[' Arguments ']'
+                                 RETURNS '[' Arguments ']'
+                                 RaisesClause ';'
+                | IDENTIFIER ':' PROC '[' Arguments ']'
+                                 NEVER RETURNS
+                                 RaisesClause ';'        
+
+RaisesClause:   /* empty */
+                | RAISES Exceptions
+
+Type:           Predefined
+                | Constructed
+                | NamedType
+                | IrefType
+
+Predefined:     BOOLEAN
+                | SHORT CARDINAL
+                | CARDINAL
+                | LONG CARDINAL
+                | SHORT INTEGER
+                | INTEGER
+                | LONG INTEGER
+                | REAL
+                | LONG REAL
+                | STRING
+                | OCTET
+                | CHAR
+                | DANGEROUS ADDRESS
+                | DANGEROUS WORD
+                | ADDRESS
+                | WORD
+
+Constructed:    '{' Identifiers '}'
+                | ARRAY NUMBER OF Type
+                | SET OF Type
+                | REF Type
+                | SEQUENCE OF Type
+                | RECORD '[' Fields ']'
+                | CHOICE Type OF '{' Candidates '}'
+
+NamedType:      ScopedIdentifier
+                | IDENTIFIER
+
+IrefType:       IREF IDENTIFIER
+                
+Candidates:     Candidate
+                | Candidates ',' Candidate
+
+Candidate:      Identifiers '=' '>' Type
+
+Arguments:      /* empty */
+                | Args
+
+Args:           Arg
+                | Args ';' Arg
+
+Arg:            Mode Field
+
+Mode:           /* empty */
+                | IN
+                | OUT
+                | IN OUT
+
+Fields:         Field
+                | Fields ',' Field
+
+Field:          Identifiers ':' Type
+
+Identifiers:    IDENTIFIER
+                | Identifiers ',' IDENTIFIER
+
+Exceptions:     Exception
+                | Exceptions ',' Exception
+
+Exception:      ScopedIdentifier
+                | Identifier
+
+ScopedIdentifier: IDENTIFIER '.' IDENTIFIER
+
+

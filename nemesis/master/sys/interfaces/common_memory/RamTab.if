@@ -1,0 +1,68 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Low-level table for marking ownership, etc, of parts 
+--      of a machines RAM. 
+-- 
+-- DESCRIPTION:
+--
+--      Keeps track of which domains own which physical frames of 
+--      memory within RAM, and whether or not the frames are currently
+--      mapped onto, or nailed down, etc. 
+-- 
+-- \chapter{Memory}
+-- \section{Translation and Protection}
+-- 
+
+-- 
+-- Domains in Nemesis are themselves responsible for providing physical
+-- backing to virtual addresses. In order to sanity check the
+-- physical addresses presented for this purpose, a system wide table
+-- is maintained with ownership (and other) information about frames. 
+--
+
+RamTab : LOCAL INTERFACE =
+BEGIN
+
+  -- 
+  -- Exceptions and Types 
+  -- 
+
+  State : TYPE = { Unused, Mapped, Nailed };
+           
+
+  -- 
+  -- Methods 
+  -- 
+
+  -- "Size" returns the total number of frames handled by this
+  -- interface.
+  Size : PROC [] RETURNS [ maxpfn : CARDINAL ]; 
+    
+
+  -- "Base" returns the base address of the ramtab. 
+  Base : PROC [] RETURNS [ base : ADDRESS ]; 
+    
+
+  -- "Put" sets the owner, width, and state of a given physical frame.
+  Put : PROC    [ pfn    : CARDINAL, 
+		  owner  : CARDINAL,
+		  fwidth : CARDINAL, 
+		  state  : State     ]
+        RETURNS [ ];
+    
+
+  -- "Get" reads the owner, width, and state of a given physical frame.
+  Get : PROC    [ pfn    : CARDINAL ]
+	RETURNS [ owner  : CARDINAL,
+		  fwidth : CARDINAL, 
+		  state  : State    ];
+
+END.

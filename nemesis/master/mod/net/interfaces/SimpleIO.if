@@ -1,0 +1,35 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1996, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--	SimpleIO.if
+--
+-- DESCRIPTION:
+--
+--	Sticks a packet up an IO sort of thing, with no IDC. Ho ho.
+--
+-- \chapter{Devices}
+-- \section{Network}
+--
+
+-- Sticks a packet up an IO sort of thing, with no IDC.  This
+-- interface is used solely between "Netif" and the card-specific
+-- network device driver code.
+
+SimpleIO : LOCAL INTERFACE =
+  NEEDS IO;
+BEGIN
+
+  Punt : PROC [ nrecs      : CARDINAL;
+                recs       : REF IO.Rec;
+		value      : WORD;
+                owner      : ADDRESS ]
+         RETURNS [];
+
+END.

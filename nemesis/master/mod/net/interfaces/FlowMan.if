@@ -1,0 +1,222 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1996, University of Cambridge Computer Laboratory             -
+--  Copyright (c) 1997, Swedish Institute of Computer Science               -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      FlowMan.if
+-- 
+-- DESCRIPTION:
+--
+--      Manage network connection setup and close
+-- 
+-- ID : $Id: FlowMan.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+-- 
+-- \chapter{Networks}
+--
+
+-- Used by client network code to build network connections to remote
+-- machines, using a variety of protocols.
+
+FlowMan : LOCAL INTERFACE =
+  NEEDS Net;
+  NEEDS Heap;
+  NEEDS IDCOffer;
+  NEEDS IOOffer;
+  NEEDS BaseProtocol;
+  NEEDS Context;
+  NEEDS Netif;
+  NEEDS QoSEntry;
+  NEEDS InetCtl;
+BEGIN
+
+  -- Protocol type. (The ATM stuff is a bit wooly at the moment).
+  PT:    TYPE = {TCP, UDP, AAL5};
+
+  IPSAP: TYPE = RECORD [
+           addr: Net.IPHostAddr, 
+           port: SHORT CARDINAL		-- network endian
+  ];
+
+  SAP:   TYPE = CHOICE PT OF {
+	   TCP   => IPSAP,
+	   UDP   => IPSAP,
+	   AAL5  => Net.ATMAddr
+  };
+
+  -- Various calls allow for the return of information regarding a
+  -- particular network interface (or interfaces) to which a client
+  -- may wish to bind.  Currently the information returned consists of
+  -- the textual name of the interface, and the textual name of its
+  -- link type, as encapsulated in the following type.
+
+  -- XXX AND: Not happy about this...
+  RouteInfo: TYPE = RECORD [ 
+           ifname : STRING,    -- name of interface to use
+           type : STRING,      -- link encapsulation
+	   gateway: CARDINAL   -- gateway to be used, or 0.0.0.0 for none
+  ];       
+  RouteInfoSeq : TYPE = SEQUENCE OF RouteInfo;
+
+  -- A pair of IOs between a client and a network interface is
+  -- identified (to the Flow Manager) by a handle.
+  Flow : TYPE = DANGEROUS ADDRESS;
+
+  -- A particular "connection" between a client and a network
+  -- interface is identified (to the Flow Manager) by a connection
+  -- id.
+  ConnID : TYPE = DANGEROUS ADDRESS;
+
+
+  -- No route to a particular (remote) SAP
+  NoRoute : EXCEPTION [];
+
+  -- Ran out of resources of some kind
+  NoResources : EXCEPTION [];
+
+
+--
+--  Local endpoint reservation
+--
+
+  -- "Bind", "Unbind" and "Route" are protocol dependent.
+
+  -- "Bind" is used to request the allocation of a local SAP; clearly
+  -- this involve the reservation of a port, or of a VCI/VPI pair, or
+  -- whatever. In the case of IP SAPs a "port" of 0 requests the
+  -- allocation of any free port.
+  -- Returns "True" if a SAP was allocated (and "lsap" now holds this),
+  -- or "False" otherwise.
+  Bind : PROC    [ IN OUT lsap: SAP ]
+         RETURNS [ ok: BOOLEAN      ];
+
+  -- "UnBind" deallocates a local SAP.  The SAP must currently be unused,
+  -- i.e., there can't be any active packet filters for this SAP.
+  -- Returns "False" if there is an active filter which prevents the
+  -- SAP to be deallocated.
+  UnBind : PROC    [ lsap: SAP ]
+           RETURNS [ ok: BOOLEAN  ];
+
+
+  -- "PassiveRoute" asks the Flow Manager for information about the interface
+  -- to use for passive communication using the local SAP "lsap".  It
+  -- returns a list of interfaces to be used.  A local IP SAP with
+  -- address 0.0.0.0 will return all IP interfaces in this host.  In
+  -- the future, this function may be implemented as a table in shared
+  -- memory.
+  PassiveRoute : PROC    [ lsap : SAP ] 
+	         RETURNS [ rt   : RouteInfoSeq ]
+	         RAISES NoRoute, Heap.NoMemory;
+
+  -- "ActiveRoute" does the same, but for active opens.  It returns
+  -- the single interface that should be used.  In the future, this
+  -- may be implemented as a table is shared memory.
+  ActiveRoute : PROC [ rsap : SAP ]
+	        RETURNS [ rt : RouteInfo ]
+	        RAISES NoRoute;
+
+--
+--  IP on Ethernet specifics (ugh!)
+--
+
+  -- Ask the Flow Manager to perform an ARP for us.
+  -- May result in a cached reply, of course.
+  ARP : PROC    [ ipaddr: CARDINAL, OUT hwaddr: Net.EtherAddr ]
+	RETURNS [ ]
+	RAISES  Context.NotFound, NoRoute;
+
+  -- Registers "inetctl" as the callback interface the Flow Manager is
+  -- expected to deliver out-of-band protocol exceptions to (e.g.,
+  -- ``Host Unreachable'' etc).
+  RegisterInetCtl : PROC [ inetctl : IREF IDCOffer ]
+	            RETURNS [ ok : BOOLEAN ];
+
+
+--
+-- Interface management
+--
+
+  -- "Open" requests the Flow Manager to open a new `flow' on a
+  -- specific interface.  A pair of offers are returned which can be
+  -- used to bind to the new flow.  The requested quality of service
+  -- for transmission is given in "txqos"; should this exceed the
+  -- capacity of the interface, "NoResources" will be raised.
+  -- In addition to the offers, "Open" returns "flow", an opaque handle which
+  -- may be used subseqently by the client to identify this particular
+  -- pair of (potential) connections; a flow of "0" means that the
+  -- open failed for some reason.
+  Open : PROC    [ ifname  : STRING,
+		   txqos   : Netif.TXQoS, 
+		   txsort  : Netif.TXSort  ]
+         RETURNS [ flow    : Flow,
+                   rxoffer : IREF IOOffer,
+		   txoffer : IREF IOOffer  ]
+	 RAISES  QoSEntry.OverAllocation;
+
+
+  -- "AdjustQoS" is used to modify the transmit quality of service
+  -- on the IOs identified by "flow". Returns "True" if the
+  -- adjustment was successful, or "False" otherwise.
+  AdjustQoS : PROC    [ flow: Flow, 
+		        qos : Netif.TXQoS ]
+	      RETURNS [ ok  : BOOLEAN     ]
+	      RAISES QoSEntry.OverAllocation;
+  
+  -- Should be a function of the IO channel, no?
+
+
+  -- "Close" is used to notify the Flow Manager that the pair of IOs
+  -- (or, originally, offers) returns from "Open" are no longer in
+  -- use. 
+  -- All `connections' on this flow will be "Detach"ed.
+  --
+  -- This spec used to say "It will \emph{not} destroy the IO channels
+  -- themselves; this must be done by the client and/or the network
+  -- interface." -- why is this?  Currently, it _does_ destroy the IO
+  -- channels. AND 10/9/97.
+  Close : PROC    [ flow: Flow  ]
+	  RETURNS [ ok  : BOOLEAN ];
+
+
+
+--
+-- Packet filter / Connection Management
+--
+
+  -- "Attach" is used to open a new `connection' on a previously
+  -- opened flow, i.e., there can be multiple `connections' on one
+  -- flow.  The semantics of a `connection' is up to the protocol
+  -- specific code to decide.  For TCP, a `connection' can simply be a
+  -- TCP connection.
+  -- "Attach" makes the flow manager install transmit and receive
+  -- packet filters on the flow.  This enables packet reception and
+  -- transmission.  No protocol specific action is taken.
+  Attach : PROC    [ flow : Flow, 
+	             lsap : SAP, 
+		     rsap : SAP    ]
+           RETURNS [ cid  : ConnID ];
+
+
+  -- "Reattach" changes previously installed packet filters for a
+  -- `connection'.  Useful if wildcard SAPs are used during connection
+  -- setup, which later becomes more specific.
+  ReAttach : PROC    [ flow : Flow,
+		       cid  : ConnID,
+		       lsap : SAP, 
+		       rsap : SAP    ]
+	     RETURNS [ ok : BOOLEAN ];
+
+
+  -- "Detach" destroys the connection ID "cid", i.e., removes the
+  -- packet filters.  This action is also implicitly done when a flow
+  -- is "Close"d.
+  Detach : PROC    [ flow: Flow,
+		     cid : ConnID ]
+	   RETURNS [ ok : BOOLEAN ];
+
+END.

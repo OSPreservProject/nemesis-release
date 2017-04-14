@@ -1,0 +1,42 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      StretchAllocatorF
+-- 
+-- DESCRIPTION:
+--
+--      Allocates Stretches.  This extended interface also allows the
+--	creation of new stretch allocators.
+-- 
+-- ID : $Id: StretchAllocatorF.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Memory}
+-- \section{Virtual Memory}
+-- 
+-- A "StretchAllocatorF" is an extention of the "StretchAllocator"
+-- interface. In addition to all the normal operations, is allows the
+-- creation of new "StretchAllocator"s to service a particular domain
+-- and protection domain. 
+--
+
+StretchAllocatorF : LOCAL INTERFACE = 
+  EXTENDS StretchAllocator;
+  NEEDS ProtectionDomain;
+  NEEDS VP;
+BEGIN
+
+  NewClient :    PROC [ child    : ProtectionDomain.ID,
+	                vp       : IREF VP,
+	                parent   : ProtectionDomain.ID   ]
+              RETURNS [ clientsa : IREF StretchAllocator ]
+              RAISES Heap.NoMemory;
+    -- Returns a new "StretchAllocator" for a client domain.
+
+END.

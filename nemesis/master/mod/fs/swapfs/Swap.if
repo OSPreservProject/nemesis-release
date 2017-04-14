@@ -1,0 +1,78 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Swap.if
+-- 
+-- DESCRIPTION:
+--
+--      Interface to the Swap File System (SFS), a trivial extent 
+--      based FS with non-volatile files but volatile 'meta data'. 
+-- 
+-- ID :         $Id: Swap.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+-- 
+-- \chapter{File Systems}
+-- \section{Swap File System}
+--
+
+Swap : LOCAL INTERFACE =
+  NEEDS FSTypes;
+  NEEDS IDCOffer;
+BEGIN
+
+  -- 
+  -- Types and Exceptions 
+  -- 
+
+  Handle : TYPE = CARDINAL; 
+  
+  BadHandle : EXCEPTION [ hdl : Handle ]; 
+
+  -- 
+  -- Query Methods
+  -- 
+
+  BlockSize : PROC  [ ] RETURNS [ blocksize : CARDINAL ];
+    -- Returns the blocksize of this swap filesystem.
+
+  Free : PROC [] RETURNS [ nblocks : CARDINAL ]; 
+    -- Returns the size (in blocks) of the largest currently 
+    -- available 'file' (viz. extent). 
+
+  CurrentQoS : PROC [ handle : Handle ] RETURNS [ qos : FSTypes.QoS ];
+    -- Return the current QoS parameters of this the file associated
+    -- with this handle. 
+
+
+  -- 
+  -- Active Methods
+  -- 
+
+
+  Open : PROC    [ nblocks : CARDINAL       ]
+	 RETURNS [ foffer  : IREF IDCOffer, 
+		   handle  : Handle         ];
+    -- Attempts to open a 'file' in the SFS. This involves the
+    -- allocation of an extent of the specified number of blocks. 
+    -- If successful, returns an "IDCOffer" for a "FileIO" for
+    -- the allocated extent. The "handle" returned associates 
+    -- the caller with the file. 
+
+  AdjustQoS : PROC    [ handle     : Handle, 
+		        IN OUT qos : FSTypes.QoS ] 
+              RETURNS [ ok         : BOOLEAN     ];
+    -- Specify the desired QoS for this handle.  Returns "True" if 
+    -- successful, otherwise returns the (probably lower) "QoS" which
+    -- has been allocated.
+
+  Close : PROC [ handle : Handle ] RETURNS [ ok : BOOLEAN ];
+    -- Close the 'file' associated with this handle. 
+
+
+END.

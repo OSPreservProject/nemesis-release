@@ -1,0 +1,50 @@
+----------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--  	DNS.if
+--
+-- DESCRIPTION:
+--
+--  	Resolves DNS queries
+--
+-- ID: 
+--
+-- \chapter(Networks)
+--
+--
+
+--  This interface provides procedures for resolving DNS queries
+--  both normal and inverse queries are handled at the moment.
+--  The types and classes in the arguments are defined in Resolver.h
+--  and are based on those types and classes that are those defined in
+--  RFC 1034, 1035.
+
+-- When quering you will get back the full answer buffer from the
+-- name-server that was defined when the module was created.
+
+DNS : LOCAL INTERFACE = 
+NEEDS Net;
+
+BEGIN
+
+	OctetSeq : TYPE = SEQUENCE OF OCTET;
+	OctetSeqP : TYPE = REF OctetSeq;
+
+	ResQuery : PROC [ name : STRING,	-- Domain name to be queried
+			class : CARDINAL,	-- class of protocol family
+			type : CARDINAL,   	-- The type of resource
+			IN OUT answer : OctetSeq ] -- answer buffer
+                                                 
+		RETURNS [ success : INTEGER ];	-- returns -1 on failure
+		 
+		
+
+	ResIQuery : PROC [ addr : Net.IPHostAddr, -- Address to be resolved
+			class : CARDINAL,	  -- class of protocol
+                                                  -- family
+			type : CARDINAL ]	  -- type of resource
+                                                  -- being looked for
+		RETURNS [ name : STRING,
+			namelen : INTEGER ];
+END.

@@ -1,0 +1,38 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	99.03.30.09.44.50;	author tlh20;	state Exp;
+branches;
+next	;
+
+
+desc
+@Initial version
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@# Makefile to turn xfig .fig files into .eps ones.  Currently this is
+# just a placeholder in case any .fig files come along...
+
+default: graphics
+
+clean:
+	rm -f \#*\# *.eps *.bak *~
+
+graphics: \
+
+%.eps: %.fig
+	fig2dev -L ps $< $@@
+
+
+@

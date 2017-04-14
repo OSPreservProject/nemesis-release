@@ -1,0 +1,37 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      CSClientStubMod
+-- 
+-- DESCRIPTION:
+--
+--      Manufactures custom client-side stubs
+-- 
+-- ID : $Id: CSClientStubMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+--
+
+-- This interface allows custom client-side stub code to be instantiated.
+
+CSClientStubMod : LOCAL INTERFACE =
+  NEEDS Type;
+BEGIN
+
+  New : PROC [ server : Type.Any ]
+	RETURNS [ stubs : Type.Any ];
+
+  Destroy : PROC [ stubs : Type.Any ]
+	RETURNS [ ];
+  -- called if the IDCClientBinding Destroy method is called; should
+  -- delete the stubs. During this call the stubs may still make calls
+  -- to the server; the connection will be broken later.
+
+END.

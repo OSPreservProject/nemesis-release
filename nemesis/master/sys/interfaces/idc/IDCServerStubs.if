@@ -1,0 +1,51 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      IDCServerStubs
+-- 
+-- DESCRIPTION:
+--
+--      Control and dispatch interface to a particular client-server
+--      binding at the server end. 
+-- 
+-- ID : $Id: IDCServerStubs.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+-- 
+
+-- An "IDCServerStubs" is a server-side control and dispatch interface 
+-- to particular client-server binding using a particular set of stubs
+-- and marshalling code.
+
+IDCServerStubs : LOCAL INTERFACE =
+  NEEDS IDCServerBinding;
+  NEEDS IDC;
+BEGIN
+
+  -- By convention, the state pointer of an "IDCServerStubs" closure
+  -- points to the following "State" record:
+
+  State : TYPE = RECORD [
+    service : ADDRESS,                 -- The real service
+    binding : IREF IDCServerBinding,	 -- Runtime state
+    marshal : IREF IDC                 -- Marshalling code
+  ];
+  
+  -- The following method is called within a thread serving calls
+  -- on this binding:
+
+  Dispatch : PROC [] RETURNS [];
+    -- There may be work to do on this binding: do it if there is
+    -- any.
+
+  -- To dispose of an "IDCServerStubs", it is sufficient to call
+  -- "Destroy" on the associated "State"'s "binding".
+
+END.

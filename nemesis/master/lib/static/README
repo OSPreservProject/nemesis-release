@@ -1,0 +1,8 @@
+This directory contains various static libraries.
+
+intmath/	Integer math routines. Perhaps an abomination.
+io/		IO instructions
+socket/		Cut down BSD socket compability layer
+system/		Low level system libraries linked against all modules
+wsrender/	Old style client rendering static library
+sunrpc/		SUN rpc compability layer

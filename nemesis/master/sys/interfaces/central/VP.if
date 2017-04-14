@@ -1,0 +1,293 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      VP.if
+--
+-- DESCRIPTION:
+--
+--      User-level Virtual Processor management; for use by
+--      user-level schedulers.
+-- 
+-- ID : $Id: VP.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Domains, Events and Activation}
+-- \section{Virtual Processor}
+--
+
+-- The kernel scheduler communicates with a domain's user-level
+-- scheduler via state and operations on the domain's Virtual
+-- Processor (VP).
+
+VP : LOCAL INTERFACE = 
+  NEEDS Activation;
+  NEEDS Channel;
+  NEEDS Event;
+  NEEDS Time;
+  NEEDS Domain;
+  NEEDS ProtectionDomain;
+  NEEDS IDCOffer;
+BEGIN
+
+  -- The procedures in the "VP" interface are implemented by a user-level
+  -- shared library and a few system calls.  There is no internal
+  -- concurrency control over the state which may be written at the
+  -- user level: user-level schedulers are expected to call conflicting
+  -- procedures within their own critical sections.
+
+  -- 
+  -- Context slots
+  -- 
+
+  -- A virtual processor has "NumContexts" slots in which context
+  -- is stored when the VP loses the real processor.  These slots
+  -- are identified by a "ContextSlot" in the range "0..NumContexts-1".
+
+  ContextSlot : TYPE = CARDINAL;
+
+  NumContexts : PROC [] RETURNS [ nc: CARDINAL ];
+
+  -- Context slots are reserved and freed with "AllocContext"
+  -- and "FreeContext".
+
+  NoContextSlots : EXCEPTION [];
+    -- Raised when no free context slots are available
+
+  InvalidContext : EXCEPTION [ cs: ContextSlot ];
+    -- Raised when "cs" is out of range or its contents are invalid.
+
+  AllocContext : PROC [] RETURNS [ cs: ContextSlot ]
+                   RAISES NoContextSlots;
+
+  FreeContext  : PROC [ cs: ContextSlot ] RETURNS []
+                   RAISES InvalidContext;
+
+  -- The user-level scheduler obtains the address of the "jmp_buf"
+  -- associated with a context slot with "Context".  The result
+  -- can be passed to "setjmp" and "longjmp" to switch between
+  -- threads.
+
+  Context      : PROC    [ cs: ContextSlot ]
+                 RETURNS [ ca: ADDRESS     ];
+    -- Return the address of the context save area identified by "cs".
+
+  -- 
+  -- Activations
+  -- 
+
+  -- A domain is activated via its activation vector.
+
+  SetActivationVector : PROC    [avec : IREF Activation ]
+                        RETURNS [];
+    -- Set this VP's activation vector to "avec".
+
+  -- "SetActivationVector" is not atomic with respect to activations;
+  -- it must be called with activations disabled.  This may change
+  -- in the future.
+
+  -- Activations are initially disabled.
+
+  ActivationsOn : PROC [] RETURNS [];
+    -- Set "vp.activationsOn := True".
+
+  -- "ActivationsOn" is a simple write to a user-level flag,
+  -- not a system call; it will not cause this domain to be re-activated
+  -- because of pending events accumulated while activations are disabled.
+
+  ActivationsOff : PROC [] RETURNS [];
+    -- Set "vp.activationsOn := False".
+
+  ActivationMode : PROC [] RETURNS [ on: BOOLEAN ];
+    -- Return "vp.activationsOn".
+
+  -- If this VP loses the processor and activations are enabled,
+  -- context is stored in the VP's ``save slot''.  When the VP
+  -- is next given the real processor, it will be activated via
+  -- its activation vector with activations disabled.  The initial
+  -- save slot is indeterminate and possibly invalid.
+
+  GetSaveSlot : PROC [] RETURNS [ cs: ContextSlot ];
+  SetSaveSlot : PROC [ cs: ContextSlot ] RETURNS [ ca: ADDRESS ]
+                  RAISES InvalidContext;
+
+  -- "SetSaveSlot" returns "Context(cs)".
+
+  -- If this VP loses the processor and activations are disabled,
+  -- context is stored in the VP's ``resume slot''.  When the VP
+  -- is next given the real processor, context will be restored
+  -- from the resume slot.  The initial resume slot is valid and
+  -- allocated.
+
+  GetResumeSlot : PROC [] RETURNS [ cs: ContextSlot ];
+  SetResumeSlot : PROC [ cs: ContextSlot ] RETURNS []
+                    RAISES InvalidContext;
+
+
+  -- 
+  -- Event channels
+  -- 
+
+  -- A virtual processor sends and receives events over event
+  -- "Channel"s.
+
+  NumChannels : PROC [] RETURNS [ n: CARDINAL ];
+    -- Return the number of slots for "Channel.Endpoint"s at this VP.
+
+  -- The "QueryChannel" procedure returns the "state" and "type" of the
+  -- endpoint "ep".  
+  -- If "ep"'s "type" is "RX", "rxval" gives its current received
+  -- value.
+ 
+  QueryChannel : PROC    [ ep      : Channel.Endpoint ]
+                 RETURNS [ state   : Channel.State,
+                           type    : Channel.EPType,
+                           rxval   : Event.Val,
+                           rxack   : Event.Val        ]
+                 RAISES Channel.Invalid;
+  
+  -- "Channel.EndPoint"s are allocated by the domain. The following
+  -- operations are provided to allocate and free them; note that
+  -- there is no concurrency control at this level. 
+
+  AllocChannel : PROC [] RETURNS [ ep : Channel.Endpoint ] 
+               RAISES Channel.NoSlots;
+    -- Find an end-point in the "Free" state, set its state to
+    -- "Allocated" and return it.
+
+  FreeChannel : PROC [ ep : Channel.Endpoint ] 
+                RETURNS []
+      	      	RAISES Channel.Invalid, Channel.BadState;
+    -- Take an end-point not in the "Connected" state, and set its
+    -- state to "Free".
+
+  -- User-level schedulers inform the kernel when they wish
+  -- events to be transmitted to other domains by calling "Send".
+
+  Send : PROC [ tx: Channel.TX, val: Event.Val ]
+           RETURNS [] RAISES Channel.Invalid, Channel.BadState;
+    -- Request that the received value of the RX endpoint associated
+    -- with "tx" be set to "val".
+
+  Poll : PROC [ ep: Channel.EP ] RETURNS [ val: Event.Val ]
+           RAISES Channel.Invalid;
+    -- Return the current received value of the endpoint "ep".
+
+  Ack : PROC [ ep: Channel.EP, ack : Event.Val ]
+           RETURNS [ val : Event.Val ]
+           RAISES Channel.Invalid, Channel.BadState;
+    -- Write "ack" into the acknowledged value for the endpoint
+    -- "ep". Return the current received value (not the ack value). 
+
+  -- A "Channel.Endpoint" "ep" has \emph{pending} events iff its value
+  -- is different from its acknowledged count.
+
+  -- The system maintains a list of end-points which require
+  -- attention. A "Channel.Endpoint" is added to this list if its
+  -- state becomes "Dead", or if it has no prior events pending and an
+  -- event for it arrives (in other words, its state changes from `not
+  -- pending' to `pending'). An end-point is removed from this list by
+  -- the "NextEvent" operation (below). 
+
+  EventsPending : PROC [] RETURNS [ pending: BOOLEAN ];
+
+  -- If "EventsPending" returns false, there is no endpoint in the
+  -- list of those requiring attention. If it returns true, there is
+  -- at least one end-point which the system believes is worthy of
+  -- attention (though this end-point is not guaranteed to have
+  -- pending events). 
+
+  NextEvent : PROC    []
+              RETURNS [ pending : BOOLEAN,
+                        ep      : Channel.Endpoint,
+                        type    : Channel.EPType,
+                        val     : Event.Val,
+                        state   : Channel.State    ];
+
+  -- If "NextEvent" returns false, there is no endpoint in the list of
+  -- those requiring attention.  Otherwise, the other results are the
+  -- identifier, type, current received value (for "RX"s) and state of
+  -- an endpoint which may have pending events or have been closed
+  -- down. 
+
+  -- The intended pattern of use is (in an activation handler):
+  -- 
+  --|    while (VP_NextEvent (vp, &ep, &type, &val, &state))
+  --|      ProcessEvent (ep, type, val, state);
+  --|    if (`nothing to do`)
+  --|      VP_RFABlock (vp)
+
+
+  -- 
+  -- Scheduling functions
+  --
+
+  RFA : PROC [] RETURNS [];
+    -- Return From Activation
+
+  -- "RFA" enables activations, then if there are no
+  -- pending events, it returns to the caller; otherwise, it
+  -- saves the return context in the save slot and reactivates.
+  -- It is atomic with respect to arrival of events.
+
+  RFAResume : PROC [ cs: ContextSlot ] NEVER RETURNS
+                    RAISES InvalidContext;
+    -- Return From Activation and Resume
+
+  -- "RFAResume" enables activations, then if there are no pending
+  -- events, restores context from "cs"; otherwise it reactivates. 
+  -- "RFAResume" is atomic with respect to losing the processor.
+  -- To see why this is necessary, consider the sequence
+  -- 
+  --|    RFA(); Resume(cs)
+  -- 
+  -- If this VP loses the processor at the semi-colon, the context
+  -- "cs" will be clobbered in the common case where "cs" is the
+  -- current save slot.
+
+  -- A domain releases the real processor voluntarily with "RFABlock",
+  -- "Block" or "Yield".  These give differing hints to the kernel
+  -- scheduler as to when the domain should next be activated or resumed.
+  -- They are only hints; a domain must be prepared to be given the
+  -- processor at any time, whether or not it has pending events or timeouts.
+
+  RFABlock : PROC [ until: Time.T ] NEVER RETURNS;
+    -- Return From Activation and Block
+
+  -- "RFABlock" enables activations, then if there are no pending
+  -- events, blocks this VP until an event arrives or "Time.Now() >= until";
+  -- otherwise, it reactivates immediately.  It is atomic with respect to
+  -- arrival of events.
+
+  Block : PROC [ until: Time.T ] RETURNS [];
+    -- Block on incoming events
+
+  -- If there are no pending events, "Block" saves the return context in
+  -- the save or resume slot and yields the processor until an event
+  -- arrives or "Time.Now() >= until"; otherwise it returns immediately.
+  -- It is atomic with respect to arrival of events.
+
+  Yield : PROC [] RETURNS [];
+
+  -- "Yield" saves the return context in the save or resume slot
+  -- and yields the processor until the next resource allocation.
+
+  -- 
+  -- Domain information
+  -- 
+
+  DomainID  : PROC [] RETURNS [ id   : Domain.ID ];
+    -- Return the domain associated with this virtual processor.
+
+  ProtDomID : PROC [] RETURNS [ pdid : ProtectionDomain.ID ];
+    -- Return the protection domain identifier associated with 
+    -- this virtual processor.
+
+  BinderOffer : PROC [] RETURNS [ bo : IREF IDCOffer ];
+
+END.

@@ -1,0 +1,18 @@
+This is the Nemesis ext2fs code.
+
+At the moment it is read-only; there are hooks for read-write, but
+I need to think a lot more about how to implement it. Coming soon to
+a tree near you...
+
+Parts of this code have been stolen from linux, eg. the inode_bmap function.
+Most of it is new.
+
+Need to think MUCH more about mutexes; we have several threads
+potentially running ext2fs code:
+
+  USD fault handler
+  Entry for client calls
+  BinderCallback thread
+
+For now, leave mutex stuff out...
+

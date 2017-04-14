@@ -1,0 +1,83 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Security
+-- 
+-- DESCRIPTION:
+--
+--      Low-level support for security in Nemesis
+-- 
+-- ID : $Id: Security.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Security}
+--
+
+-- Access control in Nemesis is mostly the responsibility of the various
+-- servers that make up the operating system. This low-level Security
+-- interface exists to improve efficiency; the names that it attaches to
+-- domains can be inherited by their children, removing the need for
+-- servers to be involved in this very common case of delegation.
+
+-- That's a pretty poor description, isn't it?
+
+Security : LOCAL INTERFACE =
+  NEEDS Domain;
+  NEEDS IDCOffer;
+BEGIN
+
+  Tag : TYPE = LONG CARDINAL;
+  -- A low-level name for a client of any server. Tags are unique
+  -- within a single boot of the operating system.
+
+  Certificate : TYPE = RECORD [
+	issuer : IREF IDCOffer,
+	value : STRING ];
+  -- A convenience type for storing certificates. The issuer may be
+  -- an IDCOffer for any type.
+
+  CertSeq : TYPE = SEQUENCE OF Certificate;
+
+  Exception : EXCEPTION [ ];
+  -- An exception that may be raised when there is nothing else more
+  -- appropriate to raise while an operation is being denied.
+
+  CreateTag : PROC [ ] RETURNS [ ok : BOOLEAN, tag : Tag ];
+    -- Create a new tag and attach it to the calling domain. By default
+    -- the tag will not be inherited by child domains. This method will
+    -- only fail if there is some internal problem with resources (the
+    -- number of tags that may be held by a domain may be limited,
+    -- for example).
+
+  DeleteTag : PROC [ tag : Tag ] RETURNS [ ok : BOOLEAN ];
+    -- Delete a tag from the current domain.
+
+  GiveTag : PROC [ tag : Tag, domain : Domain.ID,
+	inherit : BOOLEAN ] RETURNS [ ok : BOOLEAN ];
+    -- Give a tag to another domain. Only permitted if you are the parent
+    -- of the other domain.
+
+  SetInherit : PROC [ tag : Tag, inherit : BOOLEAN ]
+	RETURNS [ ok : BOOLEAN ];
+    -- Sets whether a tag is automatically inherited by child domains.
+
+  CheckTag : PROC [ tag : Tag, domain : Domain.ID ]
+	RETURNS [ ok : BOOLEAN ];
+    -- Checks whether "domain" possesses "tag".
+
+  CheckExists : PROC [ tag : Tag ] RETURNS [ exists : BOOLEAN ];
+    -- Checks whether "tag" exists. Can be used by servers to check
+    -- whether they need to carry on maintaining internal state about
+    -- a tag.
+
+  -- Originally there was a callback scheme here, but it's difficult
+  -- to do callbacks reliably from the Nemesis domain at the moment.
+  -- The callback mechanism may return later.
+
+END.

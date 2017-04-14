@@ -1,0 +1,111 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+-- 
+--	ThreadF
+--
+-- DESCRIPTION:
+--
+--	Thread hooks for Nemesis
+--
+-- ID : $Id: ThreadF.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{User Level Schedulers}
+-- 
+
+-- Some libraries (such as those that maintain per-thread state) need
+-- to take action when threads are created and destroyed.  They achieve
+-- this with a "ThreadHooks" closure registered with the ULS via the
+-- "ThreadF" interface.
+
+ThreadF : LOCAL INTERFACE = 
+  EXTENDS Threads;
+  NEEDS ThreadHooks;
+  NEEDS Heap;
+BEGIN
+
+
+  -- We first have three procedures which are for use from activation
+  -- handlers --- i.e. when the caller is not a thread. 
+  -- As there is no simple way to determine whether or not we are 
+  -- within an activation handler or within a thread, all routines 
+  -- in this interface should be used with discretion. 
+
+  CurrentThread  : PROC [] RETURNS [ t : IREF Thread ];
+    -- "CurrentThread" returns the current "running" thread; i.e. 
+    -- the thread that would be running if we were not in an 
+    -- activation handler.
+
+  BlockThread    : PROC    [ t  : IREF Thread, until : Time.T ]
+		   RETURNS [ cs : BOOLEAN     ];
+  
+    -- "BlockThread" is provided mainly for the use of the various
+    -- "Entry"s. It allows the blocking of the thread "t" with no 
+    -- timeouts; the "until" parameter is simply a hint to the ULTS
+    -- as to when it might be sensible to consider a reschedule. 
+    -- 
+    -- "BlockThread" returns True iff "t" was in a threads-level 
+    -- critical section.
+
+  UnblockThread  : PROC    [ t : IREF Thread, cs : BOOLEAN ] 
+	           RETURNS [];
+
+    -- UnblockThread unblocks a thread; if the thread "t" was not
+    -- actually blocked, the call will return successfully anyway.
+    -- The "cs" parameter specifies whether or not the thread was 
+    -- in a thread-level critical section. 
+
+
+  -- For running threads, we have two useful procedures to "Block" 
+  -- and "Unblock" threads. These perform similar functions to 
+  -- the above, but also deal with the fact the caller is the 
+  -- current running thread. 
+
+  BlockYield : PROC    [ until   : Time.T  ] 
+	       RETURNS [ alerted : BOOLEAN ];
+
+    -- On ocassion, a thread may wish to block itself indefinitely and  
+    -- then yield in a fashion where, once it is resumed (after being
+    -- unblocked) it returns immediately with the information regarding 
+    -- whether it has been 'alerted' or not.
+    -- 
+    -- "BlockYield" blocks the current thread and then yields the
+    -- processor to another thread (if there is one). It is similar
+    -- to the "Yield" method of the "Threads" interface, except that 
+    -- it guarantees that the current thread will \emph{not} be run 
+    -- again until explicitly unblocked by an external agency. 
+    -- 
+    -- As with "BlockThread", the "until" parameter is simply a hint 
+    -- to the ULTS as to when it might be sensible to consider a
+    -- reschedule; the actual unblocking of the thread must be carried
+    -- out by an external agency. 
+
+
+  UnblockYield : PROC    [ t : IREF Thread, cs : BOOLEAN ]
+	         RETURNS [ alerted : BOOLEAN ];
+
+    -- "UnblockYield" unblocks the thread "t" and then yields the
+    -- processor. The "cs" parameter specifies whether the thread 
+    -- being unblocked was in a threads-level critical section 
+    -- when it was blocked.
+
+
+   -- Finally, a miscellaneous registration method. 
+
+  RegisterHooks : PROC [ h: IREF ThreadHooks ] RETURNS []
+                    RAISES Heap.NoMemory;
+
+    -- Append "h" to the sequence of ULS hooks.
+
+  -- The registered hooks' "Fork" and "Forked" procedures are called in
+  -- order of registration.  The hooks' "ExitThread" and "ExitDomain"
+  -- procedures are called in reverse order of registration.
+
+   
+END.

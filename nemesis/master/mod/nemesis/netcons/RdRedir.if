@@ -1,0 +1,28 @@
+-----------------------------------------------------------------------------
+-----------------------------------------------------------------------------
+-- 
+-- INTERFACE:
+-- 
+-- 	RdRedir.if
+-- 
+-- DESCRIPTION:
+-- 
+-- 	SRC Readers
+-- 
+-- ID : $Id: RdRedir.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+--
+-- \chapter{Readers and Writers}
+--
+
+-- The "RdRedir" interface is an extended "Rd" interface which
+-- supports one extra method to set the destination reader.
+
+RdRedir : LOCAL INTERFACE = 
+  EXTENDS Rd;
+BEGIN
+
+  -- Makes "rd" the reader to which reads on "self" will be passed
+  -- through to.
+  SetRd : PROC [ rd : IREF Rd ] RETURNS [];
+
+END.

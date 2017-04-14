@@ -1,0 +1,89 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Glasgow                                   -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      WTime
+-- 
+-- DESCRIPTION:
+--
+--      Standard functions for retrieving the time
+--			and manipulating time structures.
+-- 
+-- CREATED : January 1998
+-- AUTHOR :  Ian McDonald <ian@dcs.gla.ac.uk>
+--
+-- ID : $Id: WTime.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- 
+
+
+WTime : LOCAL INTERFACE =
+BEGIN
+
+
+TimeVal : TYPE = RECORD [tv_sec: CARDINAL,
+												 tv_usec: CARDINAL];
+
+Time_T : TYPE = CARDINAL;
+
+TM : TYPE = RECORD [
+    tm_sec    : SHORT INTEGER,  -- seconds after the minute - [0, 61] for leap seconds
+    tm_min    : SHORT INTEGER,  -- minutes after the hour - [0, 59]
+    tm_hour   : SHORT INTEGER,  -- hour since midnight - [0, 23]
+    tm_mday   : SHORT INTEGER,  -- day of the month - [1, 31]
+    tm_mon    : SHORT INTEGER,  -- months since January - [0, 11]
+    tm_year   : SHORT INTEGER,  -- years since 1900 
+    tm_wday   : SHORT INTEGER,  -- days since Sunday - [0, 6] 
+    tm_yday   : SHORT INTEGER,  -- days since January 1 - [0, 365]
+    tm_isdst  : SHORT INTEGER,  -- flag for alternate daylight savings time
+    tm_gmtoff : INTEGER, 	      -- offset from CUT in seconds
+    tm_zone   : STRING];	      --  timezone abbreviation
+
+
+
+    GetTimeOfDay   : PROC [OUT tval : TimeVal] 
+         RETURNS [succes : SHORT INTEGER];
+    -- Returns the current wall-clock time
+
+    MkTime : PROC [IN OUT tmptr : TM]
+        RETURNS [time : Time_T];
+    -- converts tm struct to seconds since 1/1/70
+
+    AscTime : PROC [IN tmptr : TM]
+        RETURNS [thetime : STRING];
+    -- returns string rep'n of time and date
+
+    LocalTime : PROC [IN time : Time_T]
+        RETURNS [tmptr : TM];
+    -- returns local time in TM record from timer
+		
+    CTime : PROC [IN time : Time_T]
+        RETURNS [thetime : STRING];
+    -- => AscTime(LocalTime(timer))
+		
+    GMTime : PROC [IN	time : Time_T]
+        RETURNS [tmptr : TM];
+    -- converts seconds since 1/1/70 to TM record
+		
+    DayOfWeek : PROC [mday : SHORT CARDINAL, 
+                      mon  : SHORT CARDINAL,
+                      year : SHORT CARDINAL]
+        RETURNS [day : INTEGER];
+    -- calculates the day of the week
+		
+    MakeTime : PROC [mday : SHORT CARDINAL,
+                     mon  : SHORT CARDINAL,
+                     year : SHORT CARDINAL,
+                     hour : SHORT CARDINAL,
+                     min  : SHORT CARDINAL,
+                     sec  : SHORT CARDINAL]
+        RETURNS [ time : Time_T];
+    -- converts tm struct to seconds since 1/1/70
+		
+END.

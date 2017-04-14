@@ -1,0 +1,118 @@
+ The Cambridge Nemesis filing subsystem
+=======================================
+
+#00005 dr10009 pp Stephen Childs (Stephen.Childs@cl.cam.ac.uk) Tue Jun  8 15:24:59 1999
+---------------------------------------------------------------------------------------
+free resources when a client disconnects from ext2fs
+mod/fs/ext2fs/ext2mod.c            -- ext2fs disconnect cleanup
+
+#00004 dr10009 pp Rolf Neugebauer (neugebar@dcs.gla.ac.uk) Fri Apr 30 12:17:02 1999
+-----------------------------------------------------------------------------------
+needed scsi.h to compile ncr drive
+h                                  ** NEW DIRECTORY
+h/dev                              ** NEW DIRECTORY
+h/dev/scsi.h                       ++ copied from liv
+
+#00003 dr10009 pp Stephen Early (Stephen.Early@cl.cam.ac.uk) Tue Apr 13 14:59:34 1999
+-------------------------------------------------------------------------------------
+Fix symlink handling in ext2fs
+mod/fs/ext2fs/ext2.c               -- Fix symlink handling
+
+#00002 dr10009 pp Tim Harris (tim.harris@cl.cam.ac.uk) Thu Feb  4 11:22:47 1999
+-------------------------------------------------------------------------------
+Remove swearing
+mod/fs/swapfs/swapfs.c             -- Remove swearing
+mod/fs/nfs/nfs.c                   -- Remove swearing
+
+#00001 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Jan 12 14:50:49 1999
+--------------------------------------------------------------------------
+no overview
+
+                                   ** describe me
+dev                                ** describe me
+dev/isa                            ** describe me
+dev/isa/ide                        ** describe me
+dev/scsi                           ** describe me
+dev/scsi/disk                      ** describe me
+dev/scsi/interfaces                ** describe me
+dev/scsi/ncr53c8xx                 ** describe me
+glue                               ** describe me
+glue/packages                      ** describe me
+mod                                ** describe me
+mod/fs                             ** describe me
+mod/fs/ext2fs                      ** describe me
+mod/fs/interfaces                  ** describe me
+mod/fs/nfs                         ** describe me
+mod/fs/ramdisk                     ** describe me
+mod/fs/swapfs                      ** describe me
+mod/fs/usd                         ** describe me
+mod/fs/util                        ** describe me
+sys                                ** describe me
+sys/interfaces                     ** describe me
+sys/interfaces/usd                 ** describe me
+dev/isa/ide/ide.c                  ++ describe me
+dev/isa/ide/ide.h                  ++ describe me
+dev/isa/ide/ideprivate.h           ++ describe me
+dev/scsi/disk/sd.c                 ++ describe me
+dev/scsi/interfaces/SCSI.if        ++ describe me
+dev/scsi/interfaces/SCSICallback.if++ describe me
+dev/scsi/interfaces/SCSIController.if ++ describe me
+dev/scsi/interfaces/SCSIDisk.if    ++ describe me
+dev/scsi/ncr53c8xx/fake.h          ++ describe me
+dev/scsi/ncr53c8xx/main.c          ++ describe me
+dev/scsi/ncr53c8xx/ncr53c8xx.c     ++ describe me
+dev/scsi/ncr53c8xx/ncr53c8xx.h     ++ describe me
+dev/scsi/ncr53c8xx/sc.c            ++ describe me
+glue/packages/cfs.py               ++ describe me
+mod/fs/ext2fs/Ext2.if              ++ describe me
+mod/fs/ext2fs/README               ++ describe me
+mod/fs/ext2fs/bcache.c             ++ describe me
+mod/fs/ext2fs/ext2.c               ++ describe me
+mod/fs/ext2fs/ext2fs.h             ++ describe me
+mod/fs/ext2fs/ext2mod.c            ++ describe me
+mod/fs/ext2fs/ext2mod.h            ++ describe me
+mod/fs/ext2fs/fsclient.c           ++ describe me
+mod/fs/ext2fs/futils.c             ++ describe me
+mod/fs/ext2fs/inode.c              ++ describe me
+mod/fs/ext2fs/unparse.c            ++ describe me
+mod/fs/ext2fs/uuid.h               ++ describe me
+mod/fs/interfaces/BlockDev.if      ++ describe me
+mod/fs/interfaces/Disk.if          ++ describe me
+mod/fs/interfaces/FSClient.if      ++ describe me
+mod/fs/interfaces/FSDir.if         ++ describe me
+mod/fs/interfaces/FSTypes.if       ++ describe me
+mod/fs/interfaces/FSUtil.if        ++ describe me
+mod/fs/interfaces/Filesystem.if    ++ describe me
+mod/fs/interfaces/MountLocal.if    ++ describe me
+mod/fs/interfaces/MountRemote.if   ++ describe me
+mod/fs/interfaces/RamDisk.if       ++ describe me
+mod/fs/interfaces/RamDiskMod.if    ++ describe me
+mod/fs/nfs/NFS.if                  ++ describe me
+mod/fs/nfs/fsclient.c              ++ describe me
+mod/fs/nfs/fsoffer.h               ++ describe me
+mod/fs/nfs/mount.c                 ++ describe me
+mod/fs/nfs/mount.h                 ++ describe me
+mod/fs/nfs/mount.x                 ++ describe me
+mod/fs/nfs/mount_xdr.c             ++ describe me
+mod/fs/nfs/nfs.c                   ++ describe me
+mod/fs/nfs/nfs_prot.h              ++ describe me
+mod/fs/nfs/nfs_prot.x              ++ describe me
+mod/fs/nfs/nfs_st.h                ++ describe me
+mod/fs/nfs/nfs_xdr.c               ++ describe me
+mod/fs/ramdisk/Makefile            ++ describe me
+mod/fs/ramdisk/ramdisk.c           ++ describe me
+mod/fs/swapfs/Swap.if              ++ describe me
+mod/fs/swapfs/SwapFS.if            ++ describe me
+mod/fs/swapfs/swapfs.c             ++ describe me
+mod/fs/usd/disklabel.h             ++ describe me
+mod/fs/usd/io.c                    ++ describe me
+mod/fs/usd/partition.c             ++ describe me
+mod/fs/usd/usd.c                   ++ describe me
+mod/fs/usd/usd.h                   ++ describe me
+mod/fs/util/fsutils.c              ++ describe me
+sys/interfaces/usd/USD.if          ++ describe me
+sys/interfaces/usd/USDCallback.if  ++ describe me
+sys/interfaces/usd/USDCtl.if       ++ describe me
+sys/interfaces/usd/USDDrive.if     ++ describe me
+sys/interfaces/usd/USDMod.if       ++ describe me
+

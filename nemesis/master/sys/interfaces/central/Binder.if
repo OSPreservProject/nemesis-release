@@ -1,0 +1,140 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Binder
+-- 
+-- DESCRIPTION:
+--
+--      Interface used by domains to request Event channels and
+--      higher-level IDC mechanisms
+-- 
+-- ID : $Id: Binder.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+-- 
+-- 
+
+-- The "Binder" is the system service which sets up event channels
+-- between domains.  The "Binder" is only responsible for the setting up
+-- and tearing down of event channels; communication over channels
+-- is performed exclusively by kernel code.  Furthermore, details of the
+-- communication method to be employed (shared memory buffers, etc.) are
+-- intended to be hidden behind the interface that builds the proxy,
+-- rather than dictated by the binder.  In this way different IDC
+-- mechanisms can coexist transparently on the same machine.
+
+Binder : LOCAL INTERFACE = 
+  NEEDS Channel;
+BEGIN
+
+  -- 
+  -- Types
+  -- 
+
+  -- The target of a client binding operation is a service access point,
+  -- or SAP.  A SAP consists of an "ID" for the domain offering
+  -- the service and a "Port" identifier.
+
+  ID   : TYPE = LONG CARDINAL;
+  Port : TYPE = LONG CARDINAL;
+
+  -- An "ID" will in most cases be a "Domain.ID", but could in principle
+  -- refer to a group, dynamic resource balancer, or other esoteric concept.
+  -- The server domain can interpret a "Port" however it chooses.
+
+  -- Attempts to connect to a SAP can fail because the SAP is invalid,
+  -- because the server rejects the connection request, or because
+  -- insufficient system resources are available.
+
+  Problem : TYPE = { BadID,              -- SAP invalid
+                     BadPort,            -- Port invalid
+                     ServerRefused,      -- Access denied
+                     ServerError,        -- Server sent malformed response
+                     Dying,              -- Server domain is dying
+                     Failure };          -- General failure
+
+  Error : EXCEPTION [ p: Problem ];
+
+  -- During a bind, further information can be passed using "Cookie"s.
+  -- The interpretation of "Cookie"s is up to clients and servers,
+  -- and might well depend on the server "ID" and "Port".  They
+  -- could describe shared memory buffers, or anything else.
+
+  Cookie  : TYPE = RECORD [ a: ADDRESS, w: WORD ];
+  Cookies : TYPE = SEQUENCE OF Cookie;
+
+  -- 
+  -- Connection Setup and Teardown
+  -- 
+
+  -- To connect to a SAP, the active client domain supplies a
+  -- sequence of channel-pairs and a sequence "clt_cks" of "Cookie"s to
+  -- be transmitted to the server.  
+
+  ConnectTo : PROC    [ id      : ID,
+                        port    : Port,
+                        clt_eps : Channel.Pairs,
+                        clt_cks : Cookies,
+                    OUT svr_cks : Cookies      ]
+              RETURNS []
+              RAISES Channel.NoSlots, Error;
+
+  -- If it succeeds, "ConnectTo" attaches the non-null counts in
+  -- "events" to appropriate "Channel.Endpoint"s connected to peers
+  -- in the server "id".  It also returns in "svr_cks" the "Cookie"s
+  -- received from the server as a result of the connection request.
+
+  -- For the case when only a pair of event channels and a single
+  -- cookie each way are to be used, a convenience call is provided:
+
+  SimpleConnect : PROC    [ id     : ID,
+                            port   : Port,
+                            eps    : Channel.Pair,
+                            clt_ck : Cookie,
+                        OUT svr_ck : Cookie       ]
+                  RETURNS []
+                  RAISES Channel.NoSlots, Error;
+
+  Close         : PROC [ ep: Channel.EP ] RETURNS []
+                  RAISES Channel.Invalid;
+
+  CloseChannels : PROC [ chans: Channel.Pairs ] RETURNS []
+                  RAISES Channel.Invalid;
+
+  -- For each valid endpoint "ep != NULL_EP" (in "chans"), ensure
+  -- that eventually "ep.state" becomes "Free".  If "ep.state" was 
+  -- "Connected" on entry, also ensure that "peer(ep).state"
+  -- eventually becomes "Dead".
+
+  -- 
+  -- Registration
+  -- 
+
+  -- A domain offering services accepts connection requests from
+  -- the binder over a special callback channel.  The domain
+  -- responds to requests on this channel as specified in the
+  -- "BinderCallback" interface.
+  -- 
+  -- The callback channel, whose active end is in the binder, is
+  -- established with the procedure "RegisterDomain".  The domain
+  -- supplies the events and (in "bufs[0]") the read-write buffer for
+  -- its end of the IDC channel.
+
+  RegisterDomain : PROC    [ chans : Channel.Pair,
+                      IN     tx_buf : Cookie,
+                      OUT    rx_buf : Cookie     ]
+                   RETURNS []
+                   RAISES Channel.NoSlots, Error;
+
+  -- If it succeeds, "RegisterDomain" connects the callback channel
+  -- and sets "rx_buf" to the read-only receive buffer for the passive end.
+  -- For both "bufs", "a" is the base of the buffer and "w" its length.
+
+END.

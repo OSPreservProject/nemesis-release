@@ -1,0 +1,52 @@
+;; -*- Prcs -*-
+;; created by dcheckin.py on Thu Feb 18 14:18:10 1999
+(Created-By-Prcs-Version 1 2 14)
+(Project-Description "")
+(Project-Version dpatch live 45)
+(Parent-Version dpatch live 44)
+(Version-Log "")
+(New-Version-Log "")
+(Checkin-Time "Thu, 10 Jun 1999 14:55:39 +0100")
+(Checkin-Login dr10009)
+(Populate-Ignore ())
+(Project-Keywords)
+(Files
+(dpatch_updates (dpatch/0_dpatch_upd 1.45 664) :no-keywords)
+
+;; Files added by populate at Thu, 18 Feb 1999 14:18:11 +0000,
+;; to version live.1(w), by dr10009:
+
+  (master/dpatch.tex (dpatch/1_dpatch.tex 1.7 664))
+  (master/ddiff.py (dpatch/2_ddiff.py 1.17 775))
+  (master/dcheckin.py (dpatch/3_dcheckin.p 1.29 775))
+  (master/Makefile (dpatch/4_Makefile 1.2 664))
+
+;; Files added by populate at Thu, 18 Feb 1999 14:18:33 +0000,
+;; to version live.19(w), by dr10009:
+
+  (master/patchman/BoboHTTPServer.py (dpatch/5_BoboHTTPSe 1.1 664))
+  (master/patchman/CGIResponse.py (dpatch/6_CGIRespons 1.1 664))
+  (master/patchman/HTMLcolors.py (dpatch/7_HTMLcolors 1.1 664))
+  (master/patchman/HTMLgen.py (dpatch/8_HTMLgen.py 1.1 664))
+  (master/patchman/ImageFileH.py (dpatch/9_ImageFileH 1.1 664))
+  (master/patchman/ImageH.py (dpatch/10_ImageH.py 1.1 664))
+  (master/patchman/ImagePaletteH.py (dpatch/11_ImagePalet 1.1 664))
+  (master/patchman/authtest.py (dpatch/12_authtest.p 1.1 664))
+  (master/patchman/bci.py (dpatch/13_bci.py 1.1 664))
+  (master/patchman/bobo.py (dpatch/14_bobo.py 1.1 664))
+  (master/patchman/cgi_module_publisher.py (dpatch/15_cgi_module 1.1 664))
+  (master/patchman/imgsize.py (dpatch/16_imgsize.py 1.1 664))
+  (master/patchman/multiuser.py (dpatch/17_multiuser. 1.5 664))
+  (master/patchman/passwordgen.py (dpatch/18_passwordge 1.1 664))
+  (master/patchman/patchman.py (dpatch/19_patchman.p 1.11 664))
+  (master/patchman/validator.py (dpatch/20_validator. 1.3 664))
+  (master/patchman/patchman.rc (dpatch/21_patchman.r 1.1 664))
+  (master/patchman/README (dpatch/22_README 1.1 664))
+
+;; Files added by populate at Mon, 17 May 1999 12:40:49 +0100,
+;; to version live.43(w), by dr10009:
+
+  (master/patchman/patchmancli (dpatch/23_patchmancl 1.1 664))
+)
+(Merge-Parents)
+(New-Merge-Parents)

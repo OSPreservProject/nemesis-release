@@ -1,0 +1,36 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Creator interface for user-level debugging.
+-- 
+-- DESCRIPTION:
+--
+--      Allows creation of a debugger interface for a faulting thread.
+-- 
+-- \chapter{Debugging}
+-- 
+
+-- "GDBMod" is the interface for creating interfaces of type "GDB".
+
+GDBMod : LOCAL INTERFACE =
+  NEEDS GDB;
+  NEEDS Rd; 
+  NEEDS Wr; 
+BEGIN
+
+  -- "New" creates a new debugger.
+  New : PROC    [ rd  : IREF Rd, 
+                  wr  : IREF Wr  ]
+        RETURNS [ gdb : IREF GDB ];
+
+    -- Create a debugger to take input from the reader "rd" and write
+    -- output to the writer "rd". Returns NULL if no resources available.
+
+END.

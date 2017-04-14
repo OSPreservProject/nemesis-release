@@ -1,0 +1,36 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      ConsoleControl
+-- 
+-- DESCRIPTION:
+--
+--      Allows the destination of system console output to be controlled
+-- 
+-- ID : $Id: ConsoleControl.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Console}
+--
+
+-- 
+
+ConsoleControl : LOCAL INTERFACE =
+  NEEDS Wr;
+  NEEDS IDCOffer;
+BEGIN
+
+  AddWr : PROC [ wr : IREF Wr, flush : BOOLEAN ] RETURNS [ ok : BOOLEAN ];
+  AddOffer : PROC [ offer : IREF IDCOffer, flush : BOOLEAN ]
+	RETURNS [ ok : BOOLEAN ];
+
+  RemoveWr : PROC [ wr : IREF Wr ] RETURNS [ ok : BOOLEAN ];
+  RemoveOffer : PROC [ offer : IREF IDCOffer ] RETURNS [ ok : BOOLEAN ];
+
+END.

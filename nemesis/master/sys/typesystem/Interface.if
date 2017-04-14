@@ -1,0 +1,57 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Interface (!)
+-- 
+-- DESCRIPTION:
+--
+--      Presents the structure of a given interface
+-- 
+-- ID : $Id: Interface.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Runtime Type System}
+-- 
+-- 
+
+-- The "TypeSystem" represents \MIDDL\ interface types by instances
+-- of the "Interface" interface.
+
+Interface : LOCAL INTERFACE =
+  EXTENDS Context;
+  NEEDS Type;
+BEGIN
+
+  -- The procedures inherited from "Context" map the names of each
+  -- of the types declared in the interface represented by the current
+  -- "Interface" to a "Type.Any" which represents the type in the
+  -- manner described in "TypeSystem".  The list returned by the
+  -- "List" procedure produces the type names in the order in which
+  -- they are declared.
+
+  -- Two further operations are defined on interfaces of type
+  -- "Interface": 
+
+  Extends : PROC [] RETURNS [ b: BOOLEAN, i: IREF Interface ];
+
+  -- If the interface represented by the current "Interface"
+  -- has an immediate supertype, set "b := True" and "i" to
+  -- the supertype's representation.  Otherwise, set "b := False".
+
+  Needs : TYPE = SEQUENCE OF IREF Interface;
+    -- List returned by "Info" below:
+
+  Info   : PROC    [] 
+           RETURNS [ needs : Needs,
+                     local : BOOLEAN,
+                     name  : Type.Name,
+                     code  : Type.Code ];
+    -- Returns other information about the current interface.
+
+END.

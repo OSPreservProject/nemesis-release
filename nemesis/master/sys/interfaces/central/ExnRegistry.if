@@ -1,0 +1,84 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--	ExnRegistry
+--
+-- DESCRIPTION:
+-- 
+--	Nemesis Exception Handler Registry - loader's view
+--
+--      User-level view of exception handling mechanism; used by
+--      exception macros.
+-- 
+-- ID : $Id: ExnRegistry.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Exceptions}
+-- 
+-- 
+
+-- In the future, exceptions will be implemented with pc-range
+-- tables maintained by the Exception Registry.
+
+ExnRegistry : LOCAL INTERFACE =
+  NEEDS ExnSupport;
+BEGIN
+
+  -- The range of pc values guarded by an exception handler is
+  -- represented by a "Range".
+
+  CodePtr : TYPE = ADDRESS;
+
+  Range   : TYPE = RECORD [
+    start   : CodePtr,
+    stop    : CodePtr,
+    handler : CodePtr
+  ];
+
+  Ranges  : TYPE = SEQUENCE OF Range;
+
+  -- Handlers for an exception "ex" are represented by an
+  -- "ExnRanges".
+
+  ExnRanges : TYPE = RECORD [
+    ex     : ExnSupport.Id, -- "NULL => CATCH_ALL"
+    ranges : Ranges
+  ];
+
+  -- In an "ExnRanges", the elements of "ranges" are disjoint and
+  -- in ascending order; ie.
+  --
+  --|    ranges[i].start < ranges[i].stop <= ranges[i+1].start
+
+  -- Each object file "Foo.o" exports "Foo_HTbl: HandlerTbl" giving the
+  -- pc ranges which are guarded by the handlers for each exception
+  -- for which handlers are present.
+
+  HandlerTbl : TYPE = SEQUENCE OF ExnRanges;
+
+  -- When a load-module is loaded, the loader registers its handlers
+  -- with the procedure "RegisterHandlers".
+
+  RangesClash : EXCEPTION [];
+    -- Raised if there are conflicting handlers for an exception.
+
+  RegisterHandlers : PROC [ ht: HandlerTbl ]
+                       RETURNS [] RAISES RangesClash;
+
+  -- When a load-module is unloaded, the loader de-registers its
+  -- handlers with the procedure "DeregisterHandlers".
+
+  BogusHandlers : EXCEPTION [];
+    -- Raised if non-existent handlers are de-registered.
+
+  DeregisterHandlers : PROC [ ht: HandlerTbl ]
+                         RETURNS [] RAISES BogusHandlers;
+    -- Remove "ht" from the system handler table.
+
+END.

@@ -1,0 +1,39 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	99.03.30.10.07.05;	author tlh20;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@# Makefile to turn tgif .obj files into .eps ones.
+
+default: graphics
+
+clean:
+	rm -f \#*\# *.eps *.bak *~
+
+graphics: \
+	mstr-build.eps \
+	mstr-sparse-build.eps \
+	mstr-shad-build.eps
+
+%.eps: %.obj
+	tgif -print -eps $<
+
+
+@

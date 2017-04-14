@@ -1,0 +1,56 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Extended allocator for physical page frames.
+-- 
+-- DESCRIPTION:
+--
+--      Allows allocation and freeing of frames, plus the 
+--      creation of per-domain "Frames" interfaces. 
+-- 
+-- ID : $Id: FramesF.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Memory}
+-- \section{Physical Memory Allocation}
+-- 
+-- The "FramesF" interface provides --- in addition to the basic
+-- allocation & freeing of physical memory --- a mechanism whereby the
+-- system can create a new per-domain interface for physical memory
+-- allocation. 
+-- It also allows for the extension of the set of physical regions 
+-- managed by the frames allocator in the case that not all
+-- information was available at the time of its creation (i.e. at the
+-- time FramesMod$New was invoked). This typically occurs with the
+-- laying out of device address spaces. 
+
+FramesF : LOCAL INTERFACE =
+  EXTENDS Frames;
+BEGIN
+
+   NewClient : PROC    [ dcbva  : ADDRESS,
+			 dcbpa  : CARDINAL, 
+                         gtdf   : CARDINAL,
+                         xtraf  : CARDINAL,
+                         nf     : CARDINAL    ]
+	       RETURNS [ frames : IREF Frames ];
+    -- Create a new frames interface for the domain whose DCB 
+    -- is at virtual address "dcbva", physical address "dcbpa". 
+    -- The created interface should allow the client to allocate up 
+    -- to "gtdf" frames with some certainty, and may allow allocation 
+    -- of up to "xtraf" frames subject to later revocation. 
+    -- An initial allocation of "nf" frames is requested.
+
+
+   AddFrames : PROC    [ region : REF Mem.PMemDesc ]
+               RETURNS [ added  : BOOLEAN          ];
+    -- Add the set of physical frames described by "region" to the 
+    -- set of frames managed by the frames allocator. 
+
+END.

@@ -1,0 +1,30 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright %y, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      NashMod.if
+-- 
+-- DESCRIPTION:
+--
+--      Produce Nashs
+-- 
+-- FILE :	NashMod.if
+-- 
+--
+
+NashMod : LOCAL INTERFACE =
+NEEDS Nash;
+BEGIN
+
+  -- Produce a new Nash
+
+  New : PROC [ ] RETURNS [ interp: IREF Nash];
+  
+
+END.

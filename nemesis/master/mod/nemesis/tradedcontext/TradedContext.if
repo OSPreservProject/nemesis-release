@@ -1,0 +1,59 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      TradedContext
+-- 
+-- DESCRIPTION:
+--
+--      Context shared between multiple clients using IDC
+-- 
+-- ID : $Id: TradedContext.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Namespace}
+--
+
+-- 
+
+TradedContext : LOCAL INTERFACE =
+  EXTENDS Context;
+  NEEDS Security;
+  NEEDS IDCOffer;
+  NEEDS Type;
+BEGIN
+
+  AuthAdd : PROC [ name : STRING, IN obj : Type.Any,
+		   tag : Security.Tag,
+		   certificates : Security.CertSeq ]
+	RETURNS [ ] RAISES Context.Exists, Context.NotContext,
+			Context.NotFound, Context.Denied;
+
+  -- As "Add" in Context, but allows a set of certificates to be supplied.
+
+  AuthRemove : PROC [ name : STRING,
+		      certificates : Security.CertSeq ]
+	RETURNS [ ]
+	RAISES Context.NotContext, Context.NotFound, Context.Denied;
+
+  Owner : PROC [ name : STRING ]
+	RETURNS [ tag : Security.Tag ]
+	RAISES Context.NotFound, Context.Denied;
+
+  -- Returns the security tag corresponding to "name".
+
+  AddTradedContext : PROC [ name : STRING, cx : IREF IDCOffer,
+		tag : Security.Tag, certificates : Security.CertSeq ]
+	RETURNS [ ] RAISES Context.Exists, Context.NotContext,
+		Context.NotFound, Context.Denied;
+
+  -- Adds a TradedContext to this context. Clients fetching the context
+  -- will IDC\_BIND to it automatically; this is achieved using custom
+  -- marshalling code.
+
+END.

@@ -1,0 +1,35 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      SwapFS.if
+-- 
+-- DESCRIPTION:
+--
+--      Creator module for the Swap File System. 
+-- 
+-- ID :         $Id: SwapFS.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+-- 
+-- \chapter{File Systems}
+-- \section{Swap File System}
+--
+
+SwapFS : LOCAL INTERFACE =
+  NEEDS IDCOffer;
+BEGIN
+
+  New : PROC    [ drive : IREF IDCOffer, 
+                  pno   : CARDINAL        ]
+	RETURNS [ fs    : IREF IDCOffer   ];
+    -- Creates a new 'Swap File System' offer (of type "Swap") over
+    -- the partition "pno" on the USDDrive "drive". 
+    -- If the creation fails (e.g. due the partition being of the
+    -- wrong type), "fs" is returned as NULL.   
+
+END.

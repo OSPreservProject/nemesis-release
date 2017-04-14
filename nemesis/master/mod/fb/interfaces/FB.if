@@ -1,0 +1,233 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      FB
+-- 
+-- DESCRIPTION:
+--
+--      Interface provided by the Nemesis Client Rendering Frame
+--      Buffer
+-- 
+-- ID : $Id: FB.if 1.2 Wed, 28 Apr 1999 11:42:49 +0100 dr10009 $
+-- 
+-- \chapter{Devices}
+-- \section{Frame Buffer}
+
+--	The Frame Buffer provides blitting/clipping services to
+--	applications wishing to display themselves graphically.
+--
+--	Only one client, a window system server, should be calling FB
+--	directly. Other clients should make requests from the window
+--	server, which will then call into the Frame Buffer on the
+--	client's behalf.
+--
+--	The methods available in the Frame Buffer allow the window
+--	server to specify which window is allowed to update each pixel
+--	on the display. 
+--	
+--	The Frame Buffer also allows clients to request an update
+--	stream for a window. This is a mechanism for clipping and
+--	blitting rectangular blocks of pixels onto the Frame Buffer's
+--	display. Synchronous updates are supported by using "FBBlit"
+--	closures. Asynchronous updates are supported by using "IO"
+--	channels (operating in transmit master mode). The Frame Buffer
+--	may return either or both of these when asked for an update
+--	stream.
+
+
+FB : LOCAL INTERFACE = 
+  NEEDS IOOffer;
+  NEEDS FBBlit;
+  NEEDS Region;
+BEGIN
+
+  
+
+  BadWindow : EXCEPTION [];  
+  Failure   : EXCEPTION [];
+  Unsupported : EXCEPTION [];
+  NoResources : EXCEPTION [];
+  
+  WindowID : TYPE = CARDINAL;
+  StreamID : TYPE = CARDINAL;
+  Protocol : TYPE = { Bitmap16, AVA16, DFS16, Video16, DFS8, Bitmap8 };
+  QoS      : TYPE = CARDINAL;
+  LUTEntry : TYPE = RECORD [   red : OCTET,
+      	      	      	     green : OCTET,
+      	      	      	      blue : OCTET,
+                               pad : OCTET ];
+
+  MgrPktType : TYPE = { Window, Mouse };
+
+  MgrWinData : TYPE = RECORD [           wid : WindowID,
+		   	                x, y : INTEGER,
+			       width, height : CARDINAL,
+			          exposemask : Region.T ];
+
+  WinUpdatePkt : TYPE = SEQUENCE OF MgrWinData;   
+
+  MgrMouseData : TYPE = RECORD [ index : CARDINAL,
+				     x : CARDINAL,
+				     y : CARDINAL ];
+
+  MgrPkt : TYPE = CHOICE MgrPktType OF {
+    Window	=> MgrWinData,
+    Mouse	=> MgrMouseData };
+
+  -- Protocols currently supported are all 8 bits per pixel.
+  -- "Bitmap" uses the shared memory buffer as a pixmap for the entire
+  -- window.  "AVA" sends packets containing a number of 8x8 pixel tiles.
+  
+  -- QoS is simply a percentage of the available video bandwidth at 
+  -- the moment.
+  
+  Info : PROC [ ]
+         RETURNS [ width : CARDINAL,
+		  height : CARDINAL,
+		   xgrid : CARDINAL,
+                   ygrid : CARDINAL,
+		   psize : CARDINAL,
+		   pbits : CARDINAL,
+                  protos : SET OF Protocol ];
+
+
+  -- "Info" is used to obtain information about the dimensions of the 
+  -- framestore device and the protocols supported.
+
+  MgrStream : PROC [ ] RETURNS [ offer : IREF IOOffer ];
+
+  -- "MgrStream" returns an IDC offer for a stream for sending
+  -- "MgrPkt" management packets to the frame buffer. 
+
+  MaskStream : PROC [ p : Protocol ]
+               RETURNS [ offer : IREF IOOffer ]
+               RAISES Failure, Unsupported;
+  
+  -- "MaskStream" returns an IDC offer for a stream for updating the clip 
+  -- mask of the frame buffer.  The stream uses protocol "p".  "MaskStream"
+  -- can fail if the protocol is unsupported.  Only one mask stream is 
+  -- supported per device.
+
+  CreateWindow : PROC [  x : INTEGER,
+	                 y : INTEGER,
+	             width : CARDINAL,
+	            height : CARDINAL,
+	              clip : BOOLEAN ]
+                 RETURNS [ wid : WindowID ]
+                 RAISES Failure;
+  
+  -- "CreateWindow" creates a window with the specified position and size.
+  -- If "clip" is "False" then updates to the window do not take account 
+  -- of the clip mask.  A "WindowID" is returned.
+
+  DestroyWindow : PROC    [ wid : WindowID ]
+      	          RETURNS [ ]
+      	          RAISES BadWindow;
+  
+
+  -- "DestroyWindow" frees resources allocated to window "wid".
+
+  MapWindow : PROC [ wid : WindowID ] 
+              RETURNS [ ]
+              RAISES BadWindow;
+  
+  -- "MapWindow" causes the window "wid" to become mapped on the framestore 
+  -- device.  Updates to the window become possible.
+  
+  UnMapWindow : PROC [ wid : WindowID ] 
+                RETURNS [ ]
+                RAISES BadWindow;
+
+  -- "UnmapWindow" causes the window "wid" to become unmapped on the 
+  -- framestore device.  Updates to the window will be silently discarded.
+
+  UpdateWindows : PROC [ updates : WinUpdatePkt ]
+		  RETURNS [ ]
+		  RAISES Failure, BadWindow;
+
+  -- "UpdateWindows" is provided to allow the state of multiple
+  -- windows to be updated atomically. It sets the position and size
+  -- of each window in the "updates" sequence, and optionally enables
+  -- updates to that window in a region of the clipmask.
+
+  ExposeWindow : PROC [    wid : WindowID,
+		        region : Region.T ]
+                 RETURNS [ ]
+                 RAISES BadWindow;
+
+  -- "ExposeWindow" causes window "wid" to become visible in the rectangle
+  -- described.  (Coordinates are frame buffer coordinates.)
+
+  MoveWindow : PROC [ wid : WindowID,
+	                x : INTEGER,
+	                y : INTEGER ]
+               RETURNS [ ]
+               RAISES BadWindow;
+
+  -- "MoveWindow" ssks for the window "wid" to be moved to 
+  -- position $("x", "y")$.
+
+  ResizeWindow : PROC [    wid : WindowID,
+	                 width : CARDINAL,
+	                height : CARDINAL ]
+                 RETURNS [ ]
+                 RAISES BadWindow, Failure;
+  
+
+  -- "Resize" asks for the window "wid" to be resized to 
+  -- $"width" \times "height"$.
+
+  UpdateStream : PROC [ wid : WindowID,
+	                  p : Protocol,
+		          q : QoS,
+	               clip : BOOLEAN ]
+		 RETURNS [ s : StreamID,
+                       offer : IREF IOOffer,
+			blit : IREF FBBlit ]
+                 RAISES BadWindow, Failure, Unsupported;
+  
+  -- "UpdateStream" returns an IOOffer "offer" for a video updates
+  -- stream using protocol "p".  "q" specified the quality of service for 
+  -- this connection.  If "clip" is False then updates to the window do 
+  -- not take account of the clip mask.
+
+
+  
+
+  AdjustQoS : PROC [ sid : StreamID,
+                       q : QoS ]
+              RETURNS [ ]
+              RAISES NoResources;  
+
+  -- Attempts to set the QoS for stream "sid" to "q".  
+
+  LoadCursor : PROC [ index : CARDINAL,
+                       bits : REF OCTET ]
+               RETURNS [ ];
+  
+  -- Load the cursor pointed to by "bits" into cursor "index".
+
+  SetCursor : PROC [ index : CARDINAL,
+                         x : CARDINAL,
+                         y : CARDINAL ]
+              RETURNS [ ];
+
+  -- Change cursor to "index" and move to ("x", "y").
+
+  SetLUT : PROC [ index : CARDINAL,
+                    num : CARDINAL,
+                entries : REF LUTEntry ]
+           RETURNS [ ];
+
+END.
+
+
+
+

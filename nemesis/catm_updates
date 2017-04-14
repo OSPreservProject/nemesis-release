@@ -1,0 +1,75 @@
+ The Cambridge Nemesis ATM subsystem
+====================================
+
+#00006 dr10009 pp Rolf Neugebauer (neugebar@dcs.gla.ac.uk) Wed May 19 21:15:02 1999
+-----------------------------------------------------------------------------------
+Minor tweak
+app/rawvideo/rvideo.c              -- proto is a set
+
+#00005 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu May  6 17:13:07 1999
+--------------------------------------------------------------------------
+
+glue/packages/catm.py              -- fix qos params
+
+#00004 dr10009 pp Paul Menage (Paul.Menage@cl.cam.ac.uk) Wed Apr 28 14:12:33 1999
+---------------------------------------------------------------------------------
+SPANS ATM signalling server
+glue/packages/catm.py              -- Added SPANS server ite
+mod                                ** NEW DIRECTORY
+mod/net                            ** NEW DIRECTORY
+mod/net/spans                      ** NEW DIRECTORY
+mod/net/spans/Spans.if             ++ Interface to SPANS serve
+mod/net/spans/spans.c              ++ SPANS server
+mod/net/spans/fore_xdr.h           ++ SPANS marshalling structures
+mod/net/spans/fore_msg.h           ++ Random constants
+
+#00003 dr10009 pp Paul Menage (Paul.Menage@cl.cam.ac.uk) Tue Apr 27 20:39:31 1999
+---------------------------------------------------------------------------------
+Deal with WS.if change
+app/rawvideo/rvideo.c              -- Deal with WS.if change
+
+#00002 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Apr 20 17:17:51 1999
+--------------------------------------------------------------------------
+no overview
+glue/packages/catm.py              -- describe me
+app                                ** NEW DIRECTORY
+app/rawvideo                       ** NEW DIRECTORY
+app/rawvideo/Makefile              ++ describe me
+app/rawvideo/rvideo.c              ++ describe me
+
+#00001 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Jan 12 12:49:36 1999
+--------------------------------------------------------------------------
+no overview
+
+                                   ** describe me
+dev                                ** describe me
+dev/atm                            ** describe me
+dev/atm/interfaces                 ** describe me
+dev/pci                            ** describe me
+dev/pci/nicstar                    ** describe me
+dev/pci/oppo                       ** describe me
+glue                               ** describe me
+glue/packages                      ** describe me
+dev/atm/interfaces/AALPod.if       ++ describe me
+dev/atm/interfaces/ATM.if          ++ describe me
+dev/pci/nicstar/nicstar.c          ++ describe me
+dev/pci/nicstar/nicstar.h          ++ describe me
+dev/pci/nicstar/nicstar_aal5.c     ++ describe me
+dev/pci/nicstar/rbuf.h             ++ describe me
+dev/pci/oppo/DirectOppo.if         ++ describe me
+dev/pci/oppo/direct.c              ++ describe me
+dev/pci/oppo/main.c                ++ describe me
+dev/pci/oppo/otto.c                ++ describe me
+dev/pci/oppo/otto.h                ++ describe me
+dev/pci/oppo/otto_aal5.c           ++ describe me
+dev/pci/oppo/otto_exec.h           ++ describe me
+dev/pci/oppo/otto_hw.c             ++ describe me
+dev/pci/oppo/otto_hw.h             ++ describe me
+dev/pci/oppo/otto_platform.h       ++ describe me
+dev/pci/oppo/otto_regs.h           ++ describe me
+dev/pci/oppo/otto_xilinx.c         ++ describe me
+dev/pci/oppo/rbuf.h                ++ describe me
+dev/pci/oppo/state.h               ++ describe me
+dev/pci/oppo/suni.h                ++ describe me
+glue/packages/catm.py              ++ describe me
+

@@ -1,0 +1,353 @@
+% appendix to nemesis intro document
+%
+%\section{New Site Guide}
+%
+%This appendix has been written by Glasgow, as it is usual for new
+%sites and new users to be best at writing new users guides.  It has
+%been modified by Cambridge to correct it for snap 3 details.  It is
+%almost certainly not complete.
+%
+%\subsection{Setting up a new site}
+%
+%There are a number of gotchas that you may stumble across when setting
+%up Nemesis at a new site.  The first thing is to make sure that any
+%hardware you purchase is supported by the operating system OR that you
+%are prepared to write the relevant device drivers.  A list of
+%currently supported hardware can be found in appendix C of this
+%document.
+%
+%\subsection{Serial Line Output}
+%
+%To boot Nemesis and view the debugging information that is produced
+%via the serial lines you will need to set up some extra hardware and
+%software.
+%
+%As mentioned in section~\ref{sec:nemuse}, Nemesis produces two
+%different 7 bit ASCII streams of ``console'' output (``kernel'' and
+%``user'').  On platforms (e.g.~AXP3000) where two serial lines are
+%available the obvious solution is adopted and each stream directed
+%down a different serial line.  In these cases, any two suitably
+%configured terminals (or two instances of a terminal emulation
+%program) could be plumbed in to view the console output.  However, it
+%is often useful to be able to view the output on a standard
+%workstation screen remotely and we will describe how \texttt{wconsd}
+%can be used to make the console output available to (most) telnet
+%client programs.
+%
+%Complications arise where only a single serial line is available for
+%output from the target (see the Intel description below); then the two
+%console streams are multiplexed together using the top bit of the
+%serial line byte to distinguish the streams. This leads to the need
+%for some software in the pipeline to decode the multiplexed stream --
+%the role of \texttt{nsplitd}.
+%
+%For hysterical raisins, Cambridge often use ``Bridge PADs'' to make the
+%serial lines of the target machines available over a telnet session --
+%other similar Ethernet terminal PADs could be used, in which case
+%you're on your own. However, here we concentrate on introducing
+%\texttt{wconsd} and \texttt{nsplitd}.
+%
+%\subsubsection{Alpha Output -- introducing \texttt{wconsd}}
+%\index{wconsd}
+%
+%A common configuration for an Alpha is to connect the two serial lines
+%from the target machines to two serial ports on a nearby
+%workstation(s).  In RS232 terms, you are connecting two DTEs back to
+%back so you need a ``null modem cable''; go figure it.
+%
+%It is expected that the Alpha will be configured to direct the BOOT
+%ROM console output to the serial line rather than the frame buffer --
+%see your Alpha documentation for the relevant configuration commands.
+%
+%The tedious work in all of this is to ensure that in connecting your
+%target to a workstation, the workstation operating system is
+%configured correctly for 8 bit, no parity, no-echo, X-On/X-Off
+%disabled, etc. You can do this by hand with suitable incantations of
+%UNIX \texttt{cat} and \texttt{stty}, but it is an arcane activity and
+%not to be recommended. Most importantly the default state of the
+%serial line on most UNIX systems is not suitable.
+%
+%\texttt{wconsd} was built to hide this messiness away in an easy to use
+%and convenient package; currently it is only available for UNIX based
+%systems. At Glasgow we run on the following systems:
+%
+%\begin{itemize}
+%\item RedHat Linux 4.* and 5.*
+%\item Irix 5.3
+%\item Solaris 2.5.x
+%\end{itemize}
+%
+%Cambridge have it running on:
+%\begin{itemize}
+%\item OSF1 3.2
+%\item HPUX 9
+%\item Ultrix 4.3
+%\item Linux
+%\end{itemize}
+%
+%The original author has also run it on:
+%\begin{itemize}
+%\item RiscIx
+%\item SunOS
+%\end{itemize}
+%
+%\noindent \texttt{wconsd}\index{wconsd} simply forwards the characters received
+%and transmitted over the relevant serial line to a TCP stream.  Note
+%that this makes it a second rate alternative to a terminal
+%concentrator when the client is connecting with the \texttt{telnet}
+%command since \texttt{wconsd} does not understand the RFC standard
+%telnet protocol and so special control sequences may be lost.
+%
+%\texttt{wconsd} is started from the UNIX \texttt{inetd}. Suitable
+%entries must be placed in \texttt{/etc/services} and
+%\texttt{/etc/inetd.conf} to enable this.  For example, at Glasgow
+%\texttt{/etc/services}, the services (named \texttt{wcons<n>}) are
+%associated with a particular TCP port number as follows:
+%
+%{\footnotesize
+%\begin{verbatim}
+%        # some for SRG:
+%        wcons0          19600/tcp
+%        wcons1          19601/tcp
+%        wcons2          19602/tcp
+%        wcons3          19603/tcp
+%\end{verbatim}
+%}
+%
+%while the \texttt{/etc/inetd.conf} entries associates these services with
+%the location of the daemon program and particular arguments in the
+%normal way:
+%
+%{\footnotesize
+%\begin{verbatim}
+%wcons0  stream  tcp     nowait  root    /usr/local/sbin/wconsd wconsd /dev/ttya tty
+%wcons1  stream  tcp     nowait  root    /usr/local/sbin/wconsd wconsd /dev/ttyb tty
+%\end{verbatim}
+%}
+%
+%The serial line device name (in this case /dev/ttyS?) will depend on
+%your UNIX variant and its configuration.  However, it is vital that
+%you run \texttt{wconsd} with the \texttt{tty} argument -- it informs
+%\texttt{wconsd} to establish the correct serial line modes -- if you
+%don't then your serial lines may echo all of the target's output back
+%to it causing it to crash in a very peculiar manner.  Other arguments
+%can modify the default line speed of 9600bps.
+%
+%One then can simply obtain the serial line output by running telnet to
+%the correct host and port number; on UNIX this is simple: 
+%
+%{\footnotesize
+%\begin{verbatim}
+%        telnet <host> <port>
+%\end{verbatim}
+%}
+%
+%\noindent You are warned that many non-UNIX telnet programs will not allow you
+%to specify the port number as a command line argument and are thus
+%useless for this task.
+%
+%As an example, the two console streams from our target Alpha called
+%``king'' are connected to a Solaris host called ``vaila'' and accessed
+%via:
+%
+%{\footnotesize
+%\begin{verbatim}
+%        telnet vaila 19600
+%        telnet vaila 19601
+%\end{verbatim}
+%}
+%
+%\subsubsection{Intel Output -- introducing \texttt{nsplitd}}
+%\label{sec:nsplitd}\index{nsplitd}
+%
+%For Intel target platforms the most common configuration is two serial
+%lines (COM1 and COM2) where COM1 is used for a serial mouse and COM2
+%for the Nemesis output.  To transmit the two Nemesis console streams
+%down the one serial line the top bit of the byte is used to
+%distinguish the streams: if the bit is set the character is from the
+%user console, if it is clear then the output is the kernel console.
+%
+%As with the simple Alpha case, \texttt{wconsd} can be used to ensure the
+%serial line is correctly configured and provide TCP access to the
+%raw multiplexed console stream.  A further daemon, \texttt{nsplitd}, is
+%provided to perform the demultiplexing function and make available the
+%two\footnote{Well, three if we include the GDB stub\ldots} console
+%streams as two separate TCP streams. 
+%
+%\texttt{/etc/services} and \texttt{/etc/inetd.conf} are again
+%extended, and here are some Glaswegian examples taken from a Linux box
+%attached to an Intel target platform with a single serial line:
+%
+%{\footnotesize
+%\begin{verbatim} 
+%/etc/services:
+%        wcons0  19600/tcp
+%        nsplitd 19700/tcp
+%\end{verbatim} 
+%}
+%
+%\noindent and:
+%
+%{\footnotesize
+%\begin{verbatim}
+%/etc/inetd.conf:
+%wcons0  stream  tcp nowait  root  /usr/local/sbin/wconsd  wconsd  /dev/ttyS0 tty
+%nsplitd stream  tcp nowait  root  /usr/local/sbin/nsplitd nsplitd localhost:19600
+%\end{verbatim}
+%}
+%
+%\texttt{nsplitd}\index{nsplitd} and \texttt{wconsd}\index{wconsd} do
+%not need to run on the same machine -- it is possible to deploy a more
+%centralised system, using the same software, where the output of the
+%target machines is collected to a set of \texttt{nsplitd} daemons on a
+%single machine by configuring the \texttt{inetd} appropriately. The
+%important bit to understand is that the argument to \texttt{nsplitd}
+%is the ``host:port'' address of a \texttt{wconsd} attached to an Intel
+%target machine.
+%
+%When using \texttt{nsplitd} you may find that you should disconnect
+%from the user console of a Nemesis machine before the kernel console.
+%This may allow the machine to be reused immediately.  If you
+%disconnect the other way round, connections to the kernel console port
+%may be refused for a couple of minutes.
+%
+%\subsection{Setting up a build environment}
+%
+%The first thing to note is that you will need the relevant Nemesis
+%tools for the snap you are building.  These should be part of the code
+%distribution.  
+%
+%The RedHat Linux V5.1 distribution used to build Intel Nemesis comes
+%with almost all of the necessary tools, although you should ensure
+%they are selected during the installation process. Hence \gnumake
+%and \texttt{gcc} will be available by default, but make sure that \TeX\
+%is on the installation list.
+%
+%For building on DEC Alphas, again \gnumake, \texttt{gcc} and the
+%\texttt{teTeX} distribution of \TeX are necessary and will need to be
+%acquired.  Most importantly on Alpha platforms, you will need a
+%particular version of the \texttt{ld} program. This is the version
+%that comes with OSF1 V4.0, while all of the other components can be
+%from OSF1 V3.2 -- it is important to note that GNU ld will \emph{NOT}
+%build Nemesis on DEC machines, and you should be ensure that during
+%the gcc build process, the system does not squirrel away a private
+%copy of the GNU ld program.
+%
+%In addition, for both build systems, you will need to obtain the
+%following: \texttt{md5} for generating the type-codes, and
+%\texttt{tgif} for munging the pictures in the automatically built
+%documentation.
+%
+%Some scripts, for instance \texttt{misc/bin/fixtree}, assume that you
+%have a version of GNU RCS that supports the \texttt{-r} option to
+%\texttt{rlog}, such as version 5.7. To check, execute:
+%
+%\begin{verbatim}
+%        rlog -V
+%\end{verbatim}
+%
+%
+%\subsection{Booting}
+%
+%Nemesis can be booted by two methods.  The first and recommended way is
+%via bootp.  To do this on DEC targets you should consult your firmware
+%boot rom manual.  On Intel targets a boot disk is required (an image
+%of this is included as part of the distribution, and a disk can be
+%created using the \texttt{dd(1)} command), or a bootloader may be
+%installed using LiLo.
+%
+%A server needs to be configured with the correct entries in
+%\url{/etc/bootptab}.  It's probably easiest to do this using
+%continuation types.  The Cambridge configuration is shown using three
+%components, a section which is true for all machine at Cambridge, a
+%section which is true for all Nemesis machines, and a line for each host.
+%
+%{\footnotesize
+%\begin{verbatim}
+%netinfo:dn=cl.cam.ac.uk:ds=128.232.0.10:gw=128.232.0.1:sm=255.255.240.0:
+%
+%nemesis:ht=ethernet:hd=/usr/groups/pegasus/boot:vm=auto:hn:bs=auto:tc=netinfo
+%
+%sosias:ha=08002B32E742:ip=128.232.1.12:bf=sosias:tc=nemesis
+%\end{verbatim}
+%}
+%
+%The Glasgow configuration is similar.
+%
+%{\footnotesize
+%\begin{verbatim}
+%glasgow:dn=dcs.gla.ac.uk:sm=255.255.240.0:gw=130.209.240.48:ds=130.209.240.49:
+%
+%nemesis:ht=ethernet:hd=/tftpboot/pegasus:vm=auto:hn:bs=auto:tc=glasgow
+%
+%gibbs:ha=00A024A1D8E4:ip=130.209.240.168:bf=gibbs:tc=nemesis
+%\end{verbatim}
+%}
+%
+%Of course you need to replace the pathnames
+%\url{/usr/groups/pegasus/boot} or \url{/tftpboot/pegasus} with you
+%own, and you need a line for each target machine where you replace the
+%gibbs.dcs.gla.ac.uk with your own name, the ha=00A024A1D8E4 with your
+%target's Ethernet MAC address, and the ip=130.209.240.168 with your
+%own IP address.  The bf=gibbs part refers to the name of the file
+%which contains the kernel image, I would suggest that you follow the
+%above example and use the host-name of the target.
+%
+%In the above example when the target gibbs is booted it will look for
+%the file \url{/tftpboot/pegasus/gibbs} which should contain its
+%Nemesis kernel image.  Glasgow uses the 
+%\texttt{nemuse} system, described in section~\ref{sec:nemuse}, for
+%automatically managing these names; the \url{/tftpboot/pegasus} path
+%is really a symlink to the location that \texttt{nemuse} uses.
+%
+%The second boot method uses the lilo boot loader that comes with
+%linux.  A nemesis kernel can be booted with lilo, and lilo can boot
+%kernels from a number of different media sources.  For more
+%information see the lilo man pages on a linux system.  Note you will
+%need lilo version 17 or later to boot the image (i.e.\ one less than
+%about two years old).
+%
+%Nemesis is now at the stage where it requires configuration and data
+%files at runtime.  This is achieved by using NFS mounted directories.
+%You will need to set up an NFS server to trust the Nemesis target
+%machines enough to allow them to mount at least one directory.
+%[\emph{NOTE} that since nemesis targets have no concept of users they
+%can read any file in an NFS mounted file-system, and if you
+%export/mount the file-system read-write they can overwrite files.]
+%This directory is specified in the local.rules.mk file, see the
+%example in the mk directory for more details.
+%
+%The mechanism for dealing with this at Cambridge is to use a Linux
+%machine as an NFS re-exporting service.  This can be used to map the
+%\texttt{uid} and \texttt{gid} values to safe ones, and at the same
+%time gives the Nemesis boxes the advantages of automounters etc.  See
+%\texttt{mountd(8)} and \texttt{nfsd(8)} on Linux for details.
+%
+%\subsection{Things to be aware of}
+%
+%There are a number of differences in the world at Cambridge which it
+%is just possible that you should be aware of because they may in
+%theory cause differences between what you experience and what they
+%experience.
+%
+%\subsubsection{Master}
+%
+%The systems administration at Cambridge is of very high quality and
+%very proactive rather than reactive.  Fixes are installed overnight in
+%a seamless fashion without a fuss.  This can mean that people at
+%Cambridge frequently do not realise that they are using a fixed
+%version of something, whereas your system may have the broken one.
+%For snap 2 this affected the OSF1 linker \texttt{ld} and the Linux
+%\texttt{python}.
+%
+%\subsubsection{Confidentials}
+%
+%There are a number of components of the Nemesis system which have been
+%developed with information obtained under non-disclosure agreements,
+%or where a license or other agreement is involved.  This code is not
+%shipped to partners, instead a precompiled object file is sent.
+%Essentially this affects the Alpha PalCode and the S3 video engine.
+%Automated mechanisms exist to ensure that a tree is not shipped unless
+%the precompiled binaries are up to date.  Nevertheless, this is a
+%difference between building a Nemesis system in Cambridge and
+%elsewhere.

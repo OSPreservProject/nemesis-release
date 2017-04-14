@@ -1,0 +1,48 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      IDCStubs
+-- 
+-- DESCRIPTION:
+--
+--      Types for describing IDC Stubs
+--      
+-- 
+-- ID : $Id: IDCStubs.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+-- 
+
+-- The "IDCStubs" interface defines types describing sets of IDC
+-- stubs.
+
+IDCStubs : LOCAL INTERFACE =
+  NEEDS Type;
+  NEEDS IDC;
+  NEEDS IDCServerStubs;
+  NEEDS IDCClientStubs;
+BEGIN
+
+  -- "Rec"s are used as handles on generated stub modules. They
+  -- are exported by the module and looked up by the transport
+  -- mechanism when looking for stubs of a particular type. 
+
+  Rec  : TYPE = RECORD [  
+    stub : IREF IDCServerStubs,          -- Server control and
+                                         -- dispatch interface 
+    clnt : IREF IDCClientStubs,          -- Client control interface (or NULL)
+    surr : Type.AnyI,                    -- Client surrogate interface ops
+    idc  : IREF IDC,                     -- Low-level marshalling code
+    c_sz, s_sz : Heap.Size               -- Sizes of IDC memory
+                                         -- buffers in bytes.
+  ];
+  Info : TYPE = REF Rec;
+
+END.

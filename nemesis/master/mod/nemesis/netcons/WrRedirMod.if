@@ -1,0 +1,30 @@
+-----------------------------------------------------------------------------
+-----------------------------------------------------------------------------
+-- 
+-- INTERFACE:
+-- 
+-- 	WrRedirMod.if
+-- 
+-- DESCRIPTION:
+-- 
+-- 	SRC Writers
+-- 
+-- ID : $Id: WrRedirMod.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+--
+-- \chapter{Readers and Writers}
+--
+
+-- The "WrRedirMod" allows the creation of redirecting writers.
+
+WrRedirMod : LOCAL INTERFACE = 
+  NEEDS WrRedir;
+  NEEDS Wr;
+  NEEDS Heap;
+BEGIN
+
+  -- Create a new "WrRedir", with output initially going to "wr".
+  New : PROC [ wr : IREF Wr ]
+     RETURNS [ newwr: IREF WrRedir ]
+      RAISES Heap.NoMemory;
+
+END.

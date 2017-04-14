@@ -1,0 +1,51 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Thread.if
+--
+-- DESCRIPTION:
+--
+--      Handle on a thread
+-- 
+-- ID : $Id: Thread.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{User Level Schedulers}
+-- 
+
+-- A handle on a thread is provided by an instance of the "Thread"
+-- interface, which is returned from a call to "Threads.Fork".
+
+Thread : LOCAL INTERFACE =
+BEGIN
+
+  Alerted : EXCEPTION [];
+    -- Raised in an alerted thread.
+
+  -- A "Thread" "t" can be alerted by a call to "Alert" on "t".  This
+  -- sets a flag within the thread's state and may cause it to raise the
+  -- "Alerted" exception.
+
+  Alert : PROC [] RETURNS [];
+
+  GetStackInfo : PROC [] RETURNS [
+	sp : ADDRESS,
+	stackTop : ADDRESS,
+	stackBot : ADDRESS
+	];
+
+  -- returns information about the location and size of the thread's
+  -- stack.  Stacks grow downwards from stackTop to stackBot.
+
+  SetDaemon : PROC [ ] RETURNS [];
+
+  -- Mark the thread as a "daemon" thread. The thread will not be counted
+  -- when deciding whether to terminate the domain upon exit of a thread.
+
+END.

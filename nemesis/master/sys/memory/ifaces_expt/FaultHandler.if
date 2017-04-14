@@ -1,0 +1,38 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      FaultHandler
+-- 
+-- DESCRIPTION:
+--
+--      A "FaultHandler" is a user-specified object which overrides
+--      the default stretch driver implementation for a given type
+--      of memory fault. 
+-- 
+-- \chapter{Memory}
+-- \section{Paging and Fault Handling}
+-- 
+
+FaultHandler: LOCAL INTERFACE =
+  NEEDS Mem;
+  NEEDS Stretch;
+BEGIN
+
+    -- The "Fault" operation is called when some type of fault 
+    -- occurs on a virtual address within a stretch managed by
+    -- this driver; these faults should be recoverable (at least
+    -- potentially). Generally the "reason" for the fault will not 
+    -- be "PAGE", though this is not ruled out.
+    Handle : PROC    [ str     : IREF Stretch,
+                       vaddr   : ADDRESS,
+		       reason  : Mem.Fault      ]
+            RETURNS  [ success : BOOLEAN        ];
+
+END.

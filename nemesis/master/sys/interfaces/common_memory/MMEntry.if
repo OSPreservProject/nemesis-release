@@ -1,0 +1,54 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      MMEntry
+-- 
+-- DESCRIPTION:
+--
+--      The MMEntry deals with (satisfiable and non-satisfiable)
+--      memory faults caused by some thread within a given domain.
+--
+-- \chapter{Memory}
+-- \section{Paging and Fault Handling}
+-- 
+--
+-- A "MMEntry" is an object which schedules various memory faults
+-- to be satisfied (if applicable), blocking and unblocking faulting
+-- threads appropriately. 
+
+MMEntry : LOCAL INTERFACE =
+  NEEDS Mem;
+  NEEDS Stretch;
+  NEEDS StretchDriver;
+BEGIN
+
+  -- The "MMEntry" deals with satisfying \emph{faults} --- these are 
+  -- described to it by the below "Info" type.
+
+  Info : TYPE = RECORD [ 
+    code    : Mem.Fault,          -- the type of fault 
+    vaddr   : ADDRESS,            -- the faulting virtual address.
+    str     : IREF Stretch,       -- the stretch of the faulting addr.
+    sdriver : IREF StretchDriver, -- the stretch driver of the str
+    context : ADDRESS             -- the context of the faulting 'thing'.
+  ];
+				     
+
+  Satisfy : PROC [ info : Info ] RETURNS [ ok : BOOLEAN ];
+    -- "Satisfy" is called on the "MMEntry" to request that it satisfy
+    -- a particular fault. This is expected to be an asynchronous, 
+    -- non-blocking call. The fault will be satisfied at some point 
+    -- in the future. 
+    -- The return code will be "True" unless something strange happens.
+
+  Close : PROC [] RETURNS [];
+    -- "Close" shuts down the entry and kills all worker threads.
+
+END.

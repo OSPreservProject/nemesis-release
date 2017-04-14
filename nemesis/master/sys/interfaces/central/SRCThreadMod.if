@@ -1,0 +1,32 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      SRCThreadMod.if
+-- 
+-- DESCRIPTION:
+--
+--      Used to create a SRCThread interface to run over an
+--      Events interface. 
+--
+-- \chapter{User Level Schedulers}
+--
+
+-- The "SRCThreadMod" interface is used to create an instance of an
+-- "SRCThread.if" to run over a the pervasive "Events.if" interface. 
+
+SRCThreadMod : LOCAL INTERFACE =
+  NEEDS Heap;
+  NEEDS SRCThread;
+BEGIN
+ 
+  New : PROC    [ heap   : IREF Heap       ]
+	RETURNS [ srcthd : IREF SRCThread  ];
+
+END.

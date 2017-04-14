@@ -1,0 +1,68 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Plumber
+-- 
+-- DESCRIPTION:
+--
+--      Low-level event-channel munging.
+-- 
+-- ID : $Id: Plumber.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Low-Level Interfaces}
+-- 
+-- 
+
+-- \epigraph{
+--   ``Are you happy with your ducting?\\
+--     Call Central Services...''\\
+-- }{Terry Gilliam}{1984}
+-- 
+-- Oops!  Sorry, wrong operating system...
+
+-- The "Plumber" is the system library which deals with event 
+-- channels and event delivery at the lowest level, by getting in
+-- up to the elbows in the slime of domain control blocks.  Calls on
+-- this interface can only be made by code with system privileges
+-- (e.g., the binder).  Concurrency control is provided by the implementation,
+-- which must preserve the caller's interrupt priority level.
+-- The caller must be in kernel privilege mode.  The implementation is
+-- target-dependent.
+
+-- This is the all-new, lightweight Plumber interface with half the
+-- methods of your previous Plumber. Plumber.Inc and Plumber.Send weren't
+-- being used, and identical functionality exists in the "ntsc_kevent" and
+-- "ntsc_send" system calls anyway.
+
+Plumber : LOCAL INTERFACE = 
+  NEEDS Domain;
+  NEEDS Channel;
+  NEEDS Event;
+BEGIN
+
+  DCB_RO : TYPE = ADDRESS;		 -- pointer to a "dcb_ro_t"
+
+  Init    : PROC    [ dom: DCB_RO ] RETURNS [ ok: BOOLEAN ];
+    -- Initialise plumber data structures for "dom".
+
+  Connect : PROC    [ from, to : DCB_RO,
+                      tx       : Channel.TX,     -- in "from"
+                      rx       : Channel.RX ]    -- in "to"	
+      	    RETURNS [ ok : BOOLEAN ];
+
+    -- Connect end-point "tx" in domain "from" to "rx" in domain "to". 
+
+  Disconnect : PROC [ dom : DCB_RO, ep : Channel.Endpoint ]
+            RETURNS [ ok  : BOOLEAN ];
+
+    -- Free "ep", making any peer "Dead".  Return "False" if "dom"
+    -- or "ep" are invalid.
+
+END.

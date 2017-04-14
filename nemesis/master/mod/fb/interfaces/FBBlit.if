@@ -1,0 +1,82 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      FBBlit
+-- 
+-- DESCRIPTION:
+--
+--      Interface provided by the Nemesis Client Rendering Window 
+--      System server for synchronous drawing operations.
+-- 
+-- ID : $Id: FBBlit.if 1.1 Thu, 18 Feb 1999 14:18:52 +0000 dr10009 $
+-- 
+-- \chapter{Devices}
+-- \section{Frame Buffer}
+
+--	An "FBBlit" is a closure for blit operations on a particular
+--	update stream.
+
+FBBlit : LOCAL INTERFACE =
+BEGIN
+
+  BadStream : EXCEPTION [];
+
+  BadBlitParams : EXCEPTION [];
+
+--      A "Rec" is a descriptor for a blit operation. Not all
+--      protocols will use all elements of the record - the "data"
+--      pointer is the only mandatory element.
+
+--      The "x" and "y" fields are the pixel positions within the
+--      window described by the update stream. 
+
+--      For a non-scaling bitmap
+--      stream, "sourcewidth" and "sourceheight" indicate the
+--      dimensions of both the source and destination bitmaps in
+--      pixels; "destwidth" and "destheight" are not used.
+
+--	For a scaling bitmap stream, "sourcewidth" and "sourceheight"
+--      indicate the dimensions of the source bitmap in pixels;
+--      "destwidth" and "destheight" indicate the dimensions of the
+--      destination bitmap, also in pixels.
+
+--	For a tiled stream, "sourcewidth" and "sourceheight" indicate
+--	the dimensions of the tiled bitmap in pixels; "destwidth"
+--	indicates the number of pixels to be drawn from the top row of
+--	tiles. If "sourcewidth" and "destwidth" are not equal, the
+--	right hand "destwidth" pixels are drawn from the top row, then
+--	all pixels in all other rows.
+--	
+
+--      "data" is a pointer to protocol specific data.
+--      "stride" may be used by some protocols to indicate the
+--      value to be added to the base data pointer to obtain the
+--      addresses of successive lines of data.
+
+  Rec : TYPE = RECORD [
+		x, y : CARDINAL,
+		sourcewidth, sourceheight : CARDINAL,
+		destwidth, destheight : CARDINAL,
+		data : ADDRESS,
+		stride : INTEGER ];
+
+--	"Blit" carries out some blitting work. The call may return
+--	before all blitting work has been carried out. In this
+--	situation, the return value will be non-zero, indicating the
+--	number of lines of pixels still to be drawn, and the call
+--	should be remade to complete the work. If the return value is
+--	non-zero, the passed-in "Rec" will have been updated such that
+--	calling "Blit" again with the same record will restart where
+--	the previous blit left off.
+
+  Blit : PROC [ rec : REF Rec ] RETURNS [ workleft : CARDINAL ] 
+		RAISES BadStream, BadBlitParams;
+
+END.

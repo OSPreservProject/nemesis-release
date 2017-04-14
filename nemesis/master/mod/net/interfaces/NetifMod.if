@@ -1,0 +1,56 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1996, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--	NetifMod.if
+--
+-- DESCRIPTION:
+--
+--	Constructs control interfaces for network interfaces
+--
+-- ID : $Id: NetifMod.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+--
+-- \chapter{Devices}
+-- \section{Network}
+--
+
+-- "NetifMod" constructs control interfaces for network interfaces.
+
+NetifMod : LOCAL INTERFACE =
+  NEEDS Net;
+  NEEDS Netif;
+  NEEDS Netcard;
+  NEEDS SimpleIO;
+BEGIN
+
+  -- "New" is called by a device driver to put the common Nemesis top end on
+  -- itself.  The card-specific driver passes in "control", its own
+  -- control interface, its "mtu", and "tx", an IO down which Netif
+  -- can queue packets for transmit.  The line rate is also specified,
+  -- in bits per second (so a 10Mbit/s card would specify a "rate" of
+  -- 10,000,000). "maxtxq" is the largest number of transmits that can
+  -- be outstanding at any one time.
+
+  -- The driver should export "interface" (the top interface of
+  -- "Netif") as the entire driver domain's interface to the rest of
+  -- the Nemesis system. "rx" is an IO the card-specific driver
+  -- uses to send newly received packets to in order to demultiplex
+  -- them. "txfree" is so the driver can notify Netif when transmit
+  -- buffers are no longer in use.
+  New : PROC    [ control : IREF Netcard,
+		  tx      : IREF SimpleIO,
+		  maxtxq  : CARDINAL,
+		  mtu     : CARDINAL,
+		  rate    : CARDINAL,
+		  mac	  : Net.EtherAddrP ]
+	RETURNS [ rx        : IREF SimpleIO,
+		  txfree    : IREF SimpleIO,
+		  interface : IREF Netif ];
+
+END.

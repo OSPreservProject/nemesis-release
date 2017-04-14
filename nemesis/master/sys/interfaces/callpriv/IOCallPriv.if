@@ -1,0 +1,47 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Event.if
+-- 
+-- DESCRIPTION:
+--
+--      Experimental Stream IDC channels using CALLPRIV transport
+--
+-- REVISION HISTORY:
+--
+--      $Id: IOCallPriv.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+--
+-- \chapter{Input-Output Channels}
+--
+
+-- "IOCallPriv" implements the "IO" interface for inter-domain IOs.
+
+IOCallPriv : LOCAL INTERFACE =
+  NEEDS IO;
+  NEEDS Heap;
+BEGIN
+
+-- A Rec describes a callpriv IO channel, with "slots" IO slots, using
+-- callpriv vector "callpriv" and passing "arg" as the first user
+-- parameter to ntsc\_callpriv()
+
+  Rec : TYPE = RECORD [ slots : CARDINAL, 
+                      callpriv : WORD,
+                           arg : WORD ];
+  
+  Info : TYPE = REF Rec;
+
+  New : PROC    [ info   : Info ]
+        RETURNS [ io     : IREF IO  ]
+        RAISES Heap.NoMemory;
+
+  -- The "New" procedure constructs a "IO" given its components.
+
+END.

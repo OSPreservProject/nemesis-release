@@ -1,0 +1,56 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Kbd
+-- 
+-- DESCRIPTION:
+--
+--      Defines the format of a kbd event
+-- 
+-- ID : $Id: Kbd.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Devices}
+-- 
+
+-- "Kbd" is a generic low-level interface to a keyboard. It provides
+-- types which are typically transmitted via an "IO" channel. 
+
+Kbd : LOCAL INTERFACE = 
+  NEEDS Time;
+  NEEDS IOOffer;
+BEGIN
+
+  -- Keys are either "Up" or "Down". 
+  State  : TYPE = { Up, Down };
+
+  -- Keys are represented by key codes, defined elsewhere. 
+  Key : TYPE = CARDINAL;
+  
+  -- A key "Event" says what happened, together with the local time in
+  -- "Time.ns" when it did. 
+  Event : TYPE =  RECORD [ 
+           time : Time.ns,
+	  state : State,
+	    key : Key ];  
+
+  -- Keyboards sometimes have indicators
+  LED : TYPE = { CapsLock, NumLock, ScrollLock };
+
+  LEDs : TYPE = SET OF LED;
+
+  SetLEDs : PROC [ state : LEDs ] RETURNS [];
+
+  -- Set the keyboard repeat rate: delay in ms and rate in tenths of cps
+  SetRepeat : PROC [ delay : CARDINAL, rate : CARDINAL ] RETURNS [];
+
+  -- Return an IOOffer for the keyboard output
+  GetOffer : PROC [] RETURNS [ offer : IREF IOOffer ];
+
+END.

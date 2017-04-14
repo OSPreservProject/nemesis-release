@@ -1,0 +1,44 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Choice
+-- 
+-- DESCRIPTION:
+--
+--      Extension of Context used to represent elements of CHOICE type class
+-- 
+-- ID : $Id: Choice.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Runtime Type System}
+-- 
+
+-- The "TypeSystem" represents \MIDDL\ choice types by instances
+-- of the "Choice" interface.
+
+Choice : LOCAL INTERFACE =
+  EXTENDS Context;
+  NEEDS Enum;
+  NEEDS Type;
+BEGIN
+
+  -- The Context part of this interface provides an ordered list of
+  -- choice fields. The name of the element is the name of the field;
+  -- the referent is a "Field", defined below.  The order that the fields
+  -- are returned by "Context.List" corresponds to their order in the
+  -- type definition.
+
+  Field : TYPE = RECORD [ n : Enum.Value, tc : Type.Code ];
+
+  -- One extra operation is provided:
+
+  Base : PROC [ ] RETURNS [ tc : Type.Code ];
+    -- Return the type code of the base type of the choice.
+
+END.

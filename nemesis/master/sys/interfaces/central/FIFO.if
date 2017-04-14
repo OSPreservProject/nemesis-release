@@ -1,0 +1,99 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      FIFO.if
+-- 
+-- DESCRIPTION:
+--
+--      Bounded buffers of fixed-size elements.
+-- 
+-- ID : $Id: FIFO.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Input-Output Channels}
+-- 
+
+-- A "FIFO" is a handle on a bounded buffer of fixed-size \emph{slots}.
+-- The buffer may possibly be shared between domains.
+-- 
+-- No internal concurrency control is exercised on the handle.
+
+FIFO : LOCAL INTERFACE =
+NEEDS
+	Time;
+
+BEGIN
+
+  -- "Put" something into the buffer. The data starting at address
+  -- "data" is assembled into "nslots" slots, so the total size of
+  -- data read is "nslots * SlotBytes" (see below). 
+  -- If "block" is "True", the operation waits until there is space in
+  -- the "FIFO", otherwise the operation assumes that the client has
+  -- established that there is enough free space and ploughs ahead
+  -- regardless. The meaning of "value" is entirely up to the
+  -- client---it is simply passed to the corresponding "Get" call. 
+  Put : PROC    [ nslots : CARDINAL;
+                  data   : ADDRESS;
+                  value  : CARDINAL;
+                  block  : BOOLEAN     ]
+        RETURNS [];
+    -- Send "nslots" of data from address "data", together with
+    -- "value". 
+
+  -- At the other end of the "FIFO", "Get" is used to retrieve a
+  -- packet. "max_slots" specifies a ceiling on the amount of data we
+  -- want to receive as "max_slots * SlotBytes". Received bytes are
+  -- copied into "data". As with "Put", "block" determines whether any
+  -- concurrency checking is to be performed. "Get" returns the number
+  -- of slots actually read from the "FIFO", together with the "value"
+  -- passed in by "Put".
+  Get : PROC    [ max_slots : CARDINAL;
+                  data      : ADDRESS;
+                  block     : BOOLEAN;
+              OUT value     : CARDINAL ]
+        RETURNS [ nslots    : CARDINAL ];
+    -- Receive a packet from the "FIFO" into "data" area, with maximum
+    -- size "max_slots".
+
+  -- the same as the above but with a "time_out"
+  GetUntil : PROC    [ max_slots : CARDINAL;
+                  data      : ADDRESS;
+                  block     : BOOLEAN;
+		time_out    : Time.T;
+              OUT value     : CARDINAL ]
+        RETURNS [ nslots    : CARDINAL ];
+
+
+  Slots      : PROC [] RETURNS [ ns: CARDINAL ];
+    -- Return the number of slots in this FIFO.
+
+  -- Producers (i.e. those calling "Put") can call "SlotsFree" to
+  -- determine whether a subsequent call to "Put" might block. 
+  SlotsFree  : PROC [] RETURNS [ ns: CARDINAL ];
+    -- Determine number of free slots to put data into.
+
+  -- Consumers (i.e. those calling "Get") can call "SlotsToGet" to
+  -- determine how many slots are available to be read by a subsequent
+  -- call to "Get". 
+  SlotsToGet : PROC    [ OUT nslots : CARDINAL ]
+               RETURNS [     b      : BOOLEAN  ];
+    -- Return the number of slots used by the next waiting packet. 
+
+  -- Clients of the "FIFO" determine just how large a slot is by
+  -- calling "SlotBytes". 
+  SlotBytes  : PROC [] RETURNS [ sb: CARDINAL ];
+    -- Return the size of a slot in bytes.
+
+  -- The "FIFO" is disposed of by a call to "Dispose". 
+  Dispose : PROC [] RETURNS [];
+    -- Destroy the "FIFO".
+
+END.
+
+

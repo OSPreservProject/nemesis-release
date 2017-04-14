@@ -1,0 +1,6 @@
+The document archive here is a tidied up copy of the one in
+/usr/groups/pegasus/nemesis/docs/master
+in Cambridge, done by invoking the script ~dr10009/bin/buildreleasemisc.py in
+the root of the releasemisc package.
+
+Type make docs to build the postscript and HTML versions of these documents.

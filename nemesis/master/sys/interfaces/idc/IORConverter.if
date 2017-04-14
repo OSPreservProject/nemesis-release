@@ -1,0 +1,42 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      IORConverter
+-- 
+-- DESCRIPTION:
+--
+--      Provides a method of converting back from an "IDCOffer.IOR" (a
+--      concrete representation of a service) to an "IDCOffer" closure
+--      (an abstract representation).
+-- 
+-- ID : $Id: IORConverter.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+-- 
+IORConverter : LOCAL INTERFACE =
+NEEDS IDCOffer;
+NEEDS Type;
+BEGIN
+
+  -- A "IORConverter", when passed a sequence of "IOR"s, should look at
+  -- the "IOR" at position "iornum" in the sequence, and attempt to
+  -- convert it into an "IDCOffer" which will bind to the service
+  -- represented by that "IOR". If an offer is returned, it should
+  -- respect the full list of "IOR"s, in case the offer is later
+  -- passed to a different domain which would need to use a different
+  -- transport.  If the "IORConverter" cannot turn the specified "IOR"
+  -- into an offer, it should return "NULL".
+                
+  Localise : PROC  [ iors   : IDCOffer.IORList, 
+                     iornum : CARDINAL, 
+                     tc     : Type.Code ] 
+            RETURNS [ offer : IREF IDCOffer ];
+
+END.

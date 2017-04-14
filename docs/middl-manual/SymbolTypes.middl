@@ -1,0 +1,5 @@
+SymbolTypes : INTERFACE = 
+
+BEGIN
+  Data : TYPE = STRING;
+END.

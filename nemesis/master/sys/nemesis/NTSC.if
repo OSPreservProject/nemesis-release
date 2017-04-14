@@ -1,0 +1,38 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      NTSC
+-- 
+-- DESCRIPTION:
+--
+--      User-space control over some aspects of NTSC
+-- 
+-- ID : $Id: NTSC.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Misc}
+--
+
+-- 
+
+NTSC : LOCAL INTERFACE =
+
+BEGIN
+
+  SetCrashdump : PROC [ local : BOOLEAN, serial : CARDINAL ]
+	RETURNS [ ];
+  -- Sets where crash dumps go - to local VGA display, and/or to
+  -- a serial port at a specified base address.
+
+  SetConsole : PROC [ buffer : BOOLEAN, local : BOOLEAN, serial : CARDINAL ]
+	RETURNS [ ];
+  -- Sets where console output goes - to a buffer for user space,
+  -- local VGA display or a serial port.
+
+END.

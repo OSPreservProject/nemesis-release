@@ -1,0 +1,78 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      RdWrMod
+-- 
+-- DESCRIPTION:
+--
+--      Manufactures various types of readers and writers
+-- 
+-- ID : $Id: RdWrMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Readers and Writers}
+--
+
+-- 
+
+RdWrMod : LOCAL INTERFACE =
+  NEEDS Rd;
+  NEEDS Wr;
+  NEEDS Heap;
+  NEEDS Closure;
+BEGIN
+
+  Blob : TYPE = DANGEROUS ADDRESS;
+  -- Opaque identifier for 'blobs' in the image.
+
+  GetBlobRd : PROC [ b : Blob, heap : IREF Heap ] RETURNS [ rd : IREF Rd ]
+	RAISES Heap.NoMemory;
+  -- Gets a reader on a Blob.
+
+  NewPipe : PROC [ heap : IREF Heap, bufsize : CARDINAL, trigger : CARDINAL ]
+	RETURNS [ rd : IREF Rd, wr : IREF Wr ]
+	RAISES Heap.NoMemory;
+  -- A call to "NewPipe" creates a reader and writer which are joined
+  -- by a buffer of size "bufsize". If the writer blocks waiting for free
+  -- space in the buffer, it will not become unblocked until "trigger"
+  -- bytes are free in the buffer.
+
+  NewJoin : PROC [ heap : IREF Heap, bufsize : CARDINAL,
+		rd : IREF Rd, wr: IREF Wr, closeWr : BOOLEAN ]
+	RETURNS [ cl : IREF Closure ]
+	RAISES Heap.NoMemory;
+  -- A call to "NewJoin" creates a closure which, when invoked, will
+  -- copy data from the supplied reader to the supplied writer. When the
+  -- reader is exhausted it will be closed. "closeRd" controls whether the
+  -- writer will be closed.
+
+  NewBufferedWr : PROC [ heap : IREF Heap, bufsize : CARDINAL,
+		blocksize : CARDINAL, trigger : CARDINAL, wr : IREF Wr ]
+	RETURNS [ bufwr : IREF Wr ]
+	RAISES Heap.NoMemory;
+  -- A call to "NewBufferedWr" creates a writer that attempts to batch
+  -- data into "blocksize" blocks for writing to the underlying writer.
+  -- If the writer blocks waiting for free space in the buffer, it will not
+  -- become unblocked until "trigger" bytes are free in the buffer.
+
+  NewBufferedRd : PROC [ heap : IREF Heap, bufsize : CARDINAL,
+		blocksize : CARDINAL, trigger : CARDINAL, rd : IREF Rd ]
+	RETURNS [ bufrd : IREF Rd ]
+	RAISES Heap.NoMemory;
+  -- A call to "NewBufferedRd" creates a reader that attempts to read
+  -- data from the underlying reader in batches of "blocksize" bytes. If
+  -- the reader blocks waiting for data to appear in the buffer, it
+  -- will not become unblocked until "trigger" bytes are available in
+  -- the buffer, or the end of the file is reached.
+
+  NewMemRd : PROC [ base : ADDRESS, bytes : LONG CARDINAL, heap : IREF Heap ]
+	RETURNS [ rd : IREF Rd ]
+	RAISES Heap.NoMemory;
+
+END.

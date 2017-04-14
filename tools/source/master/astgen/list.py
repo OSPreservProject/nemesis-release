@@ -1,0 +1,1 @@
+list_list= [ ('NULL',[]),("expression",["n_expr"]),("statement",["n_statement"]),("id",["n_id"]),("spec",["n_spec"]),("proc",["n_block"]),("decl",["n_decl"]),("sco",["n_sco"]),("exc_handler",["n_exc_handler"]),("type",["n_type"])]

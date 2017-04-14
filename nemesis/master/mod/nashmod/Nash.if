@@ -1,0 +1,37 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright %y, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Nash.if
+-- 
+-- DESCRIPTION:
+--
+--      Evaluates 
+-- 
+-- FILE :	Nash.if
+-- 
+--
+
+Nash : LOCAL INTERFACE =
+BEGIN
+
+  ExecuteString : PROC [ str: STRING ] RETURNS [ result : INTEGER];
+
+  -- Execute string
+
+  GetPrompt : PROC [] RETURNS [ str: STRING ];
+  
+  -- Return the prompt string, which is owned by the Nash closure,
+  -- and valid until another operation is invoked on the closure.
+  
+  Destroy : PROC [] RETURNS [];
+  -- Free up all the state associated with this Nash
+
+
+END.

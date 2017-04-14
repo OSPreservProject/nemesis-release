@@ -1,0 +1,78 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      GatekeeperMod
+-- 
+-- DESCRIPTION:
+--
+--      Generates a GateKeeper for a domain
+-- 
+-- ID : $Id: GatekeeperMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Memory}
+-- \section{Shared Memory Buffers}
+-- 
+
+-- A "GatekeeperMod" is used by a domain at startup to create a
+-- "Gatekeeper". There are a number of different types of "Gatekeeper"
+-- which may be created depending on the requirements of the domain.
+
+GatekeeperMod : LOCAL INTERFACE =
+  NEEDS Gatekeeper;
+  NEEDS StretchAllocator;
+  NEEDS HeapMod;
+  NEEDS Frames;
+BEGIN
+
+  -- "New" needs to know about a "StretchAllocator" and also a
+  -- "HeapMod". The "HeapMod" determines the class of heap that will
+  -- be generated when required. The "Heap" is used to allocate the
+  -- state for the "Gatekeeper".
+
+  New : PROC    [ sa : IREF StretchAllocator,
+                  hm : IREF HeapMod,
+                   h : IREF Heap,
+                   f : IREF Frames ]
+        RETURNS [  g : IREF Gatekeeper ]
+        RAISES Heap.NoMemory;
+  
+  -- "NewPrivate" creates a new "Gatekeeper" from a single "Stretch"
+  -- for use by the specified "ProtectionDomain" "p".  The "Stretch"
+  -- is assumed read-only and is filled with a single "Heap". The heap
+  -- "h" is used to allocate state for the "Gatekeeper".
+
+  NewPrivate : PROC    [ s : IREF Stretch,
+			 p : ProtectionDomain.ID,
+                        hm : IREF HeapMod,
+                         h : IREF Heap ]
+              RETURNS [ g : IREF Gatekeeper ]
+              RAISES Heap.NoMemory, Stretch.Denied;
+
+  -- "NewGlobal" creates a new "Gatekeeper" from a single
+  -- "Stretch". This "Stretch" is mapped globally read-only and is
+  -- filled with a single "Heap". The heap "h" is used to allocate
+  -- state for the "Gatekeeper".
+
+  NewGlobal : PROC    [ s : IREF Stretch,
+                       hm : IREF HeapMod,
+                        h : IREF Heap ]
+              RETURNS [ g : IREF Gatekeeper ]
+              RAISES Heap.NoMemory, Stretch.Denied;
+
+  -- "NewSimple" generates a trivial "Gatekeeper" which always returns
+  -- the same heap, one supplied by the user. The state also comes out
+  -- of this heap. This heap ought to be globally readable by
+  -- everyone.
+
+  NewSimple : PROC    [ h : IREF Heap ]
+              RETURNS [ g : IREF Gatekeeper ]
+              RAISES Heap.NoMemory;
+
+END.

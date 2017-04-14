@@ -1,0 +1,17 @@
+MothysField : INTERFACE = 
+	NEEDS Heap;
+	NEEDS Field;
+BEGIN
+
+	MemFail : EXCEPTION [ w : INTEGER ];
+
+	Name : TYPE = STRING;
+
+	New : PROC [
+		 h   : IREF Heap ;
+		 name : Name 
+		] RETURNS [
+		 f   : IREF Field 
+		] RAISES MemFail;
+
+END.

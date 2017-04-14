@@ -1,0 +1,47 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      IOClosure
+-- 
+-- DESCRIPTION:
+--
+--      IO thread Entry point. 
+-- 
+-- ID : $Id: IOClosure.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Input-Output Channels}
+-- 
+
+-- An "IOClosure" is a general purpose type representing an entry-point
+-- that takes an "IO" argument, and any associated state.  The
+-- "IDCTransport" called "IOTransport" takes an "IOClosure.Info" as the
+-- "server" argument of its "Offer" procedure.
+
+IOClosure : LOCAL INTERFACE =
+  NEEDS IO;
+BEGIN
+  
+  -- An "Info" gives the characteristics of a particular "IO" channel
+  -- offer.
+
+  Rec  : TYPE = RECORD [  
+    clp        : IREF IOClosure,	 -- Server thread entry point
+    kind       : IO.Kind,		 -- Reader or writer at server?
+    pool_bytes : CARDINAL,		 -- Size of "IOMod_New"'s "data" arg
+    fifo_slots : CARDINAL		 -- Size of "tx,rx_buf" args
+  ];
+  Info : TYPE = REF Rec;
+  
+  -- The following method is called within the server thread associated with
+  -- this binding:
+
+  Apply : PROC [ io: IREF IO ] RETURNS [];
+  
+END.

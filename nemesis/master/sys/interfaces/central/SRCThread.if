@@ -1,0 +1,160 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      SRCThread
+--
+-- DESCRIPTION:
+--
+--      SRC Thread synchronisation operations
+--
+-- ID : $Id: SRCThread.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+--
+-- \chapter{User Level Schedulers}
+--
+
+-- Event counts and sequencers as specified in the "Event" interface
+-- can be used directly to provide concurrency control for threads.
+-- It can be convenient to use other facilities built on top of events.
+-- 
+-- The "SRCThread" interface provides the mutual-exclusion locks and
+-- condition variables of Modula-2+ \cite{rov:m2plus}, with an
+-- extension, WaitUntil.  There is an an introduction to their use in
+-- \cite{bir:threads-intro}.  See \cite{bir:threads-spec} for a formal
+-- specification; the specifications in this interface are lifted from
+-- \cite{SRC:M3-URL}, the SRC Modula-3 system.
+
+SRCThread : LOCAL INTERFACE = 
+  NEEDS Event;
+  NEEDS Events;
+  NEEDS Thread;
+  NEEDS Time;
+BEGIN
+
+
+  -- 
+  -- Mutexes
+  -- 
+
+  -- A "Mutex" is locked by some thread, or unlocked.
+  -- A newly-allocated "Mutex" is unlocked.
+
+  Mutex : TYPE = RECORD [
+    ec : Event.Count,
+    sq : Event.Sequencer
+  ];
+
+
+
+  BadState : EXCEPTION [ mu : REF Mutex ]; 
+    -- The mutex "mu" was in a bad ``state'' for the operation. 
+    -- This has various interpretations depending on the 
+    -- exact operation which was attempted. 
+
+  InvalidMutex : EXCEPTION [ mu : REF Mutex ];
+    -- The thing referred to by "mu" was not a valid mutex. 
+
+  InitMutex : PROC [ mu: REF Mutex ] RETURNS []
+              RAISES Events.NoResources, InvalidMutex;
+
+  FreeMutex : PROC [ mu: REF Mutex ] RETURNS []
+              RAISES BadState, InvalidMutex;
+
+  Lock      : PROC [ mu: REF Mutex ] RETURNS []
+              RAISES Events.Invalid, BadState, InvalidMutex;
+    -- Wait until "mu" is unlocked and then lock it.
+
+  Release   : PROC [ mu: REF Mutex ] RETURNS []
+              RAISES Events.Invalid, BadState, InvalidMutex;
+    -- The calling thread must have "mu" locked.  Unlocks "mu". 
+
+
+  -- 
+  -- Condition Variables
+  -- 
+
+  -- A "Condition" is a set of waiting threads.
+  -- A newly-allocated "Condition" is empty.
+
+  Condition : TYPE = RECORD [
+    ec : Event.Count,
+    sq : Event.Sequencer
+  ];
+
+  InitCond  : PROC [ mu: REF Condition ] RETURNS []
+              RAISES Events.NoResources;
+  FreeCond  : PROC [ mu: REF Condition ] RETURNS [];
+
+  Wait      : PROC [ mu: REF Mutex; c: REF Condition ] RETURNS []
+              RAISES Thread.Alerted, Events.Invalid;
+
+    -- The calling thread must have "mu" locked. Atomically unlocks
+    -- "mu" and waits on "c".  Then relocks "mu" and returns.
+
+  Signal    : PROC [ c: REF Condition ] RETURNS []
+              RAISES Events.Invalid;
+
+    -- One or more threads waiting on "c" become eligible to run.
+
+  Broadcast : PROC [ c: REF Condition ] RETURNS []
+              RAISES Events.Invalid;
+
+    -- All threads waiting on "c" become eligible to run.
+
+
+    -- WaitUntil is an extension to the standard SRC threads
+    -- primitives.
+
+  WaitUntil : PROC    [ mu: REF Mutex; c: REF Condition; until: Time.T ] 
+              RETURNS [ ok: BOOLEAN ]
+              RAISES  Thread.Alerted, Events.Invalid;
+
+    -- The calling thread must have "mu" locked. Atomically unlocks
+    -- "mu" and waits on "c" until the timout "until".  
+    -- Then relocks "mu" and returns.  If "ok" is "False", then the
+    -- timeout expired before any signal on "c" was observed. This does 
+    -- \emph{not} mean that no Broadcast or Signal method was invoked 
+    -- before the timeout expired, nor does it mean that no signal was 
+    -- observed between the timeout expiring and the method returning. 
+    -- If "ok" is "True" then a signal \emph{may} have been observed 
+    -- on "c" before the timeout expired. 
+
+    -- WaitUntil may be specified in a similar way to the other SRC 
+    -- threads primitives (using a modified form of the Larch
+    -- Specification Language) as follows:
+    --
+    -- \begin{tabbing}
+    -- XX\=XX\=\kill
+    --    
+    -- {\sc Var} now : Time \textsc{Initially} 0; (The counter "now"
+    -- is incremented monotonically)\\
+    --
+    -- {\sc Procedure} WaitUntil({\sc Var} m: Mutex; {\sc Var} c :
+    -- Condition; {\sc Var} until : Time; {\sc Var} ok : Boolean)=\\ 
+    -- \>{\sc Composition of} Enqueue; Resume {\sc End} $\mid$ {\sc
+    -- Composition of} Enqueue; TimeOut {\sc End} \\ 
+    -- \>{\sc Requires} m = {\sc Self}\\
+    -- \>{\sc Modifies at most} [ m, c, ok ] \\
+    --
+    -- \>{\sc Atomic action} Enqueue\\
+    -- \>\>{\sc Ensures} c$_{post}$ = (insert(c, {\sc Self})) \&
+    -- (m$_{post}$ = {\sc Nil})\\
+    --
+    -- \>{\sc Atomic action} Resume\\
+    -- \>\>{\sc When} (m = {\sc Nil}) \& !({\sc Self} in c) \\
+    -- \>\>{\sc Ensures} (m$_{post}$ = {\sc Self}) \& (ok = True) \&
+    -- {\sc Unchanged} [ c ]\\
+    --                                                                   
+    -- \>{\sc Atomic action} TimeOut\\
+    -- \>\>{\sc When} (m = {\sc Nil}) \& (now $\geq$ until) \\
+    -- \>\>{\sc Ensures} m$_{post}$ = {\sc Self} \& (ok = False) \&
+    -- (c$_{post}$ = delete(c, {\sc Self}))
+    -- \end{tabbing}
+
+END.

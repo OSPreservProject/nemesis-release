@@ -1,0 +1,43 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      SpawnMod
+-- 
+-- DESCRIPTION:
+--
+--      Creates interface surrogates that spawn new domains
+-- 
+-- ID : $Id: SpawnMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Domains, Events and Activation}
+--
+
+-- The Builder and Exec utilities assume that the entry point of a new
+-- domain is to be the Apply method of a Closure interface. The Spawn module
+-- enables domains to be started using any method of any interface as
+-- an entry point, and arranges for appropriate parameters to be passed
+-- to the new domain. When the method called in the new domain returns,
+-- the result is returned to the parent.
+
+SpawnMod : LOCAL INTERFACE =
+  NEEDS Type;
+  NEEDS Heap;
+  NEEDS Spawn;
+BEGIN
+
+  Failure : EXCEPTION [ ];
+  -- Couldn't find stubs, out of memory, etc.
+
+  Create : PROC [ module : Type.Any, heap : IREF Heap ]
+	RETURNS [ spawn : IREF Spawn ];
+  -- Creates a stub which, when called, starts a new domain and invokes
+  -- "module" in it. The stub will block until the call is complete.
+
+END.

@@ -1,0 +1,92 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Threads.if
+--
+-- DESCRIPTION:
+--
+--      Forking user-level threads.
+-- 
+-- ID : $Id: Threads.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{User Level Schedulers}
+-- 
+
+-- Multiple threads of control may be created in a Nemesis domain
+-- via the "Threads" interface, provided that the domain's user-level
+-- scheduler implements it. 
+
+Threads : LOCAL INTERFACE = 
+  NEEDS Thread;
+BEGIN
+
+  NoResources : EXCEPTION [];
+    -- Raised when there are insufficient resources to "Fork"
+    -- a new thread.
+
+  -- "Fork" creates a new thread executing "entry(data)".
+  -- The new thread's stack is at least "stackBytes" long,
+  -- unless "stackBytes = 0", in which case it has the default
+  -- size specified when the scheduler was initialised.
+  -- 
+  -- "Fork" returns a handle "t" on the newly created thread to allow
+  -- facilities like "Join" and "Alert".
+
+  Fork  : PROC    [ entry      : ADDRESS,
+                    data       : ADDRESS,
+                    stackBytes : CARDINAL    ]
+          RETURNS [ t          : IREF Thread ]
+      	  RAISES NoResources;
+
+  -- Sometimes a thread wishes to ensure that no other thread will
+  -- run until it has completed a particular critical section. 
+  -- The following pair of methods are provided to do this. 
+  -- 
+  -- Note: in a preemptive ULS, these methods are prone to abuse. 
+  -- Hence any implementation \emph{may} decide to deschedule or 
+  -- even terminate a particular thread which remains too long 
+  -- in a critical section. 
+
+  EnterCS: PROC    [ vpcs : BOOLEAN ] 
+           RETURNS []; 
+    -- enter a threads-level critical section. 
+    -- If the parameter "vpcs" is True, then a VP critical 
+    -- section is also entered (i.e. activations will be off 
+    -- on returning from the call.)
+    -- \bf{Note}: this is the recommended manner in which 
+    -- to turn off activations (rather than using VP\$ActivationsOff
+    -- directly) due to page fault / breakpoint restrictions. 
+    --
+    -- The call \emph{is} nestable: $n$ calls to EnterCS will 
+    -- require $n$ calls to LeaveCS (see below) in order to 
+    -- leave the cirtical section and/or restore the original 
+    -- activation mode. 
+
+  LeaveCS: PROC [] RETURNS [];
+    -- leave a level of critical section; as mentioned above,
+    -- calls are nestable, and hence each EnterCS must have 
+    -- a corresponding LeaveCS. 
+    -- If the EnterCS corresponding to this call also entered 
+    -- a virtual processor critical section, then this CS 
+    -- will also be left. 
+
+  -- If a domain's ULS is not preemptive, threads must call "Yield"
+  -- to pass control to each other.  If there are other threads ready
+  -- to run, "Yield" transfers control to one of them and returns
+  -- when the caller is next scheduled; otherwise it returns immediately.
+
+  Yield : PROC [] RETURNS [];
+
+  -- A thread finishes either by returning from "entry" or by
+  -- calling "Exit".
+
+  Exit  : PROC [] NEVER RETURNS;
+
+END.

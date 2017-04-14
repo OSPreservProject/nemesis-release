@@ -1,0 +1,31 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Glasgow Department of Computing Science   -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- FILE:
+--
+--	DNSMod.if
+--
+-- FUNCTIONAL DESCRIPTION:
+--
+--	creates DNS module
+-- 
+-- ID : $Id: DNSMod.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+--
+--	\chapter{Networks}
+--
+
+-- The "DNSMod" module allows you to create an "IREF DNS" which asks the
+-- particular nameserver which you give as it's arguments.
+
+DNSMod : LOCAL INTERFACE =
+  NEEDS Net; 
+  NEEDS DNS;
+BEGIN
+
+	New: PROC [IN server : Net.IPHostAddr ] RETURNS [ dns : IREF DNS ];
+END.

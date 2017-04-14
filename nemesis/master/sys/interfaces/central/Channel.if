@@ -1,0 +1,83 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Channel.if
+-- 
+-- DESCRIPTION:
+--
+--      Types for event channels.
+-- 
+-- ID : $Id: Channel.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Domains, Events and Activation}
+-- 
+
+-- Events are transmitted between virtual processors over event
+-- channels.  User code does not normally manipulate channels; instead,
+-- it uses associated event counts via its user-level scheduler.  The
+-- "Channel" interface defines the channel-related types used by lower
+-- levels.
+
+Channel : LOCAL INTERFACE = 
+  NEEDS Domain;
+BEGIN
+
+  -- 
+  -- Types
+  -- 
+
+  -- An event channel is a (tx, rx) pair of endpoints.  Endpoints
+  -- are stored in per-domain memory at the kernel level.
+  -- An endpoint is identified within its domain by an "Endpoint".
+
+  Endpoint : TYPE = WORD;		 -- Opaque
+  EP       : TYPE = Endpoint;		 -- An abbreviation
+
+  -- An "Endpoint" is either the receive ("RX") end or the transmit
+  -- ("TX") end of a channel.
+
+  RX     : TYPE = Endpoint;
+  TX     : TYPE = Endpoint;
+  EPType : TYPE = { RX, TX };
+
+  -- An endpoint is either "Free" or allocated.  A newly
+  -- allocated endpoint is in state "Local".  While its
+  -- channel is open, the endpoint is in state "Connected".
+  -- An endpoint of a closed channel is in state "Dead".
+
+  State : TYPE = { Free, Local, Connected, Dead };
+
+  -- An endpoint makes transitions between these states as a result
+  -- of actions by the binder.
+
+  -- For inter-domain communication ("IDC"), it is often useful to have
+  -- pairs of channels, one in each direction.  Each domain holds one or
+  -- one or more "(rx, tx)" pairs of endpoints connected to corresponding
+  -- pairs at the peer domain.
+
+  Pair  : TYPE = RECORD [ rx: RX, tx: TX ];
+  Pairs : TYPE = SEQUENCE OF Pair;
+
+  -- 
+  -- Exceptions
+  -- 
+
+  Invalid  : EXCEPTION [ ep: Endpoint ];
+    -- Raised when "ep" does not denote an "Endpoint" or has an
+    -- inappropriate polarity ("EPType").
+
+  BadState : EXCEPTION [ ep: Endpoint, st: State ];
+    -- Raised by operations encountering an unexpected state "st"
+    -- for an endpoint "ep".
+
+  NoSlots  : EXCEPTION [ dom: Domain.ID ];
+    -- Raised when no further endpoint slots are available at "dom".
+
+END.

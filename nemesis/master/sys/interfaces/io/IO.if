@@ -1,0 +1,246 @@
+------------------------------------------------------------------------------
+--
+-- File:
+-- 
+--      IO.if
+--
+-- Description:
+--
+--      Abstract stream inter-domain communication channels
+--
+-- Revision History:
+--
+-- ID : $Id: IO.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Input-Output Channels}
+-- 
+
+-- An IO channel transfers data in packets by a mechanism somewhat
+-- similar to the "rbuf"s described in \cite{rjb:thesis}.  A packet is
+-- described by an array of "IO_Rec"s, which are currently simply
+-- ("base","len") pairs, although this may change in the future to
+-- support more complex channels.
+-- 
+-- NO internal concurrency control is performed. 
+
+IO : LOCAL INTERFACE =
+  NEEDS IOData;
+  NEEDS Time;
+  NEEDS Channel;
+BEGIN
+
+  -- 
+  -- Types
+  -- 
+
+  -- The values passed through "IO" channels are "IO_Recs",
+  -- essentially "base" + "length" pairs describing the data. 
+  Rec : TYPE = RECORD [ base : ADDRESS,
+                        len  : WORD     ];        
+  
+    
+  -- Each party involved in communication with IO channels will hold a
+  -- reference to an IO. In the simplest case of bipartite
+  -- communication, one party will be the \emph{master} and the other 
+  -- the \emph{slave}. This distinction is captured by the below type.
+
+  Kind : TYPE = { Master, Slave }; 
+     -- The "Kind" of an "IO" determines how it is (procedurally)
+     -- used; a principal with a "Master" IO will \emph{put} packets
+     -- into the IO first, and later \emph{get} packets back again. 
+     -- A "Slave" IO, on the other hand, is used by first getting
+     -- packets out, and subsequently putting packets back in.
+     -- \bf{Note}: this distinction has little to do with the
+     -- direction of data transfer in the IO, or the relative levels
+     -- of trustworthiness of the principals. Perhaps its closest
+     -- analog is to Client (=="Master") / Server (=="Slave"). 
+
+
+
+  -- Data may be transferred through an IO channel in one of three
+  -- modes. The mode of an IO is \emph{always} viewed purely from the 
+  -- point of view of the "Master" end of an IO channel, regardless of
+  -- which kind of IO one has. 
+
+  Mode : TYPE = { Rx, Tx, Dx };
+     -- The operation of "IO"s in various modes is as follows: 
+     -- \begin{itemize}
+     --    \item "Rx" mode: the "IO_Rec"s the "Master" puts into
+     --    the channel are 'empty'; that is, they describe some free
+     --    buffers into which the "Slave" side should \textsl{write}.
+     --    The "IO_Rec"s which the "Master" gets from the channel are
+     --    'full' (contain information from the "Slave").
+     --    In "Rx" mode data needs to be "Master" R, "Slave" R/W. 
+     --
+     --    \item "Tx" mode: the "IO_Rec"s which the "Master" puts into
+     --    the channel are 'full'; that is, they describe some buffers
+     --    containing data which the "Slave" side should\textsl{read}. 
+     --    The "IO_Rec"s which the "Master" gets from the channel are
+     --    'empty' (synchronisation points only).  
+     --    In "Tx" mode data needs to be "Master" R/W, "Slave" R. 
+     --
+     --    \item "Dx" mode: the "IO_Rec"s which are put into the
+     --    channel by the "Master" are 'full',; that is, they describe
+     --    some buffers containing data which the "Slave" side should
+     --    \textsl{read}. Additionally, the "IO_Rec"s which the
+     --    "Master" gets from the channel are 'full' (contain
+     --    information from the "Slave").
+     --    In "Dx" mode data needs to be "Master" R/W, "Slave" R/W. 
+     -- \end{itemize}
+     -- 
+
+  -- 
+  -- Exceptions
+  -- 
+
+  Failure : EXCEPTION [];
+    -- an operation on an IO failed for some reason or another.
+
+  InvalidRec : EXCEPTION [ rec : REF Rec ];
+    -- the "IO_Rec" rec has been examined and found wanting. 
+
+
+
+
+
+  -- 
+  -- Procedures
+  -- 
+
+  
+  -- "PutPkt" sends a vector of "IO_Rec"s down the channel. The
+  -- operation sends "nrecs" records in a vector starting at "recs" in
+  -- memory. If the channel is full, the value of "until" determines 
+  -- the time until which the caller is prepared to block. If the 
+  -- current time passed "until" and the channel still has not enough
+  -- space for the "IO_Rec"s, then "PutPkt" will return False. 
+  -- Otherwise "PutPkt" always returns True.
+  -- 
+  -- Sometimes we wish to simply determine whether or not a 
+  -- subsequent "PutPkt" would block or not (i.e. whether or 
+  -- not there is enough space in the IO channel). To do this 
+  -- give a value of "nrecs" of 0. In this case it is guaranteed 
+  -- that "recs" will not be touched, and that nothing will be 
+  -- transferred through the IO channel; i.e "PutPkt" will return a
+  -- value of "False". 
+  --
+  -- The following macro is defined in IOMacros.h: 
+  -- 
+  --| #define IO$QueryPut(_io,_nrecs,_until) \
+  --|         IO$PutPkt(_io, _nrecs, NULL, 0, _until)
+  -- 
+  -- Note that a non-blocking put is accomplished simply by setting
+  -- "until" to a time <= NOW. 
+  
+  PutPkt : PROC    [ nrecs      : CARDINAL;
+                     recs       : REF Rec;
+                     value      : WORD;
+                     until      : Time.T  ]
+           RETURNS [ put        : BOOLEAN ] 
+           RAISES Failure, InvalidRec; 
+    -- Send a vector of I/O records down the channel, or release them
+    -- at the receiving end. Raise "Failure" if, for example, "nrecs"
+    -- is greater than the depth of the IO channel.
+    -- \emph{Note}: the "InvalidRec" exception cannot always be raised
+    -- here in the non-local case since it is may be only when a peer 
+    -- domain has had a chance to validate the records that their 
+    -- lack will be made manifest. Not sure how to fix this.
+
+  -- In some cases one end of the "IO" channel (typically the slave
+  -- end) may wish to check that there is sufficient space in the
+  -- 'back channel' before it removes any more packets from the 
+  -- 'forward channe'. It may do this by means of the following 
+  -- method. 
+
+  AwaitFreeSlots : PROC    [ nslots : CARDINAL, 
+                             until  : Time.T   ]
+                   RETURNS [ free   : BOOLEAN  ];
+     -- Check if there are "nslots" \emph{slots} free in the 
+     -- underlying FIFO of this "IO" channel. If there, return 
+     -- "True" immediately. 
+     -- Otherwise wait until either "nslots" become available, 
+     -- or NOW() $>$ "until", returning "True" iff there are 
+     -- "nslots" slots now free in the channel. 
+     -- XXX SMH: this is a pretty nasty hack put in for SNAP5
+     -- and which should be sorted out in a better way after 
+     -- that's been taken. 
+
+  -- "GetPkt" acquires a maximum of "max_recs" "IO_Rec"s, which are
+  -- copied into memory at address "recs". At the receive end these
+  -- typically constitute a packet. The total number of records read
+  -- is returned in "nrecs". If "nrecs" is greater than "max_recs",
+  -- this means not enough recs were passed down and "GetPkt" will 
+  -- return False. In this case, "nrecs" will be set to the minimum 
+  -- number of records you need to supply.
+  -- If there are not enough records in the channel, "GetPkt" will 
+  -- block waiting for the requisite number of records to arrive, 
+  -- or until the current time reaches "until". If there are still 
+  -- insufficient records in the channel, "GetPkt" will return False; 
+  -- otherwise it will return True. In both cases the actual number 
+  -- of records in the channel is returned in "nrecs". 
+  -- 
+  -- As before, we sometimes want to know whether a "GetPkt" 
+  -- would block or not (i.e. whether or not there are enough
+  -- "IO_Rec"s in the IO channel). If we give "max_recs" a value
+  -- of 0, then no actual get will occur (i.e. neither of the
+  -- parameters "recs" or "value" will be touched (it is safe to
+  -- give NULL values for these two) and "GetPkt" will return 
+  -- False), but "nrecs" will contain the number of records 
+  -- available for a subsequent "GetPkt". 
+  -- 
+  -- The following macro is defined in IOMacros.h: 
+  -- 
+  --| #define IO$QueryGet(_io,_until,_nrecs) \
+  --|         IO$GetPkt(_io, 0, NULL, _until, _nrecs, NULL)
+  -- 
+  -- Note that a non-blocking get is accomplished simply by setting
+  -- "until" to a time <= NOW. 
+
+  GetPkt : PROC    [ max_recs   : CARDINAL;
+                     recs       : REF Rec;
+                     until      : Time.T;
+                     OUT nrecs  : CARDINAL;
+                     OUT value  : WORD     ] 
+           RETURNS [ got        : BOOLEAN  ];
+    -- Pull a vector of I/O records out of the channel. 
+
+
+  -- We also have three more simple procedures which may be used to
+  -- find out various properties of an IO. 
+
+
+  QueryDepth: PROC [] RETURNS [ nslots : CARDINAL ]; 
+    -- return the 'depth' of the IO (i.e. the number of slots which
+    -- can be put into an empty IO before it becomes full). Exactly
+    -- how this maps to "IO_Rec"s will of course vary on the blocking
+    -- used.
+
+  QueryKind : PROC [] RETURNS [ kind : Kind ]; 
+    -- return the kind of the IO. 
+
+  QueryMode : PROC [] RETURNS [ mode : Mode ]; 
+    -- return the mode of the IO. 
+
+
+  -- For non-local "IO"s (i.e. ones spanning more than one domain), we
+  -- sometimes wish to find out where the various shared memory data
+  -- areas are. To determine this, we call the following procedure:
+
+  QueryShm : PROC [] RETURNS [ shm : IOData.Shm ] RAISES Failure; 
+     -- If the "IO" is non-local, return the data areas associated
+     -- with it, if any. Otherwise raise an exception.
+
+  QueryEndpoints : PROC [ OUT eps : Channel.Pair ] RETURNS [];
+     -- "QueryEndpoints" sets "eps" to contain the receive endpoints
+     -- associated with the "tx" and "rx" sides of the "IO"
+     -- respectively. Activity on these endpoints \emph{may} indicate
+     -- that packets are available for receive, or space available for
+     -- transmit. Either or both of these may be set to "NULL_EP" if
+     -- no appropriate endpoint exists in this implementation.
+
+  -- Finally, a procedure to get rid of an IO. 
+
+  Dispose  : PROC [] RETURNS [];
+    -- Destroy the "IO" and its associated resources. 
+  
+END.

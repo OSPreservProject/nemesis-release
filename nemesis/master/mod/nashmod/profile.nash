@@ -1,0 +1,21 @@
+!# profile.nash; this can be used to override default program environments
+!# or to set up other nash state
+!# 
+!# if you define penv>program_name then you can override environments
+!# for new processes. But be careful; a merged context at program name level
+!# is employed, and this may not behave in the way you expect.
+!#
+!# Legacy lines which could not be transcribed in to the blueprint:
+!#penv>mesatest = <| b_env = <| defStackWords = 16384 |> |>
+!#penv>rollercoaster = <| b_env = <| defStackWords = 32768 |>, qos>cpu = <| p =20ms, s=2ms, l=20ms, x=false|> |>
+!#penv>rol = <| b_env = <| defStackWords = 32768 |>, qos>cpu = <| p =20ms, s=2ms, l=20ms, x=true|> |>
+!#penv>fptest = <| qos>cpu = <| p=20ms, s=1ms, x=false |> |>
+!#penv>atlantis>b_env = <| defStackWords = 16384, pHeapWords=65536 |>
+!#penv>atlantis>b_env>priv_root = <| width=300, height=100 |>
+!#penv>netbars = <| qos>cpu = <| k=true, p = 20ms, s=1ms, l=20ms, x=false |>, b_env>priv_root = <| qosctl = svc>net>eth0>qosctl |> |>
+!#penv>measure = <| qos>cpu = <| p = 10ms, s=1ms, l=5ms, k=true, x=false |> |>
+!#penv>measureserver = <| qos>cpu = <| p = 5ms, s=300us, l=5ms, k=true, x=false |> |>
+!#penv>xmarkov = <| qos>cpu = <| p=10ms, s=1ms, l=10ms, k=true, x=true |> |>
+!#penv>xjd = <| qos>cpu = <| p=4ms, s=100us, l=4ms, k=false, x=true |> |>
+!#penv>qosmeasure = <| qos>cpu = <| p=10ms, s=500us, l=10ms, k=true, x=false |> |>
+

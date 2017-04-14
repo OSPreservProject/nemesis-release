@@ -1,0 +1,5 @@
+#!/bin/sh
+case $# in
+0)	exec find .         -type l ! -exec test -r {} \; -print ;;
+*)	exec find ${1+"$@"} -type l ! -exec test -r {} \; -print ;;
+esac

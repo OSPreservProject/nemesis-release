@@ -1,0 +1,13 @@
+ModExOne : MODULE = 
+
+  IMPORTS m : Mutable ;
+
+  EXPORTS Example     : Test;
+
+BEGIN
+
+  Strategy : TYPE = { Conservative, Aggressive };
+
+  PARAMETERS [ tableSize: CARDINAL; strategy: Strategy ];
+
+END .

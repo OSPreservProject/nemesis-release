@@ -1,0 +1,29 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+-- 
+-----------------------------------------------------------------------------
+-- 
+-- INTERFACE:
+-- 
+-- 	ConsoleWr
+-- 
+-- DESCRIPTION:
+-- 
+-- 	Console Writers
+-- 
+-- ID : $Id: ConsoleWr.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+--
+-- \chapter{Readers and Writers}
+--
+
+-- A "ConsoleWr" is a special writer to the console.  It has no
+-- new methods, but introducing a distinct type allows the use of
+-- custom IDC stubs for the console.
+
+ConsoleWr : LOCAL INTERFACE = 
+  EXTENDS Wr;
+BEGIN
+END.

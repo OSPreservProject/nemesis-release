@@ -1,0 +1,164 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      MMU.if
+-- 
+-- DESCRIPTION:
+--
+--      Encapsulates machine/arch-specific protection info and operations.
+-- 
+-- FILE :	MMU.if
+-- CREATED :	Thu Oct 16 1997
+-- AUTHOR :	Steven Hand (Steven.Hand@cl.cam.ac.uk)
+-- ID : 	$Id: MMU.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Memory}
+-- \section{Translation and Protection}
+--
+
+-- The "MMU" interface is used for the creation and deletion of
+-- \emph{protection domains}, and for the adding, freeing or updating
+-- of ranges of virtual ranges to the translation structures. 
+-- 
+MMU : LOCAL INTERFACE =
+  NEEDS Frames;
+  NEEDS Mem; 
+  NEEDS ProtectionDomain;
+  NEEDS Stretch;
+BEGIN
+
+  -- 
+  -- Intialisation 
+  -- 
+
+
+  Engage    : PROC    [ pdid : ProtectionDomain.ID ]
+              RETURNS [];
+    -- Engage the MMU; "pdid" is the identifier of the initial 
+    -- protection domain to use. 
+
+
+  -- 
+  -- Operations on virtual address ranges. 
+  -- 
+          
+  AddRange  : PROC    [ str   : IREF Stretch, 
+			range : Mem.VMemDesc, 
+                        gaxs  : Stretch.Rights  ]
+              RETURNS [ ] 
+              RAISES  Mem.Failure;
+     -- Update the mapping structures to include the virtual addresses
+     -- described by "range" (which should be the exact range held
+     -- within the stretch "str") with the global permissions "gaxs". The 
+     -- range is not initially mapped - i.e. any access to any part of
+     -- the stretch will cause a fault.
+
+
+  AddMappedRange: PROC    [ str   : IREF Stretch, 
+                            range : Mem.VMemDesc, 
+                            pmem  : Mem.PMemDesc,
+                            gaxs  : Stretch.Rights ]
+                  RETURNS [ ] 
+                  RAISES  Mem.Failure;
+     -- Update the mapping structures to include the virtual addresses
+     -- described by "range" (which should be the exact range held
+     -- within the stretch "str") with the global permissions
+     -- "gaxs"; 
+     -- The range is mapped linearly onto the set of a physical 
+     -- addresses described by "pmem". If there is insufficient
+     -- physical memory present, "Mem.Failure" is raised. 
+
+  UpdateRange  : PROC    [ str   : IREF Stretch, 
+                           range : Mem.VMemDesc, 
+                           gaxs  : Stretch.Rights ] 
+                 RETURNS [ ] 
+                 RAISES  Mem.Failure;
+     -- Update the mapping structures for the virtual addresses 
+     -- described by "range" (which should be the exact range held
+     -- within the stretch "str") with the new global permissions
+     -- "gaxs". 
+     -- The range must already be present in the mapping structures; 
+     -- else "Mem.Failure" will be raised. 
+
+
+  FreeRange    : PROC    [ range : Mem.VMemDesc ]
+                 RETURNS [ ] 
+                 RAISES  Mem.Failure;
+     -- Free the mapping structures for the virtual addresses
+     -- described by "range". Any subsequent access to addresses
+     -- within this range will cause a fault. 
+
+  -- 
+  -- Operations on Protection Domains (see also "ProtectionDomain.if") 
+  -- 
+ 
+  NewDomain : PROC    [ ]
+      	      RETURNS [ pdid : ProtectionDomain.ID ]
+      	      RAISES  Mem.Failure;
+    -- Create a new protection domain and return an identifier for
+    -- it. Initially its reference count will be \emph{zero}; typically
+    -- this will be incremented when it is first associated with an
+    -- executable domain by the domain manager. 
+
+  IncDomain : PROC    [ pdid : ProtectionDomain.ID ]
+      	      RETURNS [];
+    -- Increment the reference count for the given protection domain. 
+
+
+  FreeDomain : PROC    [ pdid : ProtectionDomain.ID ]
+      	       RETURNS [];
+    -- Decrement the reference count on the protection domain
+    -- identified by "pdid", and, if it is $\leq$ zero, delete 
+    -- the protection domain. 
+
+
+  SetProt   : PROC    [ pdid : ProtectionDomain.ID, 
+                        str  : IREF Stretch, 
+                        axs  : Stretch.Rights        ]
+	      RETURNS [];
+    -- Set the protections on stretch "str" within the protection 
+    -- domain identified by "pdid" to be "axs". 
+
+  QueryProt : PROC    [ pdid : ProtectionDomain.ID, 
+                        str  : IREF Stretch           ]
+	      RETURNS [ axs  : Stretch.Rights         ];
+    -- Query the protections on stretch "str" within the protection 
+    -- domain identified by "pdid". 
+
+   -- Protection domains may also be associated with an "address 
+   -- space number" (ASN). This is an architecture specific value 
+   -- which may be used within the caches and/or TLBs of the machine. 
+   -- For architectures without such support, the value returned from 
+   -- "QueryASN" is undefined. 
+
+   QueryASN : PROC    [ pdid : ProtectionDomain.ID ] 
+              RETURNS [ asn  : WORD ];
+    -- Return the ASN (if any) which is associated with the protection
+    -- domain identified by "pdid". 
+
+
+  -- 
+  -- Miscellaneous Operations
+  -- 
+
+  QueryGlobal  : PROC    [ str  : IREF Stretch   ] 
+                 RETURNS [ gaxs : Stretch.Rights ];
+     -- Return the global rights currently associated with the 
+     -- stretch "str". 
+
+  CloneProt : PROC    [ str  : IREF Stretch, 
+			tmpl : IREF Stretch  ]
+	      RETURNS [ ];
+    -- Set the protections on stretch "str" to be the same as those 
+    -- of the stretch "tmpl" in all protection domains. 
+    -- This does *not* affect the global rights - these must be done
+    -- manually via "QueryGlobal" and "[Add|AddMapped|Update]Range".
+
+END.

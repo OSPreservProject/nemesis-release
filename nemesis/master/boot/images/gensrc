@@ -1,0 +1,5 @@
+
+modules=`grep "module " $1 | cut -f2 -d=`
+programs=`grep "^program" $1 | cut -f2 -d" "`
+srcdirs=`for thing in $modules $programs ; do dirname $thing ; done`
+echo directory $srcdirs

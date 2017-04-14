@@ -1,0 +1,59 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      MountRemote
+-- 
+-- DESCRIPTION:
+--
+--      Mounts a remote filesystem
+-- 
+-- ID : $Id: MountRemote.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+-- 
+-- \chapter{Filesystems}
+--
+
+-- This interface allows servers to be started for remote filesystems.
+
+MountRemote : LOCAL INTERFACE =
+  NEEDS IDCOffer;
+  NEEDS Context;
+BEGIN
+
+  Option : TYPE = { ReadOnly, Debug };
+
+  Options : TYPE = SET OF Option;
+
+  Problem : TYPE = { Lookup, Denied, Server, Mountpoint };
+
+  Failure : EXCEPTION [ reason : Problem ];
+
+  Mount : PROC [ host       : STRING,
+                 mountpoint : STRING,
+                 options    : Options,
+                 settings   : IREF Context ]
+	RETURNS [ fs : IREF IDCOffer ]
+	RAISES Failure;
+    -- Remote filesystems are identified by "host" and "mountpoint". The
+    -- interpretation of these is filesystem dependent. For example, NFS
+    -- may interpret "host" as an IP address and "mountpoint" as an NFS
+    -- mountpoint, and SMB may interpret "host" as a machine name and
+    -- "mountpoint" as a share name.
+    --
+    -- "settings" is used for arbitrary name/value pairs, for example
+    -- rsize=8192, wsize=8192, timeout=60, etc.
+    -- "fs" is an IDCOffer for a FSClient.
+
+  SimpleMount : PROC [ host       : STRING, 
+                       mountpoint : STRING ]
+	RETURNS [ fs : IREF IDCOffer ]
+	RAISES Failure;
+    -- Clanger doesn't let us construct sets. Awkward.
+
+END.

@@ -1,0 +1,77 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      IDCClientBinding
+-- 
+-- DESCRIPTION:
+--
+--      Client control interface to an IDC binding
+-- 
+-- ID : $Id: IDCClientBinding.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+-- 
+
+-- Invoking "Bind" on an "IDCOffer" results in (if all goes well) an
+-- "IREF" of the required type, plus one of type "IDCClientBinding".
+-- "IDCClientBinding" interfaces are used for two purposes: firstly, they
+-- provide the means to create invocations, and are used by the
+-- surrogates for transmitting requests. Secondly, they allow control
+-- of a binding from the client's point of view; most notably, closing
+-- it down. 
+--
+-- It is possible to map surrogates to and from the corresponding
+-- "IDCClientBinding"s by using the convention documented in
+-- the "IDCClientStubs" interface.
+
+IDCClientBinding : LOCAL INTERFACE =
+  NEEDS IDC;
+BEGIN
+  
+  InitCall : PROC [ proc : WORD, name : STRING ] 
+             RETURNS [ b : IDC.BufferDesc ];
+    -- Block until there is a transmit buffer free, then return the
+    -- associated "BufferDesc" set up for a call of the "PROC"
+    -- whose index is "proc".
+
+  InitCast : PROC [ ann : WORD, name : STRING ] 
+             RETURNS [ b : IDC.BufferDesc ];
+    -- Block until there is a transmit buffer free, then return the
+    -- associated "BufferDesc" set up for a cast of the "ANNOUNCEMENT" 
+    -- whose index is "ann".
+             
+  SendCall : PROC [ b : IDC.BufferDesc ] RETURNS [];
+    -- Transmit the buffer previously prepared with "InitCall" or
+    -- "InitCast". 
+
+  ReceiveReply : PROC []
+                 RETURNS [ rc : WORD,
+                            b : IDC.BufferDesc, 
+                         name : STRING ];
+    -- Receive a reply from a server. "rc" represents an exception
+    -- raised by the server or infrastructure, or "0" if the call
+    -- completed normally.
+
+  AckReceive : PROC [ b : IDC.BufferDesc ] RETURNS [];
+    -- Notify any interested parties that the contents of the
+    -- receive buffer have been read and can be overwritten.
+
+  Destroy : PROC [] RETURNS [];  
+    -- Remove the binding, destroying both the client invocation
+    -- interface and this one, and call "ObjectTbl.Delete" on the
+    -- pervasive object table, passing the "IDCOffer" which generated
+    -- this binding.
+
+  -- Having "Destroy" call "ObjectTbl.Delete" is EXPERIMENTAL.  This
+  -- feature may disappear in future if it turns out not to be a good
+  -- idea.  If that happens, the "IDCClientStubs.State" record should
+  -- be modified by adding a field giving the "IDCOffer".
+
+END.

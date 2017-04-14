@@ -1,0 +1,59 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      BlockDev.if
+-- 
+-- DESCRIPTION:
+--
+--      Low level IO to a block device. 
+-- 
+-- FILE :	BlockDev.if
+-- CREATED :	Wed Jan  8 1997
+-- AUTHOR :	Paul Barham (Paul.Barham@cl.cam.ac.uk)
+-- ID : 	$Id: BlockDev.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+-- 
+-- \chapter{Devices}
+-- \section{Block}
+
+-- Blocke devices are those to which it is only sensible to perform
+-- I/O in fixed size units.  Examples are disks and some tape drives.  
+-- The "BlockDev" interface abstracts the features common to such
+-- devices.
+
+BlockDev : LOCAL INTERFACE =
+BEGIN
+    --
+    -- Types
+    --
+
+  Block : TYPE = CARDINAL;
+
+    -- 
+    -- Operations
+    --
+
+  BlockSize : PROC [ ] RETURNS [ bs : CARDINAL ];
+
+	-- Get the blocksize supported by this device.
+
+  Read : PROC [ b : Block, n : CARDINAL,
+	        a : ADDRESS ]
+	 RETURNS [ ok : BOOLEAN ];
+
+	-- Read "n" blocks starting at block "b".  This operation is
+	-- currently synchronous.
+
+  Write : PROC [ b : Block, n : CARDINAL,
+	         a : ADDRESS ]
+	  RETURNS [ ok : BOOLEAN ];
+
+	-- Write "n" blocks starting at block "b".
+
+END.

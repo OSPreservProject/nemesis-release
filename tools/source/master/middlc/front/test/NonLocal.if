@@ -1,0 +1,7 @@
+
+NonLocal : INTERFACE = 
+  NEEDS Beer; --  Should cause middlc to complain: Beer is LOCAL
+BEGIN
+  Random : PROC [ r: Beer.Ref ] RETURNS [];
+
+END.

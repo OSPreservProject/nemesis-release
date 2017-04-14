@@ -1,0 +1,595 @@
+#!/bin/sh
+# -*- perl -*-
+exec perl -w -- - ${1+"$@"} <<\\
+
+#
+# $Id: nemuse 1.1 Tue, 13 Apr 1999 14:06:13 +0100 dr10009 $
+
+# Oh dear, I don't remember how to use perl. This script needs major
+# tidying.
+
+# Syntax:  nemuse [options] [ machine [ description of use ] ]
+# If invoked as nemlock defaults to -l
+# If invoked as nemrelease defaults to -r
+
+# Command line options:
+# default operation is to list all machines
+# -i imagefile   link to the specified image
+# -n nfsdir      directory for image to mount by default
+# -r             release a machine
+# -l             claim a particular machine
+# -p prop[,prop] the selected machine must have these properties
+# -P             list all properties for selected machines
+# -c             run console script if present
+# -v             be verbose
+# -h, --help     help text
+
+use Socket;
+
+if (-d "/usr/groups/pegasus")
+{
+    $bootdir="/usr/groups/pegasus/boot";
+    $machinesfile="/usr/groups/pegasus/misc/testmachines";
+    $usersfile="/usr/groups/pegasus/boot/userlocks";
+    $lockfile="/usr/groups/pegasus/boot/userlocks-lock";
+    $mailprog="/usr/bin/v6mail";
+} 
+elsif (-d "/local/peg2/pegasus")
+{
+    $bootdir="/local/snow_tmp0/nfs";
+    $machinesfile="/local/peg2/pegasus/misc/testmachines";
+    $usersfile="/local/peg2/pegasus/misc/userlocks";
+    $lockfile="/local/peg2/pegasus/misc/userlocks-lock";
+    $mailprog="/users/peg/rjb/sanity/scripts/v6mail";
+}
+else
+{
+    die "Unable to determine where control files are located";
+}
+
+$userssep=":";
+$machinessep=":";
+$propssep=",";
+
+# can't leave places blank - trash $d
+($username,$d,$d,$d,$d,$d,$d,$homedir)=getpwuid($<);
+
+# A script to open the console of the locked machine; passed four parameters
+# eg. for candlestick we pass  styx 9650 styx 9651
+$consolescript=$homedir."/.nemuseconsole";
+
+$machine="";	# name of machine to operate on
+$image="";	# image file to use for machine
+$nfsdir="";	# directory for image to mount by default
+@properties=();	# user-supplied properties
+$verbose=0;
+$useconsolescript=0;
+
+@machines=();	# list of machines matching user-supplied properties
+%march=();	# array of machine architectures indexed by machine
+%mprop=();	# array of properties indexed by machine
+%userport=();	# array of user port addresses indexed by machine
+%kernelport=();	# array of kernel port addresses indexed by machine
+%debugport=();	# array of debug port addresses indexed by machine
+
+%locks=();	# array of current lock usernames, indexed by machine
+%locktimes=();	# array of current lock times, indexed by machine
+%locknotes=();	# array of current lock notes, indexed by machine
+
+
+# operations:
+#   0  list state
+#   1  claim machine
+#   2  release machine
+#   3  output debug port info for your locked machines
+#   4  list properties for machines
+$_=$0;
+$operation=0;
+/\/nemlock$/ && ($operation=1);
+/\/nemrelease$/ && ($operation=2);
+
+# Skip ownership check
+$force=0;
+
+# Subroutine declarations
+sub do_unlock;
+sub mail_user;
+
+# Initial sanity checks
+if ($< != $>) {
+    # UID and EUID are not the same
+    die "nemuse MUST NOT be installed setuid\n";
+}
+
+while (@ARGV && $machine eq "") {
+    $_ = shift(@ARGV);
+
+    if (/^-h$/ || /^--help$/) {
+	print <<EOH;
+nemuse|nemlock|nemrelease [options] [machine [notes]]
+
+Options:
+	-l     		lock machine
+	-r, -u		release machine
+	-f		force operation
+	-p prop[,prop]	choose machine based on list of properties
+	-i imagefile	name of image to use
+	-n nfsdir	default directory for image to mount
+	-c		use ~/.nemuseconsole script
+	-v		be verbose
+	-g		output debug port information for your locked machines
+	-P		list properties for selected machines
+	-h, --help	be helpful
+
+If the -c option is present and you are locking a machine then
+~/.nemuseconsole is invoked with five parameters:
+	1  name of test machine
+	2  address for kernel output
+	3  port for kernel output
+	4  address for user output
+	5  port for user output
+
+EOH
+    exit 0;
+    }
+    if (/^-l$/) {
+	$operation=1;  # lock machine
+	next;
+    }
+    if (/^-r$/ || /^-u$/) {
+	$operation=2;  # release machine
+	next;
+    }
+    if (/^-f$/) {
+	$force=1; # don't check who owns the machine
+	next;
+    }
+    if (/^-p$/) {
+	$p=shift(@ARGV);
+	if (!defined($p)) {
+	    die "nemuse: You must supply an argument to -p\n";
+	}
+	push @properties,split(",",$p);
+	next;
+    }
+    if (/^-i$/) {
+	$image=shift(@ARGV);
+	if (!defined($image)) {
+	    die "nemuse: You must supply an argument to -i\n";
+	}
+	next;
+    }
+    if (/^-n$/) {
+	$nfsdir=shift(@ARGV);
+	if (!defined($nfsdir)) {
+	    die "nemuse: You must supply an argument to -n\n";
+	}
+	next;
+    }
+    if (/^-c$/) {
+	$useconsolescript=1;
+	next;
+    }
+    if (/^-v$/) {
+	$verbose=1;
+	next;
+    }
+    if (/^-g$/) {
+	$operation=3; # debug port info
+	next;
+    }
+    if (/^-P$/) {
+	$operation=4; # print properties
+	next;
+    }
+    $machine=$_;
+}
+
+# Sanity check for Dickon
+if ($useconsolescript && $operation!=1) {
+    print "nemuse: Using -c is only appropriate while locking\n";
+    exit 1;
+}
+
+# Ideally it would be nice to read some defaults from somewhere if the user
+# hasn't specified any properties or machine name
+if ($machine eq "" && scalar(@properties)==0) {
+    # do something about defaults
+}
+
+# Open the machine description file
+open (MACHINESFILE, $machinesfile) ||
+    die "nemuse: Couldn't open machine list '".$machinesfile."'\n";
+
+# Read the machines file, filtered by properties
+while (<MACHINESFILE>) {
+    chomp;
+    /^\#/ && next; # skip lines starting with hash
+    /^ *$/ && next; # skip empty lines
+    ($m,$a,$p,$k,$u,$d)=split($machinessep);
+    @prop=split($propssep,$p);
+    $ok=1;
+    foreach $cp (@properties) {
+	if (scalar(grep(($cp eq $_),@prop))==0) {
+	    $ok=0;
+	}
+    }
+    if ($ok) {
+	push(@machines,$m);
+	$march{$m}=$a;
+	$mprop{$m}=$p;
+	$userport{$m}=$u;
+	$kernelport{$m}=$k;
+	$debugport{$m}=$d;
+    }
+}
+close MACHINESFILE;
+
+# if the user has specified a machine, make sure it exists
+if ($machine ne "") {
+    $ok=0;
+    foreach $m (@machines) {
+	if ($m eq $machine) {
+	    $ok = 1;
+	    last;
+	}
+    }
+    if (!$ok && !($machine eq "all" && $operation==2)) {
+	print "nemuse: Machine '".$machine."' does not match property list\n";
+	exit 2;
+    }
+}
+
+# If we're claiming or releasing then lock the users file
+if ($operation == 1 || $operation == 2) {
+    if (-e $lockfile) {
+	die "nemuse: Users file is already locked: try again\n";
+    }
+
+    # Create the lock directory
+    mkdir($lockfile,0) || die "nemuse: Couldn't lock users file\n";
+}
+
+# Start a block for operations that occur while the lock is held
+
+$exitval=2;
+{
+    # Read the list of locked machines
+    if (!open (USERSFILE, $usersfile)) {
+	print "nemuse: Couldn't open user list file '".$usersfile."'\n";
+	$exitval=2;
+	next;
+    }
+    while (<USERSFILE>) {
+	chomp;
+	($m,$u,$t,$n)=split($userssep);
+	$locks{$m}=$u;
+	$locktimes{$m}=$t;
+	$locknotes{$m}=$n;
+    }
+    close USERSFILE;
+
+    if ($operation == 0) {
+	# List all machines, with users who have them locked
+	$~=TMLIST;
+	foreach $m (@machines) {
+	    $a=$march{$m};
+	    $u=defined($locks{$m})?$locks{$m}:"";
+	    $d=defined($locknotes{$m})?$locknotes{$m}:"";
+	    if (defined($locks{$m}) || $verbose) {
+		write STDOUT;
+	    }
+	}
+    }
+
+    if ($operation == 3) {
+	# If a machine is specified, output information for that machine
+	if ($machine ne "") {
+	    print $machine." ".$march{$machine}." ".
+		join(" ",split(",",$debugport{$machine}))."\n";
+	} else {
+	    foreach $m (keys(%locks)) {
+		if ($locks{$m} eq $username) {
+		    print $m." ".$march{$m}." ".
+			join(" ",split(",",$debugport{$m}))."\n";
+		}
+	    }
+	}
+    }
+
+    if ($operation == 4) {
+	$~=PROPLIST;
+	foreach $m (@machines) {
+	    $p=join(" ",split(",",$mprop{$m}));
+	    if ($machine eq "" || $m eq $machine) {
+		write STDOUT;
+	    }
+	}
+    }
+
+    if ($operation == 1) {
+	# claim machine
+	if ($machine eq "") {
+	    # find an unlocked machine
+	    foreach $m (@machines) {
+		if (!defined($locks{$m}) &&
+		    scalar(grep(($_ eq "noauto"),split(",",$mprop{$m})))==0) {
+		    $machine = $m;
+		    last;
+		}
+	    }
+	    if ($machine eq "") {
+		printf("nemuse: No appropriate machine is available\n");
+		$exitval=1;
+		next;
+	    }
+	}
+	else {
+	    # See if machine is locked
+	    if (defined($locks{$machine})) {
+		# do we have it already?
+		if ($locks{$machine} ne $username) {
+		    if (!$force) {
+			print $machine." is locked by ".$locks{$machine}."\n";
+			print "The lock was obtained at ".
+			    localtime($locktimes{$machine})."\n";
+			$exitval=1;
+			next;
+		    } else {
+			print $machine." is locked by ".$locks{$machine}.", ".
+			    "but -f was used: ignoring problem ".
+				"and sending mail\n";
+			mail_user($locks{$machine}, $machine,
+				  $locktimes{$machine});
+			break_telnet($machine);
+		    }
+		}
+	    }
+	}
+
+	# it's free, so it's now ours
+	$locks{$machine}=$username;
+	$locktimes{$machine}=time();
+	$locknotes{$machine}=join(" ",@ARGV);
+
+	if ($nfsdir eq "") {
+	    $nfsdir=$username."/".$machine;
+	    # sanity checks and fixups
+	    if (!defined(-e $bootdir."/".$username)) {
+		mkdir($bootdir."/".$username,0755);
+	    }
+	    if (!defined(-e $bootdir."/".$nfsdir)) {
+		symlink($march{$machine},
+			$bootdir."/".$nfsdir);
+		if (!defined(-e $bootdir."/".$username."/".$march{$machine})) {
+		    symlink("../install/".$march{$machine},
+			    $bootdir."/".$username."/".$march{$machine});
+		}
+	    }
+	}
+	if ($image eq "") {
+	    $image=$username."/".$machine."/image";
+	}
+	# unlink the boot image and replace it with an appropriate symlink
+	# may fail - don't worry about it
+	unlink($bootdir."/".$machine);
+	unlink($bootdir."/".$machine.".nfs");
+	if (!symlink($image,$bootdir."/".$machine)) {
+	    print "Unable to create image symlink for ".$machine."\n";
+	    $exitval=2;
+	    next;
+	}
+	if (!symlink($nfsdir,$bootdir."/".$machine.".nfs")) {
+	    print "Unable to create mount point symlink for ".$machine."\n";
+	    $exitval=2;
+	    next;
+	}
+
+	# if they provide a script to connect to the machine's console, use it
+	if ($useconsolescript && -x $consolescript) {
+	    system $consolescript." ".$machine." ".
+		join(" ",split(",",$kernelport{$machine}))." ".
+		join(" ",split(",",$userport{$machine}));
+	}
+
+	print "Locked machine ".$machine." (".$kernelport{$machine}.
+	    " ".$userport{$machine}.")\n";
+    }
+    
+    if ($operation == 2) {
+	# release a machine
+
+	if ($machine eq "all") {
+	    # find all appropriate machines locked by us
+	    foreach $m (@machines) {
+		if (defined($locks{$m}) && $locks{$m} eq $username) {
+		    do_unlock($m);
+		}
+	    }
+	} else {
+
+	    if ($machine eq "") {
+		print "You must name a machine to release\n";
+		$exitval=1;
+		next;
+	    }
+
+	    if (!defined($locks{$machine})) {
+		print $machine." is not locked\n";
+		$exitval=1;
+		next;
+	    }
+
+	    if ($locks{$machine} ne $username) {
+		if (!$force) {
+		    print $machine." is locked by ".$locks{$machine}."\n";
+		    print "The lock was obtained at ".
+			localtime($locktimes{$machine})."\n";
+		    $exitval=1;
+		    next;
+		} else {
+		    print $machine." is locked by ".$locks{$machine}.", ".
+			"but -f was used: ignoring problem and sending mail\n";
+		    mail_user($locks{$machine}, $machine,
+			      $locktimes{$machine});
+		    break_telnet($machine);
+		}
+	    }
+
+	    # it's ok for us to release the lock
+	    do_unlock($machine);
+	    print "Please remember to release the console.\n" if ($verbose);
+	}
+    }
+
+    # if we're locking or releasing, rewrite the users file
+    if ($operation != 0) {
+	if (!open(USERSFILE,">$usersfile.$$")) {
+	    print "nemuse: Can't open $usersfile.$$ for writing\n";
+	    $exitval = 2;
+	    next;
+	}
+	foreach $m (keys(%locks)) {
+	    print USERSFILE
+		$m.$userssep.$locks{$m}.$userssep.$locktimes{$m}.
+		    $userssep.$locknotes{$m}."\n";
+	}
+	if (!close(USERSFILE)) {
+	    warn "nemuse: close of $usersfile.$$ failed: $!\n";
+	    $exitval = 2;
+	    next;
+	}
+	# now atomically rename it into place
+	if (!rename("$usersfile.$$", "$usersfile")) {
+	    warn "nemuse: rename $usersfile.$$ to $usersfile failed: $!\n";
+	    $exitval = 2;
+	    next;
+	}
+    }
+
+    $exitval=0;
+} continue {
+    # Release lock if appropriate
+    if ($operation == 1 || $operation == 2) {
+	rmdir($lockfile) || die "nemuse: Couldn't release lockfile '".
+	    $lockfile."'\n";
+    }
+}
+
+exit $exitval;
+
+
+# Pass in machine name; unlocks it
+sub do_unlock {
+    my $machine = $_[0];
+
+    delete $locks{$machine};
+    # it's ugly to repeat this code - fix later
+    unlink ($bootdir."/".$machine);
+    unlink ($bootdir."/".$machine.".nfs");
+    symlink ("install/".$march{$machine}."/image",
+	     $bootdir."/".$machine);
+    symlink ("install/".$march{$machine},
+	     $bootdir."/".$machine.".nfs");
+    print "Unlocked ".$machine."\n";
+}
+    
+# Pass in id of user whose lock was stolen, and name of machine, and
+# time machine was locked
+sub mail_user {
+    my $machine = $_[1];
+    my $ruser = $_[0];
+    my $olocktime = $_[2];
+
+    print "Sending mail to ".$ruser." from ".$username." about ".$machine."\n";
+    open(MAIL, "|$mailprog -s '$machine: stolen by $username' $ruser")
+	|| return;
+    print MAIL "Your lock on ".$machine." was stolen by ".$username.".\n";
+    print MAIL "\nYou obtained your lock on ".localtime($olocktime).".\n";
+    close(MAIL);
+
+    return;
+}
+
+
+sub break_telnet {
+    local ($machine) = @_;
+    local ($pid, $conshost, $consport);
+
+    $pid = fork();
+    if (! defined($pid))
+    {
+	warn "break_telnet: fork failed: $!\n";
+	return;
+    }
+
+    return if ($pid);   # parent returns
+
+
+    # work out if we know how to break these beasts
+
+    # try as if it were an nsplitd first
+    if ($debugport{$machine} =~ /([^,]+),(\d+)/)
+    {
+	# looks semi-plausable
+	$conshost = $1;
+	$consport = $2;
+	$consport++;
+
+	if (myconnect($conshost, $consport))
+	{
+	    print SOCK "r\r\n";
+	    close(SOCK);
+	    print "Broke nsplitd telnet connections\n";
+	}
+    }
+    else
+    {
+	# don't know what else to do
+	print "Unable to automatically kill telnets, check manually\n";
+    }
+
+    exit(0);
+}
+
+sub myconnect {
+    local ($host, $port) = @_;
+    local ($proto, $sin, $iaddr);
+
+    $iaddr = gethostbyname($host);
+    if (!defined($iaddr))
+    {
+	warn "nemuse: $host: host not found\n";
+	return 0;
+    }
+
+    $proto = getprotobyname('tcp');
+    socket(SOCK, PF_INET, SOCK_STREAM, $proto);
+    $sin = sockaddr_in(0, INADDR_ANY); # pick a port, any port
+    bind(SOCK, $sin) || (warn "nemuse: bind failed: $!\n", return 0);
+    $sin = sockaddr_in($port, $iaddr);
+    connect(SOCK, $sin) || return 0;
+	   
+    local($old) = select(SOCK); $| = 1; select($old);
+}
+
+
+format TMLIST_TOP =
+                         Nemesis Test Machines
+Machine      Arch     User      Notes
+-----------------------------------------------------------------------------
+.
+format TMLIST =
+@<<<<<<<<<<< @<<<<<<< @<<<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+$m,          $a,      $u,       $d
+.
+
+format PROPLIST_TOP =
+                         Nemesis Test Machines
+-----------------------------------------------------------------------------
+Machine      Properties
+.
+format PROPLIST =
+@<<<<<<<<<<< @<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+$m,          $p
+.

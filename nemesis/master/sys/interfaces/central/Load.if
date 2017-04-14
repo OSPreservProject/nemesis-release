@@ -1,0 +1,67 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--	Load.if
+--
+-- DESCRIPTION:
+--
+--	Loader library interface
+--
+-- ID : $Id: Load.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Loader}
+-- 
+-- 
+
+Load : LOCAL INTERFACE = 
+  NEEDS Rd;
+  NEEDS Stretch;
+  NEEDS Context;
+  NEEDS ProtectionDomain;
+BEGIN
+
+  -- External symbols defined by modules are recorded during loading
+  -- in a "Context" which maps their string names to "Symbol"s.
+
+  SymbolRec : TYPE = RECORD [
+    name  : STRING,
+    class : SHORT CARDINAL,     -- storage class (text, data, ...)
+    type  : SHORT CARDINAL,     -- symbol type (proc, global, ...)
+    value : WORD
+  ];
+  Symbol : TYPE = REF SymbolRec;
+
+  -- Various things will cause a load to fail.
+
+  Bad : TYPE = { FileHdr, Format, OptionalHdr, Magic, SectionHdr,
+                 RelocationInfo, UnresolvedSymbols, Segment,
+                 CantRelocate, SymTab, Strings };
+
+  Failure : EXCEPTION [ why: Bad ];
+
+  -- "FromRd" loads the module on "rd", attempting to resolve imported
+  -- external symbols against the values in "imps".  External symbols
+  -- exported by the module are themselves recorded in "exps".  It may
+  -- be convenient for "imps" and "exps" to be the same context.
+  -- The text, data, etc are mapped into stretches within the
+  -- protection domain specified by "pdid".
+
+  FromRd : PROC    [ rd   : IREF Rd,
+                     imps : IREF Context,
+                     exps : IREF Context,
+		     pdid : ProtectionDomain.ID ]
+           RETURNS [ text : IREF Stretch,
+                     data : IREF Stretch  ]
+           RAISES Failure;
+
+END.
+
+
+

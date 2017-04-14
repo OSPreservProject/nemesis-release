@@ -1,0 +1,64 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1996, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Directory.if
+-- 
+-- DESCRIPTION:
+--
+--      Interface for filesystem directories
+-- 
+-- ID : $Id: Directory.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Files}
+--
+
+-- A Directory is an extension of the Context interface which maps
+-- UNIX-like filenames to File objects. It differs from Context in
+-- that it provides the additional methods to open/create entries in
+-- a Directory with options. 
+
+Directory : LOCAL INTERFACE =
+  EXTENDS Context;
+  NEEDS File;
+BEGIN
+	-- "List" does what you would expect: returns a list of
+	-- all of the names in this directory.
+
+	-- "Get" looks up a name in the directory to obtain an
+	-- "File.Attributes" record.  i.e. the equivalent of "stat"
+
+	-- Open options which may be specified
+	OpenOption: TYPE = {ReadOnly, WriteOnly, ReadWrite, Create, Append};
+	OpenOptions: TYPE = SET OF OpenOption;
+
+	Open: PROC [ name: STRING,
+                     options: OpenOptions]
+	      RETURNS [ file: IREF File ]
+              RAISES Context.NotFound, Context.Exists, Context.Denied;
+
+        -- "Open" looks up "name" in the directory and, if it is a 
+        -- regular file, creates a "File" object which may be 
+	-- used to access the file.
+
+	OpenDir: PROC [ name: STRING ]
+	      RETURNS [ file: IREF Directory ]
+              RAISES Context.NotFound, Context.Denied;
+
+        -- "OpenDir" looks up "name" in the directory and, if it is another 
+        -- directory, creates a new "Directory" object.
+
+
+	SimpleOpen: PROC [ name : STRING ]
+	      RETURNS [ file: IREF File ]
+              RAISES Context.NotFound, Context.Exists, Context.Denied;
+
+	-- Same as "Open", but without options. Defaults to "ReadOnly".
+
+END.

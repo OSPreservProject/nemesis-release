@@ -1,0 +1,57 @@
+/*
+ * FILE		:	cube.poly
+ * AUTHOR	:	Ralph Becket
+ * DATE		:	Wed Apr  7 18:14:03 BST 1993
+
+ * Definition of the cube polyhedron.
+ */
+
+
+
+#ifndef __cube_poly__
+#define __cube_poly__
+
+
+
+#define T	40
+
+
+vertex		cube_v[] = {
+			     {-T, T,-T},
+			     { T, T,-T},
+			     { T, T, T},
+			     {-T, T, T},
+			     {-T,-T,-T},
+			     { T,-T,-T},
+			     { T,-T, T},
+			     {-T,-T, T}
+			   };
+
+vset		cube_vs = { 8, cube_v };
+
+unsigned	cube_f_p0[] = { 0, 1, 2, 3 };
+unsigned	cube_f_p1[] = { 0, 3, 7, 4 };
+unsigned	cube_f_p2[] = { 3, 2, 6, 7 };
+unsigned	cube_f_p3[] = { 2, 1, 5, 6 };
+unsigned	cube_f_p4[] = { 1, 0, 4, 5 };
+unsigned	cube_f_p5[] = { 7, 6, 5, 4 };
+
+face		cube_f[] = {
+			     { 4, cube_f_p0 },
+			     { 4, cube_f_p1 },
+			     { 4, cube_f_p2 },
+			     { 4, cube_f_p3 },
+			     { 4, cube_f_p4 },
+			     { 4, cube_f_p5 }
+			   };
+
+fset		cube_fs = { 6, cube_f };
+
+polyhedron	cube_poly = { &cube_vs, &cube_fs };
+
+
+#undef T
+
+
+
+#endif

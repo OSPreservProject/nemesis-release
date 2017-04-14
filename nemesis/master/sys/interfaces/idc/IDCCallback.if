@@ -1,0 +1,79 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      IDCCallback.if
+-- 
+-- DESCRIPTION:
+--
+--      For those servers who want to know a little bit more about
+--              who is playing with their offers.
+-- 
+-- FILE :       IDCCallback.if
+-- CREATED :    Wed Feb 19 1997
+-- AUTHOR :     Paul Barham (Paul.Barham@cl.cam.ac.uk)
+-- ID :         $Id: IDCCallback.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+--
+
+-- The "IDCCallback" interface is used by servers who need to be 
+-- aware of the creation and destruction of bindings.
+
+IDCCallback : LOCAL INTERFACE =
+        NEEDS Binder;
+        NEEDS Domain;
+        NEEDS ProtectionDomain;
+        NEEDS IDCOffer;
+        NEEDS IDCServerBinding;
+BEGIN 
+
+        Request : PROC    [ offer       : IREF IDCOffer,
+                            did         : Domain.ID,
+                            pdid        : ProtectionDomain.ID,
+                            clt_cks     : Binder.Cookies,
+                            OUT svr_cks : Binder.Cookies ]
+                  RETURNS [ accept      : BOOLEAN ];
+
+  -- A client has requested to bind the "offer".  "did" and
+  -- "pdid' are the client's domain and protection domain IDs 
+  -- respectively. Cookies are passed in both directions in case 
+  -- anybody is interested in doing random security mumbles.  The 
+  -- server can decide whether or not to accept the request.
+
+        Bound : PROC    [ offer         : IREF IDCOffer,
+                          binding       : IREF IDCServerBinding,
+                          did           : Domain.ID,
+                          pdid          : ProtectionDomain.ID,
+                          clt_cks       : Binder.Cookies,
+                          IN OUT server : Type.Any ] 
+                RETURNS [ success : BOOLEAN ];
+                                   
+  -- A new binding has successfully been established.
+  -- Any remaining initialisation of the server closure
+  -- may be performed at this point.
+
+  -- An example of a situation where this is useful is the
+  -- FlowManager, which requires per-client state on each binding, to
+  -- permit connection control and garbage collection of connections
+  -- on client death.  The per-client state will have a reference to
+  -- the shared FlowManager state --- a new closure will be created
+  -- with the per-client state and substituted for the passed in
+  -- "server".
+
+        Closed : PROC [ offer   : IREF IDCOffer,
+                        binding : IREF IDCServerBinding,
+                        server  : Type.Any ]
+                    RETURNS [];
+                
+  -- This binding has been closed. (note that "binding" is 
+  -- probably no longer valid, but is intended to allow servers
+  -- to tidy up.
+        
+END.

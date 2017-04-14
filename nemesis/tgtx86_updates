@@ -1,0 +1,157 @@
+ The Nemesis X86 target
+=======================
+
+#00004 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Wed May 26 16:34:21 1999
+--------------------------------------------------------------------------
+
+glue/packages/tgtx86.py            -- removed doubled up ix86_arch
+
+#00003 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue May 25 17:52:00 1999
+--------------------------------------------------------------------------
+
+ntsc/ix86/intel/local.c            -- kill the blue screen of death
+
+#00002 dr10009 pp Rolf Neugebauer (neugebar@dcs.gla.ac.uk) Fri Apr 30 12:18:59 1999
+-----------------------------------------------------------------------------------
+small fix
+h/intel/io.h                       -- get types for pci<->phys right
+
+#00001 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Mon Feb 15 13:11:53 GMT 1999
+------------------------------------------------------------------------------
+Create the Nemesis Release X86 support
+glue                               ** NEW DIRECTORY
+glue/packages                      ** NEW DIRECTORY
+glue/packages/tgtx86.py            ++ describe me
+mk                                 ** NEW DIRECTORY
+mk/intel-smp.tgt.mk                ++ describeme
+mk/intel.tgt.mk                    ++ describeme
+mk/ix86_linux.pfm.mk               ++ describeme
+mk/ix86_target.mk                  ++ describeme
+mk/linux_for_arm.pfm.mk            ++ describeme
+h                                  ** NEW DIRECTORY
+h/iana.h                           ++ describeme
+h                                  ** NEW DIRECTORY
+h/intel                            ** NEW DIRECTORY
+h/intel/Type.ih                    ++ describeme
+h/intel/VPMacros.h                 ++ describeme
+h/intel/dcb.h                      ++ describeme
+h/intel/dcb.off.h                  ++ describeme
+h/intel/io.h                       ++ describeme
+h/intel/irq.h                      ++ describeme
+h/intel/jmp_buf.h                  ++ describeme
+h/intel/kernel_config.h            ++ describeme
+h/intel/kernel_st.h                ++ describeme
+h/intel/kernel_tgt.h               ++ describeme
+h/intel/math_inline.h              ++ describeme
+h/intel/nemesis_tgt.h              ++ describeme
+h/intel/ntsc_tgt.h                 ++ describeme
+h/intel/pip.h                      ++ describeme
+h/intel/syscall.h                  ++ describeme
+h/intel/timer.h                    ++ describeme
+h/intel/veneer_tgt.h               ++ describeme
+h                                  ** NEW DIRECTORY
+h/ix86                             ** NEW DIRECTORY
+h/ix86/asm                         ** NEW DIRECTORY
+h/ix86/asm/elf.h                   ++ describeme
+h/ix86/asm/ptrace.h                ++ describeme
+h/ix86/asm/stackframe.h            ++ describeme
+h/ix86/bitops.h                    ++ describeme
+h/ix86/context.h                   ++ describeme
+h/ix86/elf.h                       ++ describeme
+h/ix86/float.h                     ++ describeme
+h/ix86/interrupt.h                 ++ describeme
+h/ix86/limits.h                    ++ describeme
+h/ix86/mmu_tgt.h                   ++ describeme
+h/ix86/multiboot.h                 ++ describeme
+h/ix86/platform.h                  ++ describeme
+h/ix86/processor.h                 ++ describeme
+h/ix86/stdarg.h                    ++ describeme
+h/ix86/veneer.h                    ++ describeme
+lib                                ** NEW DIRECTORY
+lib/static                         ** NEW DIRECTORY
+lib/static/intmath                 ** NEW DIRECTORY
+lib/static/intmath/ix86            ** NEW DIRECTORY
+lib/static/intmath/ix86/Makefile   ++ describeme
+lib/static/intmath/ix86/intmath.c  ++ describeme
+lib                                ** NEW DIRECTORY
+lib/static                         ** NEW DIRECTORY
+lib/static/system                  ** NEW DIRECTORY
+lib/static/system/crt0_ix86.S      ++ describeme
+lib/static/system/setjmp_intel-smp.S ++ describeme
+lib/static/system/setjmp_intel.S   ++ describeme
+lib/static/system/stub_ix86.c      ++ describeme
+lib/static/system/syscall_intel.S  ++ describeme
+lib/static/system/syscall_intel_inline.h ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/ix86                   ** NEW DIRECTORY
+mod/nemesis/ix86/Time.c            ++ describeme
+mod/nemesis/ix86/VP.c              ++ describeme
+ntsc                               ** NEW DIRECTORY
+ntsc/ix86                          ** NEW DIRECTORY
+ntsc/ix86/Makefile                 ++ describeme
+ntsc                               ** NEW DIRECTORY
+ntsc/ix86                          ** NEW DIRECTORY
+ntsc/ix86/intel                    ** NEW DIRECTORY
+ntsc/ix86/intel/Makefile           ++ describeme
+ntsc/ix86/intel/asm.h              ++ describeme
+ntsc/ix86/intel/gdb-asm.S          ++ describeme
+ntsc/ix86/intel/i386-stub.c        ++ describeme
+ntsc/ix86/intel/i386-stub.h        ++ describeme
+ntsc/ix86/intel/idt.S              ++ describeme
+ntsc/ix86/intel/inline.h           ++ describeme
+ntsc/ix86/intel/kernel.c           ++ describeme
+ntsc/ix86/intel/khead.S            ++ describeme
+ntsc/ix86/intel/local.c            ++ describeme
+ntsc/ix86/intel/mmgmt.c            ++ describeme
+ntsc/ix86/intel/pagesetup.c        ++ describeme
+ntsc/ix86/intel/segment.h          ++ describeme
+ntsc/ix86/intel/serial.c           ++ describeme
+ntsc/ix86/intel/stub-support.c     ++ describeme
+ntsc/ix86/intel/syscalls.c         ++ describeme
+ntsc/ix86/intel/timer.c            ++ describeme
+ntsc/ix86/intel/timer_rdtsc.c      ++ describeme
+mod                                ** NEW DIRECTORY
+mod/pci                            ** NEW DIRECTORY
+mod/pci/intel_bios32.c             ++ describeme
+sys                                ** NEW DIRECTORY
+sys/primal                         ** NEW DIRECTORY
+sys/primal/pcrt0_ix86.S            ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/threads                ** NEW DIRECTORY
+mod/nemesis/threads/thead_intel-smp.S ++ describeme
+mod/nemesis/threads/thead_intel.S  ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/ugdb                   ** NEW DIRECTORY
+mod/nemesis/ugdb/stub_ix86.c       ++ describeme
+sys/primal/addr_init_intel.c       ++ describeme
+boot                               ** NEW DIRECTORY
+boot/images                        ** NEW DIRECTORY
+boot/images/intel                  ** NEW DIRECTORY
+boot/images/intel/bootsect.S       ++ describeme
+boot/images/intel/head.S           ++ describeme
+boot/images/intel/inflate.c        ++ describeme
+boot/images/intel/io.h             ++ describeme
+boot/images/intel/linkage.h        ++ describeme
+boot/images/intel/misc.c           ++ describeme
+boot/images/intel/nemesis.gdb      ++ describeme
+boot/images/intel/setup.S          ++ describeme
+boot/images/intel/video.S          ++ describeme
+sys                                ** NEW DIRECTORY
+sys/domains                        ** NEW DIRECTORY
+sys/domains/sched_intel-smp.c      ++ describeme
+sys/domains/sched_intel.c          ++ describeme
+boot/images/intel/Makefile         ++ describeme
+sys                                ** NEW DIRECTORY
+sys/memory                         ** NEW DIRECTORY
+sys/memory/intel_mmu.c             ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/sgen                   ** NEW DIRECTORY
+mod/nemesis/sgen/ix86_stubs.S      ++ describeme
+mod/nemesis/sgen/ix86_synth.c      ++ describeme
+ntsc/ix86/intel/mmgmt.c            --  More informative warnings about 
+potential stack overruns
+

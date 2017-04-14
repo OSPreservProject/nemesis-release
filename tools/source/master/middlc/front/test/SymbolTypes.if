@@ -1,0 +1,7 @@
+SymbolTypes : INTERFACE = 
+
+BEGIN
+  Data  : TYPE = STRING;
+  Bogus : PROC [] RETURNS [];
+  -- should not affect numbering of procs in SymbolTable
+END.

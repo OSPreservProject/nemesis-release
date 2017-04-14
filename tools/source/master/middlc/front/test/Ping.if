@@ -1,0 +1,55 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Ping
+-- 
+-- DESCRIPTION:
+--
+--      IDC Test interface.
+-- 
+-- ID : $Id: Ping.if 1.1 Thu, 18 Feb 1999 14:20:06 +0000 dr10009 $
+-- 
+
+Ping : INTERFACE = 
+BEGIN
+
+  Cardinal : PROC [ n: CARDINAL ] RETURNS [ next: CARDINAL ];
+
+
+  -- Test mutable parameters
+
+  Big : TYPE = RECORD [ a, b: INTEGER ];
+
+  Small : PROC [ IN OUT n: CARDINAL ] RETURNS [ ];
+
+  Large : PROC [ IN OUT b: Big      ] RETURNS [ ];
+
+  Many  : PROC    [ IN OUT n: CARDINAL, OUT b: Big ]
+          RETURNS [ res1: Big, res2: Big ];
+
+  Spong : PROC    [ ]
+          RETURNS [ res1: CARDINAL, res2: Big ];
+
+  Wombat: PROC    [ ]
+          RETURNS [ res1: Big, res2: CARDINAL ];
+
+  Foo   : PROC    [ ]
+          RETURNS [ res1: CARDINAL, res2: CARDINAL ];
+
+  StrAlias1 : TYPE = STRING;
+  StrAlias  : TYPE = StrAlias1;
+
+  String: PROC    [ arg1: STRING ]
+          RETURNS [ res1: STRING, res2: StrAlias, res3: STRING ];
+
+
+
+
+END.

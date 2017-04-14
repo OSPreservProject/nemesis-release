@@ -1,0 +1,39 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1995, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      EntryMod
+-- 
+-- DESCRIPTION:
+--
+--      Fabricates Entries.
+-- 
+-- ID : $Id: EntryMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+-- 
+
+-- "EntryMod" is an interface used to create "Entry"s.
+
+EntryMod : LOCAL INTERFACE =
+  NEEDS ActivationF;
+  NEEDS Entry;
+BEGIN
+
+  -- "New" creates a new entry. 
+
+  New : PROC    [ actf  : IREF ActivationF,
+                  vp    : IREF VP,
+                  nch   : CARDINAL   ]
+        RETURNS [ e     : IREF Entry ]
+        RAISES Heap.NoMemory;
+    -- Create a new "Entry" running over the VP "vp" and ActivationF
+    -- "actf", and capable of handling "nch" bindings. 
+
+END.

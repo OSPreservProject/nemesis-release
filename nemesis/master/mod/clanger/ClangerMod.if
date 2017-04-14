@@ -1,0 +1,31 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright %y, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      ClangerMod.if
+-- 
+-- DESCRIPTION:
+--
+--      Produce Clangers
+-- 
+-- FILE :	ClangerMod.if
+-- 
+--
+
+ClangerMod : LOCAL INTERFACE =
+NEEDS Clanger;
+NEEDS Rd;
+NEEDS Wr;
+BEGIN
+
+  -- Produce a new clanger
+
+  New : PROC [ ] RETURNS [ interp: IREF Clanger];
+  
+END.

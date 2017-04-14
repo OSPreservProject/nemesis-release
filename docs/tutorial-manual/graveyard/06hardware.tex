@@ -1,0 +1,139 @@
+% appendix to nemesis intro doc
+
+\chapter{Supported Hardware}
+\label{sec:hardware}
+
+All of the information provided in this section is to the best of our
+knowledge and belief.  We do not guarantee that it is error-less nor
+are we responsible for problems derived from purchasing according to
+this information.
+
+\section{Systems}
+
+The support for various platforms is summarised in table
+\ref{tab:support}.  \emph{There are some 'issues' with PCI and Intel
+  hardware.}  In particular the Triton I and Triton II chip-sets
+contain some PCI bugs which prevent certain PCI cards from working
+correctly.  In particular it is known that the Digital ATM Works 350
+does not work with some: see table \ref{tab:workingpci} for details.  The
+Triton is the name for the Pentium's motherboard chip-set, the Natoma
+for the Pentium Pro.  We therefore recommend Natoma based machines.
+  
+\begin{table}[htb]
+\begin{center}
+\begin{tabular}{c|c}
+Platform & Support \\ \hline
+Intel & Full \\
+Digital PC164 & Full \\
+Digital EB164 & Full \\
+Digital EB64 & Little \\
+Digital AXP3000 & Moderate \\
+Digital SHARK & Moderate \\
+Digital IT & Moderate \\
+Intel Multiprocessors & Little \\
+\end{tabular}
+\end{center}
+\caption{Platforms listed in order of support}
+\label{tab:support}
+\end{table}
+
+\begin{table}[htb]
+\begin{center}
+\begin{tabular}{c|c|c}
+Working    & Broken     & Unknown \\ \hline
+82441FX    & 82437      & 430TX       \\
+AL440LX    & 82439FX    & 430VX       \\
+           & 82439HX    & 82789IB     \\
+\end{tabular}
+\end{center}
+\caption{Summary of PCI working-ness}
+\label{tab:workingpci}
+\end{table}
+
+\emph{If you have doubt about your machine boot linux and run
+  \texttt{grep 'Host bridge' /proc/pci}, the output should contain
+  exactly one of the words ``Triton'' or ``Natoma''.}
+
+There are a number of comments:
+\begin{itemize}
+\item The extant alpha pal-code is for EV4, EV45, EV5 and EV56 chips.
+\item We do not recommend purchasing Digital hardware from
+  ``Bytech'', rather we currently recommend ParSys Ltd.
+\item The Intel port has not been tested recently on 386 or 486 hardware.
+\end{itemize}
+
+\section{Recomendations}
+
+We recommend either the purchase of Intel Natoma (Pentium Pro or
+P{\small II}) based
+systems,  or the purchase of Digital Alpha PC164 systems.
+
+\section{Device Hardware}
+
+Existing device drivers for various hardware on various busses are
+described below.  Partners are encouraged to write additional device
+drivers.
+
+\subsection{PCI}
+\begin{itemize}
+\item The most recent frame buffer supported is the Matrox
+  Millennium~II.  The Diamond Stealth 64 2Mbyte VRAM card based on the
+  S3/968 chip-set using ``New MMIO'' with either the IBM RGB524 timing
+  chip, or the TI 3025/6 is also supported.
+\item The Ethernet cards supported are those based on the DE4x5
+  chip-sets.  In particular the DE450 and DE500 (the latter supporting
+  both 10 and 100Mbit) have been tested in both EB164 and
+  Intel\footnote{At the time of writing the bootp client has yet to
+    have support for this card integrated.}.
+\item The OPPO ATM card (Digital ATM Works 350) is supported in all
+  PCI machines except the Triton.  This card is highly recommended.
+  On \emph{no} account get the Digital ATM Works 350{\bf L} card, which is
+  completely different and neither supported nor recommended.
+\item The Nicstar ATM card (based on the IDT 77201) is supported, but
+  has much lower performance than the OPPO.  Ensure you get revision E
+  (or later) silicon.
+\item Most cards based on the NCR53c8xx SCSI chip are supported.
+\end{itemize}
+
+\subsection{ISA}
+
+Note that like similar restrictions with Linux, ISA cards which
+require strange BIOS Pnp activities, (e.g. some soundblaster cards),
+may not work in machines WITH no BIOS (e.g. EB164s).  In general the
+purchase of ISA PnP cards should be avoided at least for the time
+being until plug and play support has been implemented under Nemesis.
+
+\begin{itemize}
+\item For PCs, the 3c509 Ethernet card is supported.  Before Nemesis
+  uses it, it should be configured correctly by its DOS install
+  program.
+\item The NS16550A UART serial chip is supported.  A serial mouse may
+  be used on COM2 on Intel platforms.
+\item The Standard ISA British Keyboard is supported.  Windows silly
+  keyboards with too little space bar are not fully supported~--- not
+  all keysyms work.
+\item PS/2 mouse is supported (Intel and EB164).
+\item Sound blaster 16 or \emph{hardware} compatibles are supported.
+\item An am79c960 ``Lance'' Ethernet driver exists but will only work
+  on the EB64.
+\item The cs8900 ethernet card for Digital Sharks is supported.
+\end{itemize}
+
+\subsection{TURBOchannel and other AXP3000 buses}
+\begin{itemize}
+\item The (P)OTTO ATM card (Digital ATM Works 750) is supported.  This
+  is the only supported ATM card for this bus.
+\item The ``lance'' Ethernet chip on the AXP3000 Junk-I/O-bus is
+  supported.
+\item The UART on the AXP3000 Junk-I/O-bus is supported.
+\end{itemize}
+
+\subsection{PCMCIA}
+
+A driver is available for the 3c589B ethernet card.
+
+\subsection{Podule}
+
+A podule bus serial line driver is available.  With the demise of the
+RISC\,PC, it is unlikely that there will be many further developments
+for this bus.

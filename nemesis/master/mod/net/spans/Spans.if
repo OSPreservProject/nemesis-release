@@ -1,0 +1,236 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      mod/net/spans/Spans.if
+-- 
+-- DESCRIPTION:
+--
+--      Interface to a server providing SPANS signalling.
+-- 
+-- ID : $Id: Spans.if 1.1 Thu, 29 Apr 1999 09:53:48 +0100 dr10009 $
+-- 
+-- \chapter{Networks}
+--
+
+-- The "Spans" interface provides operations and callback definitions
+-- for a SPANS server.
+
+Spans : INTERFACE = 
+NEEDS ATM;
+NEEDS IOOffer;
+BEGIN                           
+
+  --  A "Result" is returned from an operation, either as the parameter
+  --  in an exception (in the event of a synchronous failure) or as a
+  --  return code in a callback event (in the case of an asynchronous
+  --  operation).
+  --
+  --  The first five values map directly to the SPANS
+  --  protocol return values. Other values are specific to the Nemesis
+  --  implementation of the SPANS service and relate to local error
+  --  conditions.
+
+  Result : TYPE = { Success, GeneralFailure, NoVPVC, 
+                    NoResources, BadDestination,
+                    BadSAP, BadConnection, BadChannel, 
+                    BadAddress, BusySAP, ConnectionExists };
+
+  -- "Failure" is raised when an operation cannot be completed
+  -- successfully. The "reason" parameter indicates why the operation
+  -- failed.
+
+  Failure : EXCEPTION [ reason : Result ];
+
+  -- A "BindResult" indicates the result of a "Bind" request. "Success"
+  -- means that the "SAP" was allocated successfully. "Busy" indicates
+  -- that another client is using the requested "SAP". "Deferred"
+  -- indicates that the request is being processed. This may happen if
+  -- the "Bind" request refers to a "SAP" that is associated with a
+  -- group address, for example. "Error" indicates that an unspecified
+  -- error occurred.
+
+  BindResult : TYPE = { Success, Busy, Deferred, Error };
+  
+  -- An "Address" is a direct mapping to a SPANS protocol "Atm_Address"
+  -- type. It is an opaque type.
+
+  Address : TYPE = RECORD [ addr : ARRAY 8 OF OCTET ];
+
+  -- A "SAP" identifies a particular SPANS endpoint. Note that the
+  -- "port" member of the record is what the SPANS protocol refers to
+  -- as a "SAP". The terminology used here is to fit in with the
+  -- current Nemesis nomenclature.
+
+  SAP : TYPE = RECORD [ addr : Address,
+                        port : CARDINAL ];  -- network endian
+
+  -- A "QoS" record describes the Quality of Service requested for, or
+  -- allocated to, a connection. It corresponds directly to the SPANS
+  -- protcol "Atm_conn_resource". The "peakBandwidth" and
+  -- "meanBandwidth" are measured in kilobits/second. The "meanBurst"
+  -- field is measured in kilobits.
+
+  QoS : TYPE = RECORD [ peakBandwidth : CARDINAL,
+                        meanBandwidth : CARDINAL,
+                        meanBurst     : CARDINAL ];
+
+  -- A "Handle" is an opaque identifier that refers to a connection or a
+  -- callback channel.
+
+  Handle : TYPE = LONG CARDINAL;
+
+  -- A "ConnectRequestData" record is supplied to the client as part of
+  -- a "ConnectRequest" event on a callback channel. It contains all
+  -- of the details about the requested channel passed to the SPANS
+  -- service by the network.
+
+  ConnectRequestData : TYPE = RECORD [ connection : Handle,
+                                       lsap       : SAP,
+                                       rsap       : SAP,
+                                       type       : ATM.AAL,
+                                       qos        : QoS,
+                                       min        : QoS,
+                                       vpi        : ATM.VPI,
+                                       vci        : ATM.VCI,
+                                       multi      : BOOLEAN ];
+
+  -- A "ConnectResponseData" record is supplied to the client as part of
+  -- a "ConnectResponse" event on a callback channel. It contains the
+  -- result of the connection setup request, and details of the
+  -- obtained VCI/VPI and allocated QoS if the connection was set up
+  -- successfully.
+
+  ConnectResponseData : TYPE = RECORD [ connection : Handle,
+                                        result     : Result,
+                                        qos        : QoS,
+                                        vpi        : ATM.VPI,
+                                        vci        : ATM.VCI ];
+                           
+  -- An "AddResponseData" record is supplied to the client as part of an
+  -- "AddResponse" event on a callback channel. It contains the result
+  -- of the add request, and details of the allocated QoS if the
+  -- connection was set up successfully.
+
+  AddResponseData : TYPE = RECORD [ connection : Handle,
+                                    rsap       : SAP,
+                                    result     : Result,
+                                    qos        : QoS ];
+
+  -- A "CloseData" record is supplied to the client as part of a "Close"
+  -- event on a callback channel. It indicates that a connection owned
+  -- by the client has been closed, either due to a local or remote
+  -- close request, or due to a network error.
+
+  CloseData : TYPE = RECORD [ connection : Handle ];
+
+  -- A "BindResponseData" record is supplied to the client as part of a
+  -- "BindResponse" event on a callback channel. It indicates the
+  -- result of a deferred "Bind" operation.
+
+  BindResponseData : TYPE = RECORD [ sap    : SAP,
+                                     result : BindResult ];
+
+  -- The "EventType" enumeration is used to distinguish events on a
+  -- client's callback channel.
+
+  EventType : TYPE = { ConnectRequest, 
+                       ConnectResponse, 
+                       AddResponse, 
+                       Close,
+                       BindResponse };
+
+  -- An "Event" is sent to a client over a callback channel whenever the
+  -- SPANS service needs to communicate with the client
+  -- asynchronously.
+
+  Event : TYPE = CHOICE EventType OF {
+    ConnectRequest    => ConnectRequestData,
+    ConnectResponse   => ConnectResponseData,
+    AddResponse       => AddResponseData,
+    Close             => CloseData,
+    BindResponse      => BindResponseData
+  };
+
+  -- "CallbackChannel" creates a new callback channel with the requested
+  -- number of slots, and returns an offer for the channel and a
+  -- handle which can be used to identify the channel in future
+  -- operations.
+
+  CallbackChannel : PROC [ numSlots : CARDINAL ] 
+                    RETURNS [ offer  : IREF IOOffer, 
+                              handle : Handle ];
+
+  -- "Bind" requests that a particular "SAP" be allocated to the client
+  -- and associated with the passed in callback channel. 
+
+  Bind : PROC [ IN OUT sap : SAP, channel : Handle ] 
+         RETURNS [ result : BindResult ] RAISES Failure;
+
+  -- "Unbind" indicates that the client has finished using the specified
+  -- "SAP". If there are still connections open on that "SAP", the
+  -- operation will raise "Failure" with the "reason" parameter set to
+  -- "BusySAP".
+
+  Unbind : PROC [ sap : SAP ] RETURNS [] RAISES Failure;
+
+  -- "Listen" sets the listening status of the specifed "SAP". If the
+  -- "listen" parameter is "True", the client will be notified of
+  -- future incoming connection requests on the specified "SAP". If
+  -- "listen" is "False", future incoming connection requests will be
+  -- rejected. (This is the default state for a newly bound "SAP".)
+
+  Listen : PROC [ sap : SAP, listen : BOOLEAN ] RETURNS [] RAISES Failure;
+
+  -- "Connect" requests that a connection be created between the
+  -- "lsap", which must be owned by the client, and the remote "SAP",
+  -- "rsap". The "qos" and "min" parameters specify the requested
+  -- level of QoS and the minimum acceptable level of QoS
+  -- respectively. If the "multi" parameter is "True", a multicast
+  -- connection with a single branch will be opened. A "Handle" for
+  -- the connection is returned. The connection cannot be used until a
+  -- "ConnectResponse" event is received on the client's callback
+  -- channel.
+
+  Connect : PROC [ lsap  : SAP,
+                   rsap  : SAP,
+                   qos   : QoS, 
+                   min   : QoS, 
+                   multi : BOOLEAN ] 
+            RETURNS [ handle : Handle ] RAISES Failure;
+
+  -- A client calls "Accept" in response to a "ConnectRequest" event to
+  -- indicate that it wishes to accept the requested connection.
+
+  Accept : PROC [ connection : Handle, qos : QoS ] 
+           RETURNS [] RAISES Failure;
+
+  -- A client calls "Reject" in response to a "ConnectRequest" event to
+  -- indicate that it does not wish to accept the requested
+  -- connection.
+
+  Reject : PROC [ connection : Handle ] RETURNS [] RAISES Failure;
+
+  -- "Close" causes the specified connection to be shut down.
+
+  Close : PROC [ connection : Handle ] RETURNS [] RAISES Failure;
+
+  -- "Add" requests that the remote "SAP", "rsap", be added as
+  -- a branch to the specified multicast connection.
+
+  Add : PROC [ connection : Handle, rsap : SAP ]
+        RETURNS [] RAISES Failure;
+
+  -- "Remove" requests that the remote "SAP", "rsap", be removed from the
+  -- specified multicast connection.
+
+  Remove : PROC [ connection : Handle, rsap : SAP ]
+           RETURNS [] RAISES Failure;
+  
+END.

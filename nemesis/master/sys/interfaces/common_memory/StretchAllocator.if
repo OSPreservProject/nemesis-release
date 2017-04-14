@@ -1,0 +1,114 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      StretchAllocator
+-- 
+-- DESCRIPTION:
+--
+--      Allocates Stretches.
+-- 
+-- ID : $Id: StretchAllocator.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Memory}
+-- \section{Virtual Memory}
+-- 
+
+-- The Nemesis single virtual address space is divided into
+-- "Stretch"es.  To acquire a stretch of virtual memory, one invokes
+-- operations on a "StretchAllocator". 
+--
+
+StretchAllocator : LOCAL INTERFACE = 
+  NEEDS Mem;
+  NEEDS Stretch;
+BEGIN
+
+  Failure : EXCEPTION [];
+    -- The region could not be supplied.
+
+  SizeSeq    : TYPE = SEQUENCE OF Stretch.Size;
+  StretchSeq : TYPE = SEQUENCE OF IREF Stretch;
+
+  -- To create one stretch of at least a given size (sizes are always
+  -- in bytes), use "New":
+
+  New : PROC    [ size : Stretch.Size, 
+		  gaxs : Stretch.Rights ]
+        RETURNS [ s    : IREF Stretch   ]
+        RAISES Failure;
+
+    -- Returns a "Stretch" whose size is "size" rounded up to a whole
+    -- number of clicks. The initial global rights will be "gaxs". 
+
+
+  -- Sometimes it is convenient to be able to create a sequence of
+  -- stretches which is contiguous in memory:
+
+  NewList : PROC    [ sizes     : SizeSeq, 
+                      gaxs      : Stretch.Rights ]
+      	    RETURNS [ stretches : StretchSeq     ]
+      	    RAISES Failure;
+
+    -- For each size in "sizes", create a "Stretch" at least that
+    -- size. The initial global rights of each stretch will be
+    -- "gaxs". Return the entire sequence of stretches.
+    -- Each of these stretches may be destroyed independently.
+
+  -- Some clients may wish to create a stretch with particular
+  -- properties; "NewAt" is provided for this purpose. 
+  NewAt : PROC    [ size   : Stretch.Size,
+		    gaxs   : Stretch.Rights,
+		    start  : ADDRESS,
+		    attr   : Mem.Attrs,
+                    pmem   : Mem.PMem     ]
+          RETURNS [ s      : IREF Stretch ]
+          RAISES Mem.Failure;
+
+    -- The value "start" describes the requested (page aligned) 
+    -- starting virtual address of the stretch, unless it has
+    -- the value ANY\_ADDRESS, in which case an arbitrary base
+    -- may be chosen contigent on its satisfying the various VM 
+    -- attributes (see Mem.if) held in "attr". The initial global 
+    -- access rights are given by "gaxs". 
+    -- 
+    -- If "pmem" is not NULL, it holds the physical memory into which 
+    -- the Stretch is mapped; in the case where the Stretch is to be
+    -- pinned down, this \emph{must} hold enough frames.
+
+
+  -- Sometimes one may wish to create a new stretch with similar
+  -- properties to another; the "Clone" operation provides a certain
+  -- amount of support for this.
+  Clone : PROC    [ template : IREF Stretch, 
+		    size     : Stretch.Size     ]
+          RETURNS [ s        : IREF Stretch     ]
+          RAISES Failure;
+    -- Creates and returns a "Stretch" with the same protection
+    -- attributes (both globally and in various protection domains) as
+    -- the template stretch "template". 
+    -- If "size" is zero, then the size of the template stretch is
+    -- also used; otherwise "size" is used (rounded up to a whole
+    -- number of clicks). 
+
+  DestroyStretch : PROC    [ stretch : IREF Stretch ] 
+		   RETURNS [] 
+		   RAISES Stretch.Denied;
+    -- Destroy the stretch.
+
+
+  Destroy : PROC [] RETURNS [];
+    -- Destroy this "StretchAllocator".
+
+  -- Causes all stretches allocated from this allocator to be
+  -- destroyed (probably).
+
+   
+  
+END.

@@ -1,0 +1,54 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      FIFOMod.if
+-- 
+-- DESCRIPTION:
+--
+--	Single client, single server implementation of FIFO.if over
+--      shared memory and event channels.
+-- 
+-- ID : $Id: FIFOMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Input-Output Channels}
+-- 
+
+-- "FIFOMod" implements the "FIFO" interface for inter-domain FIFOs,
+-- by using a shared-memory buffer and a pair of event channels.
+
+FIFOMod : LOCAL INTERFACE =
+  NEEDS FIFO;
+  NEEDS IDC;
+  NEEDS Event;
+  NEEDS Heap;
+BEGIN
+
+  BadSlotSize : EXCEPTION [];
+    -- Slot size was too large or small.
+
+  BadEvents   : EXCEPTION [];
+    -- Use of non-zero event counts in constructing the "FIFO".
+
+  -- The "New" procedure constructs a "FIFO" given its components.
+  -- The result should either be used only to receive data with
+  -- "FIFO_Get" or only to transmit data with "FIFO_Put"; the permissions
+  -- on "buf" should be appropriate.
+  -- 
+  -- Raises "BadSlotSize" if "slot_bytes" is larger than "buf" or smaller
+  -- than "sizeof (CARDINAL)", and "BadEvents" if either of the "events"
+  -- has a non-zero value.
+  New : PROC    [ heap       : IREF Heap;
+                  slot_bytes : CARDINAL;
+      	      	  buf        : IDC.Buffer;
+      	      	  events     : Event.Pair  ]
+      	RETURNS [ fifo       : IREF FIFO   ]
+      	RAISES Heap.NoMemory, BadSlotSize, BadEvents;
+    -- Construct a "FIFO" using a pair of events.
+END.

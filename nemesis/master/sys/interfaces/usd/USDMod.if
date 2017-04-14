@@ -1,0 +1,39 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      USDMod.if
+-- 
+-- DESCRIPTION:
+--
+--      Creates generic user-safe disk interfaces.
+-- 
+-- FILE :	USDMod.if
+-- CREATED :	Wed Jan  8 1997
+-- AUTHOR :	Paul Barham (Paul.Barham@cl.cam.ac.uk)
+-- ID : 	$Id: USDMod.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+-- 
+-- \chapter{Devices}
+-- \section{Disks}
+
+-- The "USDMod" interface is used to create instances of user-safe
+-- disks ("USD.if").
+
+USDMod : LOCAL INTERFACE =
+  NEEDS Disk;
+  NEEDS USDDrive;
+BEGIN
+
+  New : PROC    [ d   : IREF Disk,
+                  n   : STRING ]
+	RETURNS [ ctl : IREF USDDrive ];
+    -- Creates a new user-safe disk.  The parameter "n" is used when
+    -- USD outputs messages.
+
+END.

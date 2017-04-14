@@ -1,0 +1,46 @@
+/* CLUless compiler front end
+ ***********************************************************************
+ * Copyright 1997 University of Cambridge Computer Laboratory          *
+ * All Rights Reserved                                                 *
+ * Authors: Dickon Reed (Dickon.Reed@cl.cam.ac.uk)                     *
+ *          Richard Mortier (rmm1002@cam.ac.uk)                        *
+ ***********************************************************************/ 
+/* CLUless */
+
+/* decl.tab; declarations (for use with "gentables.py" to generate decl.[ch]) */
+
+/* Dickon Reed, 1996 */
+/* Richard Mortier, 1997 */
+
+/*
+ * $Id: decl.tab 1.1 Thu, 18 Feb 1999 14:20:06 +0000 dr10009 $
+ */
+
+/*
+ * $Log: decl.tab,v $
+ * Revision 1.1  1997/06/25 17:07:48  dr10009
+ * Initial revision
+ *
+ * Revision 2.1  1997/04/04 15:34:42  rmm1002
+ * Mass check-in; now have vaguely working compiler, makes on P5 & Alpha
+ *
+ * Revision 1.10  1997/02/04 16:48:33  rmm1002
+ * Finished first look and layout fixup
+ *
+ * Revision 1.1  1997/02/03 16:39:31  rmm1002
+ * Initial revision
+ *
+ */
+
+#BEGIN#
+decl,3
+announcement,ann_decl,n_integer,op_count
+exception,exc_decl,n_list,list,n_cptr,oname
+type,type_decl 
+var,VAR 
+invar,INVAR 
+outvar,OUTVAR 
+inoutvar,INOUTVAR 
+procedure,header,n_list,raises,n_integer,op_count,n_cptr,intf
+procedure_nr,proc_nr,n_list,raises,n_integer,op_count,n_cptr,intf
+spec,spec,n_spec,spec

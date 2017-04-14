@@ -1,0 +1,56 @@
+
+This package contains the Nemesis tools. They are distributed under
+the Nemesis Free License. See:
+
+http://www.cl.cam.ac.uk/Research/SRG/netos/nemesis/releaseguide/index.html
+
+for details.
+
+
+INSTALLATION
+
+1. The master/ directory contains the source code to the tools. First
+you must configure the build system for your build platform. Look in
+the subdirectry master/mk. You need to create a symlink called platform.mk
+to one of the other files (except rules.mk) in this directory. If you
+do not see a file for your the version of the operating system you have
+installed, look at the PORTING section below.
+
+So, for Red Hat Linux v5.1, I'd do:
+
+$ cd master/mk
+$ ln -s ix86_linux_rh5.1.mk platform.mk
+$ cd ..
+
+
+2. Then, invoke make in the master/ subdirectory:
+
+$ make
+
+3. If everything buids, you can install it. To install in to the
+default place, which is a new subdirectory called install/$(ARCH)/bin where
+$(ARCH) is determined by the platform.mk file you specified in step 1, do:
+
+$ cd master
+$ make install
+
+If you wish to install in a different directory you set the environment
+variable INSTDIR to specify the directory to install things in. It will then
+install in $(INSTDIR)/$(ARCH)/bin
+
+In both cases, a directory called python is created at the same level as
+the bin directory containing the python portions of the Nemesis tools.
+
+You will find the binaries for your architecture in the bin directory thus
+created.
+
+PORTING
+
+If you're lucky, you can get away with creating a .mk file like one of the
+existing architecture.mk files. These files just define the names of 
+certain programs used to build the Nemesis tools. If you come up with a new
+one, we'd appreciate it if you could submit the file to us.
+
+
+Dickon Reed, 20/5/1999, Dickon.Reed@cl.cam.ac.uk
+

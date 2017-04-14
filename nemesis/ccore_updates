@@ -1,0 +1,2450 @@
+ The Cambridge Nemesis Core
+===========================
+
+#00056 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Jun 10 14:29:54 1999
+--------------------------------------------------------------------------
+resident set size measurement for MEMSYS_EXPT
+mod/nashmod/commands.c             -- handle RSSMonitor not being around
+mod/rssmonitor                     ** NEW DIRECTORY
+mod/rssmonitor/RSSMonitorMod.c     ++ factory module
+mod/rssmonitor/RSSMonitor.c        ++ does the work
+mod/rssmonitor/RSSMonitor.if       ++ interface for inserting new 
+stretches
+mod/rssmonitor/RSSMonitorMod.if    ++ factory module interface
+
+#00055 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Jun 10 13:02:46 1999
+--------------------------------------------------------------------------
+
+glue/genmakefile.py                -- handle missing requirements
+
+#00054 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Wed Jun  9 15:08:11 1999
+--------------------------------------------------------------------------
+no overview
+mod/nemesis/sdriver/stretchdriver.c-- describe me
+mod/nemesis/builder/Builder.c      -- describe me
+mod/nashmod/commands.c             -- describe me
+glue/packages/ccore.py             -- describe me
+
+#00053 dr10009 pp Michael Dales (michael@dcs.gla.ac.uk) Fri Jun  4 18:23:40 1999
+--------------------------------------------------------------------------------
+Added the Nemesis port of isapnp. Please read the README.Nemesis file
+for more information.
+glue/packages/ccore.py             -- App isapnp for Nemesis
+app/isapnp                         ** NEW DIRECTORY
+app/isapnp/isapnp.c.diff           ++ 
+app/isapnp/pnp.h                   ++ 
+app/isapnp/README.Nemesis          ++ 
+app/isapnp/isapnp.c                ++ 
+
+#00052 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Wed Jun  2 13:31:07 1999
+--------------------------------------------------------------------------
+antistatic support and more domain information storage in proc
+sys/nemesis/Trader.c               -- ditch code duplication
+sys/interfaces/central/Heap.if     -- inspection methods
+sys/domains/DomainMgr.c            -- export context in self
+mod/nemesis/threads/threads.c      -- stash away stack info
+mod/nemesis/heap/heapmod.c         -- query code
+mod/nemesis/gatekeeper/gatekeeper.c-- query code
+mod/nemesis/builder/Builder.c      -- store extra info in self
+mod/nashmod/nashst.h               -- new dominfo command
+mod/nashmod/commands.c             -- new dominfo command
+mod/nashmod/autoexec.nash          -- more stack for Nash
+mod/nashmod/Nash.c                 -- new dominfo commands
+mod/loader/load_ix86.c             -- stash away text and data stretches
+mk/rules.mk                        -- antistatic support
+h/contexts.h                       -- new namespace macros
+glue/genmakefile.py                -- antistatic support
+
+#00051 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu May 27 16:14:51 1999
+--------------------------------------------------------------------------
+
+mod/nemesis/spawn/spawn.c          -- disable Spawn$Destroy; it's broke
+mod/clanger/cexec.c                -- 
+
+#00050 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Wed May 26 15:14:45 1999
+--------------------------------------------------------------------------
+detect dups
+glue/plumbtree.py                  -- makevars support
+glue/nemclasses.py                 -- makevars support
+glue/customizer.py                 -- detect duplications
+glue/buildutils.py                 -- detect item duplications
+
+#00049 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Wed May 26 14:55:40 1999
+--------------------------------------------------------------------------
+
+mod/loader/exec.c                  -- deal with NULL env to Exec$Run
+
+#00048 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue May 25 14:21:33 1999
+--------------------------------------------------------------------------
+
+mod/loader/exec.c                  -- default slice back to zero
+
+#00047 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue May 25 13:41:16 1999
+--------------------------------------------------------------------------
+
+glue/gennbf.py                     -- fix obvious warning bug
+
+#00046 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue May 25 13:36:21 1999
+--------------------------------------------------------------------------
+
+glue/gennbf.py                     -- make warnings more useful
+
+#00045 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Fri May 21 17:54:53 1999
+--------------------------------------------------------------------------
+Self loading
+sys/interfaces/central/Exec.if     -- Separate LoadProgram logic out
+mod/nemesis/builder/Builder.c      -- less tracing
+mod/nashmod/commands.c             -- use CExec$Run
+mod/loader/exec.c                  -- separate out program entry
+point detection and starting new domains
+mod/clanger/cexec.c                -- self loading
+mod/clanger/CExec.if               -- new run while waiting for
+main thread to complete operations
+
+#00044 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu May 20 15:19:03 1999
+--------------------------------------------------------------------------
+
+mod/clanger/clangermod.c           -- good error messages
+mod/clanger/clanger.c              -- good error messages
+mod/clanger/Lexer.c                -- good error messages
+mod/clanger/Clanger_st.h           -- good error messages
+h/stddef.h                         -- include nemesis.h
+boot/initscripts/standard.rc.py    -- sort out sysheap/actheap
+
+#00043 dr10009 pp Paul Menage (Paul.Menage@cl.cam.ac.uk) Thu May 20 12:33:18 1999
+---------------------------------------------------------------------------------
+Fix sets and enumerations
+h/nemesis_types.h                  -- Make enum_t 32 bits
+h/nemesis.h                        -- Fix SET_ELEM()
+
+#00042 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Wed May 19 17:32:29 1999
+--------------------------------------------------------------------------
+
+mod/nashmod/autoexec.nash          -- fix nash
+
+#00041 dr10009 pp Rolf Neugebauer (neugebar@dcs.gla.ac.uk) Tue May 18 20:07:40 1999
+-----------------------------------------------------------------------------------
+Wallclock time for EB164 as well
+mod/wtime/Wall_Clock.c             -- work on eb164
+
+#00040 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue May 18 19:25:34 1999
+--------------------------------------------------------------------------
+fix deps
+boot/initscripts/init.rc.py        -- fix init.rc deps
+boot/initscripts/Makefile          -- fix deps
+mk/rules.mk                        -- fix deps
+glue/plumbtree.py                  -- fix deps
+glue/gennbf.py                     -- fix deps
+glue/customizer.py                 -- fix deps
+glue/buildutils.py                 -- fix deps
+glue/blueprint.py                  -- fix deps
+glue/regenerate_packages.py        -- fix deps
+boot/initscripts/standard.rc.py    -- fix deps
+mod/nemesis/csidc/Makefile         XX should not be presented (is autogenerated)
+
+#00039 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Mon May 17 16:35:06 1999
+--------------------------------------------------------------------------
+support for a simpler way of building Nemesis
+Makefile                           -- rebuild makefiles target
+mk/rules.mk                        -- handle no source tree
+mk/config.mk                       -- handle no autoconf.mk
+glue/plumbtree.py                  -- handle no h/autoconf dir
+glue/growtree.py                   -- handle no source tree
+glue/blueprint.py                  -- handle no source tree
+glue/settarget.py                  ++ set target of tree
+
+#00038 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Fri May 14 13:15:39 1999
+--------------------------------------------------------------------------
+
+glue/genmakefile.py                -- fix requires problem
+
+#00037 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Wed May 12 13:39:54 1999
+--------------------------------------------------------------------------
+
+glue/nemclasses.py                 -- catch bad qos fields
+
+#00036 dr10009 pp Paul Menage (Paul.Menage@cl.cam.ac.uk) Sat May  8 16:46:53 1999
+---------------------------------------------------------------------------------
+Avoid stack overruns in sys/nemesis/console
+sys/nemesis/Console.c              -- Avoid stack overruns 
+
+#00035 dr10009 pp Michael Dales (michael@dcs.gla.ac.uk) Thu May  6 17:09:10 1999
+--------------------------------------------------------------------------------
+Add the WTime module implementation to ccore.
+glue/packages/ccore.py             -- Module entry for WTime module.
+mod/wtime                          ** NEW DIRECTORY
+mod/wtime/Wall_Clock.c             ++ Implementation of WTime module.
+
+#00034 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu May  6 14:37:31 1999
+--------------------------------------------------------------------------
+misc fixes
+boot/initscripts/init.rc.py        -- tidy up
+boot/initscripts/Makefile          -- build standard.rc as well
+mod/nashmod/profile.nash           -- comment everything out; this
+data now comes straight from the blueprint
+mod/nashmod/Nash.c                 -- Merged Context for getting
+program environments in order to utilize new standard.rc data
+mod/clanger/clanger.c              -- better error handling and comments
+glue/sourcemanager.py              -- less grungy source management
+glue/gennbf.py                     -- fix silly bug
+glue/customizer.py                 -- use new merge_all behaviour
+glue/buildutils.py                 -- new merge_all to handle
+split source trees better
+glue/blueprint.py                  -- pull things from both build and
+then source
+glue/regenerate_packages.py        -- pull things from both build and
+then source
+glue/packages/ccore.py             -- new standard.rc location
+missing params for ps2
+boot/initscripts/standard.rc.py    ++ autogen some stuff
+
+#00033 dr10009 pp Rolf Neugebauer (neugebar@dcs.gla.ac.uk) Tue May  4 16:58:06 1999
+-----------------------------------------------------------------------------------
+make it work with egcs-1.1.2 on eb164 targe
+mod/nemesis/sgen/engine.c          -- make it work with egcs-1.1.
+
+#00032 dr10009 pp Matt Holgate (holgate@dcs.gla.ac.uk) Tue May  4 11:33:37 1999
+-------------------------------------------------------------------------------
+Support for more keys
+dev/isa/ps2/table.c                -- Support for more keys
+(including escaped keycodes)
+dev/isa/ps2/ps2_st.h               -- Escaped Keycodes
+dev/isa/ps2/ps2.c                  -- Escaped Keycodes
+
+#00031 dr10009 pp Paul Menage (Paul.Menage@cl.cam.ac.uk) Sun May  2 19:11:58 1999
+---------------------------------------------------------------------------------
+Fix broken libc checkin 
+lib/veneer/c/libc.ven              -- Add missing jumptable entries 
+lib/vaneer/c/libc.ven              XX 
+lib/vaneer/c                       !! 
+lib/vaneer                         !! 
+
+#00030 dr10009 pp Michael Dale (michael@dcs.gla.ac.u) Fri Apr 30 18:07:04 1999
+------------------------------------------------------------------------------
+Added the functions isascii and toascii to the c vanee
+mod/venimpl/c/stdlib/ctype.c       -- 
+mod/venimpl/c/jmptbl.c             -- 
+h/ctype.h                          -- 
+lib/vaneer                         ** NEW DIRECTORY
+lib/vaneer/c                       ** NEW DIRECTORY
+lib/vaneer/c/libc.ven              ++ 
+
+#00029 dr10009 pp Paul Menage (Paul.Menage@cl.cam.ac.uk) Fri Apr 30 15:22:26 1999
+---------------------------------------------------------------------------------
+Better diagnostics in stub engine 
+mod/nemesis/sgen/engine.c          -- Better diagnostics 
+
+#00028 dr10009 pp Paul Menage (Paul.Menage@cl.cam.ac.uk) Fri Apr 30 15:09:06 1999
+---------------------------------------------------------------------------------
+Support thread death properly in events module 
+mod/nemesis/events/events.c        -- Support thread death properly 
+
+#00027 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Fri Apr 30 14:10:08 1999
+--------------------------------------------------------------------------
+tidy up error handling
+glue/genmakefile.py                -- better error handling
+
+#00026 dr10009 pp Paul Menage (Paul.Menage@cl.cam.ac.uk) Fri Apr 30 13:29:44 1999
+---------------------------------------------------------------------------------
+Added more benchmarks 
+mod/nemesis/benchmarks/bm.c        -- Added more benchmarks 
+
+#00025 dr10009 pp Anonymous (no email) Fri Apr 30 11:40:30 1999
+---------------------------------------------------------------
+no overview
+mk/rules.mk                        -- describe me
+
+#00024 dr10009 pp Paul Menage (Paul.Menage@cl.cam.ac.uk) Thu Apr 29 17:53:59 1999
+---------------------------------------------------------------------------------
+Various clanger enhancements
+mod/clanger/Lexer.c                -- Tidy; support 'null'
+mod/clanger/Interp.c               -- Various tidies; extend 'more' and 'include'; support 'null'; add string ops
+mod/clanger/Clanger_st.h           -- Add 'null'
+mod/clanger/Clammar.y              -- Extend 'more' and 'include'
+
+#00023 dr10009 pp Paul Menage (Paul.Menage@cl.cam.ac.uk) Wed Apr 28 14:45:35 1999
+---------------------------------------------------------------------------------
+
+mod/venimpl/c/stdio/fopen.c        -- Fix "fs:path" handling
+
+#00022 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Apr 27 15:15:50 1999
+--------------------------------------------------------------------------
+ditch ref
+sys/typesystem/TypeSystem.if       -- ditch ref
+sys/interfaces/central/Context.if  -- ditch ref
+
+#00021 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Fri Apr 16 16:43:45 BST 1999
+------------------------------------------------------------------------------
+
+boot/images/gensrc                 !! +x
+
+#00020 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Apr 15 18:09:20 1999
+--------------------------------------------------------------------------
+dont depend on generic_blueprint
+glue/blueprint.py                  -- dont depend on generic_blueprint
+
+#00019 dr10009 pp Dickon Reed (Dickon.Reed@cl.cam.ac.uk) Thu Apr 15 17:25:48 BST 1999
+-------------------------------------------------------------------------------------
+removing old files
+glue/generic_blueprint.py          XX deleted
+glue/generic_blueprint.py.orig     XX deleted
+glue/regenerate_blueprint.py       XX deleted
+
+#00018 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Apr 13 00:55:44 1999
+--------------------------------------------------------------------------
+use_package support
+glue/layfoundations.py             -- fixing bad warning message
+glue/customizer.py                 -- use_package support
+
+#00017 dr10009 pp Stephen Early (sde1000@cl.cam.ac.uk) Thu Apr  8 15:25:03 1999
+-------------------------------------------------------------------------------
+Bootloader changes for release
+boot/initscripts/init.rc.py        -- 
+h/ix86                             ** NEW DIRECTORY
+h/ix86/asm                         ** NEW DIRECTORY
+h/ix86/asm/boot.h                  ++ 
+h/ix86/asm/segment.h               ++ 
+mod/nashmod/Nash.c                 -- 
+mod/stringutil/StringUtil.if       -- 
+mod/stringutil/stringutil.c        -- 
+
+#00016 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Apr  8 11:33:08 1999
+--------------------------------------------------------------------------
+
+glue/layfoundations.py             -- update for way we work with trees
+
+#00015 dr10009 pp Paul Menage (Paul.Menage@cl.cam.ac.uk) Tue Mar 16 17:44:18 1999
+---------------------------------------------------------------------------------
+
+mod/clanger/Functions.c            -- Work around Spawn race condition
+
+#00014 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Mar  2 12:40:14 1999
+--------------------------------------------------------------------------
+
+glue/packages/ccore.py             -- add app test annotation
+
+#00013 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Wed Feb 17 13:32:28 1999
+--------------------------------------------------------------------------
+support for multiple targets
+glue/customizer.py                 -- support split target files
+glue/packages/ccore.py             -- reinstate NTSC generic
+
+#00012 dr10009 pp Tim Harris (tim.harris@cl.cam.ac.uk) Thu Feb  4 11:16:17 1999
+-------------------------------------------------------------------------------
+Remove swearing
+mod/venimpl/c/stdio/vprintf.c      -- Remove swearing.
+mod/nashmod/boot.c                 -- Remove swearing.
+
+#00011 dr10009 pp Austin Donnelly (and1000@cl.cam.ac.uk) Wed Jan 20 14:24:09 1999
+---------------------------------------------------------------------------------
+
+sys/nemesis/Nemesis.c              -- more consistent error message
+mod/nashmod/profile.nash           -- qos>cpu info for scrdump
+mod/nashmod/autoexec.nash          -- 
+boot/initscripts/init.rc.py        -- point out where serial1 is made
+boot/images/standard.rc            -- probe serial1, and serialmouse
+
+#00010 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Wed Jan 20 13:22:54 GMT 1999
+------------------------------------------------------------------------------
+
+Makefile                           -- fix for py1.5
+
+#00009 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Fri Jan 15 16:51:02 1999
+--------------------------------------------------------------------------
+
+glue/layfoundations.py             -- default to resolving links mode
+
+#00008 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Fri Jan 15 16:13:49 GMT 1999
+------------------------------------------------------------------------------
+
+glue/layfoundations.py             !! +x
+
+#00007 dr10009 pp Paul Menage (pbm1001@cl.cam.ac.uk) Thu Jan 14 11:13:52 1999
+-----------------------------------------------------------------------------
+
+
+#00006 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Jan 12 16:45:37 1999
+--------------------------------------------------------------------------
+
+Makefile                           -- remove contrib
+
+#00005 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Jan 12 16:21:08 1999
+--------------------------------------------------------------------------
+fix naming
+glue/genmakefile.py                -- fix naming
+
+#00004 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Jan 12 15:45:02 1999
+--------------------------------------------------------------------------
+packaging fix ups
+glue/packages                      ** packages
+glue/packages/ccore.py             ++ ccore package files
+glue/regenerate_packages.py        ++ routine to generate packages
+
+#00003 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Jan 12 11:04:44 1999
+--------------------------------------------------------------------------
+Reorgansiation of the tree in to packages
+Makefile                           -- reflect packaging scheme
+glue/plumbtree.py                  -- fix naming
+glue/nemclasses.py                 -- ditch old code
+glue/customizer.py                 -- ditch maxine
+glue/buildutils.py                 -- packages support
+glue/blueprint.py                  -- new packages scheme
+mod/net/bpf/BPF.c                  XX moved to cnet
+mod/net/bpf                        !! moved to cnet
+mod/net/tftp/tftp.c                XX moved to cnet
+mod/net/tftp/Makefile              XX moved to cnet
+mod/net/tftp                       !! moved to cnet
+dev/atm/interfaces/ATM.if          XX moved to catm
+dev/atm/interfaces/AALPod.if       XX moved to catm
+dev/pci/oppo/suni.h                XX moved to catm
+dev/pci/oppo/state.h               XX moved to catm
+dev/pci/oppo/rbuf.h                XX moved to catm
+dev/pci/oppo/otto_xilinx.c         XX moved to catm
+dev/pci/oppo/otto_regs.h           XX moved to catm
+dev/pci/oppo/otto_platform.h       XX moved to catm
+dev/pci/oppo/otto_hw.h             XX moved to catm
+dev/pci/oppo/otto_hw.c             XX moved to catm
+dev/pci/oppo/otto_exec.h           XX moved to catm
+dev/pci/oppo/otto_aal5.c           XX moved to catm
+dev/pci/oppo/otto.h                XX moved to catm
+dev/pci/oppo/otto.c                XX moved to catm
+dev/pci/oppo/main.c                XX moved to catm
+dev/pci/oppo/direct.c              XX moved to catm
+dev/pci/oppo/DirectOppo.if         XX moved to catm
+dev/pci/nicstar/rbuf.h             XX moved to catm
+dev/pci/nicstar/nicstar_aal5.c     XX moved to catm
+dev/pci/nicstar/nicstar.h          XX moved to catm
+dev/pci/nicstar/nicstar.c          XX moved to catm
+dev/isa/lksound/vidc.h             XX moved to caudio
+dev/isa/lksound/v_midi.h           XX moved to caudio
+dev/isa/lksound/ulaw.h             XX moved to caudio
+dev/isa/lksound/tuning.h           XX moved to caudio
+dev/isa/lksound/soundvers.h        XX moved to caudio
+dev/isa/lksound/soundmodule.h      XX moved to caudio
+dev/isa/lksound/sound_firmware.h   XX moved to caudio
+dev/isa/lksound/sound_config.h     XX moved to caudio
+dev/isa/lksound/sound_calls.h      XX moved to caudio
+dev/isa/lksound/softoss.h          XX moved to caudio
+dev/isa/lksound/sb_mixer.h         XX moved to caudio
+dev/isa/lksound/sb_mixer.c         XX moved to caudio
+dev/isa/lksound/sb_midi.c          XX moved to caudio
+dev/isa/lksound/sb_common.c        XX moved to caudio
+dev/isa/lksound/sb_audio.c         XX moved to caudio
+dev/isa/lksound/sb.h               XX moved to caudio
+dev/isa/lksound/os.h               XX moved to caudio
+dev/isa/lksound/opl3.h             XX moved to caudio
+dev/isa/lksound/midi_synth.h       XX moved to caudio
+dev/isa/lksound/midi_ctrl.h        XX moved to caudio
+dev/isa/lksound/lksound.h          XX moved to caudio
+dev/isa/lksound/lksound.c          XX moved to caudio
+dev/isa/lksound/iwmem.h            XX moved to caudio
+dev/isa/lksound/gus_linearvol.h    XX moved to caudio
+dev/isa/lksound/gus_hw.h           XX moved to caudio
+dev/isa/lksound/finetune.h         XX moved to caudio
+dev/isa/lksound/dmasound.h         XX moved to caudio
+dev/isa/lksound/dev_table.h        XX moved to caudio
+dev/isa/lksound/dev_table.c        XX moved to caudio
+dev/isa/lksound/coproc.h           XX moved to caudio
+dev/isa/lksound/aubuf.h            XX moved to caudio
+dev/isa/lksound/ad1848_mixer.h     XX moved to caudio
+mod/au/AuPlaybackWriter_st.h       XX moved to caudio
+mod/au/AuPlaybackWriter.c          XX moved to caudio
+mod/au/AuMod.c                     XX moved to caudio
+mod/au/AsyncAuPlaybackWriter.c     XX moved to caudio
+app/amp/util.c                     XX moved to caudio
+app/amp/transform.h                XX moved to caudio
+app/amp/transform.c                XX moved to caudio
+app/amp/rtbuf.h                    XX moved to caudio
+app/amp/rtbuf.c                    XX moved to caudio
+app/amp/readppm.c                  XX moved to caudio
+app/amp/proto.h                    XX moved to caudio
+app/amp/position.h                 XX moved to caudio
+app/amp/position.c                 XX moved to caudio
+app/amp/nemstuff.c                 XX moved to caudio
+app/amp/misc2.h                    XX moved to caudio
+app/amp/layer3.h                   XX moved to caudio
+app/amp/layer3.c                   XX moved to caudio
+app/amp/layer2.h                   XX moved to caudio
+app/amp/misc2.c                    XX moved to caudio
+app/amp/layer2.c                   XX moved to caudio
+app/amp/huffman.h                  XX moved to caudio
+app/amp/huffman.c                  XX moved to caudio
+app/amp/guicontrol.h               XX moved to caudio
+app/amp/guicontrol.c               XX moved to caudio
+app/amp/getopt1.c                  XX moved to caudio
+app/amp/getopt.h                   XX moved to caudio
+app/amp/getopt.c                   XX moved to caudio
+app/amp/getdata.h                  XX moved to caudio
+app/amp/getdata.c                  XX moved to caudio
+app/amp/getbits.h                  XX moved to caudio
+app/amp/getbits.c                  XX moved to caudio
+app/amp/formats.h                  XX moved to caudio
+app/amp/formats.c                  XX moved to caudio
+app/amp/dump.h                     XX moved to caudio
+app/amp/dump.c                     XX moved to caudio
+app/amp/controldata.h              XX moved to caudio
+app/amp/audioIO_aubuf.c            XX moved to caudio
+app/amp/audioIO.h                  XX moved to caudio
+app/amp/audioIO.c                  XX moved to caudio
+app/amp/audio.h                    XX moved to caudio
+app/amp/audio.c                    XX moved to caudio
+app/amp/args.c                     XX moved to caudio
+app/amp/amp.h                      XX moved to caudio
+app/timidity/timidity.obj          XX moved to caudio
+app/timidity/timidity.c            XX moved to caudio
+app/timidity/tables.h              XX moved to caudio
+app/timidity/tables.c              XX moved to caudio
+app/timidity/resample.h            XX moved to caudio
+app/timidity/resample.c            XX moved to caudio
+app/timidity/readppm.c             XX moved to caudio
+app/timidity/readmidi.h            XX moved to caudio
+app/timidity/readmidi.c            XX moved to caudio
+app/timidity/playmidi.h            XX moved to caudio
+app/timidity/playmidi.c            XX moved to caudio
+app/timidity/output.h              XX moved to caudio
+app/timidity/output.c              XX moved to caudio
+app/timidity/nemmain.c             XX moved to caudio
+app/timidity/nemesis_c.c           XX moved to caudio
+app/timidity/nemesis_a.c           XX moved to caudio
+app/timidity/mix.h                 XX moved to caudio
+app/timidity/mix.c                 XX moved to caudio
+app/timidity/misc.tcl              XX moved to caudio
+app/timidity/instrum.h             XX moved to caudio
+app/timidity/instrum.c             XX moved to caudio
+app/timidity/filter.h              XX moved to caudio
+app/timidity/filter.c              XX moved to caudio
+app/timidity/controls.h            XX moved to caudio
+app/timidity/controls.c            XX moved to caudio
+app/timidity/config.h              XX moved to caudio
+app/timidity/common.h              XX moved to caudio
+app/timidity/common.c              XX moved to caudio
+app/timidity/README                XX moved to caudio
+app/timidity/Makefile              XX moved to caudio
+app/timidity/COPYING               XX moved to caudio
+dev/scsi/disk/sd.c                 XX moved to cfs
+dev/scsi/ncr53c8xx/sc.c            XX moved to cfs
+dev/scsi/ncr53c8xx/ncr53c8xx.h     XX moved to cfs
+dev/scsi/ncr53c8xx/ncr53c8xx.c     XX moved to cfs
+dev/scsi/ncr53c8xx/main.c          XX moved to cfs
+dev/scsi/ncr53c8xx/fake.h          XX moved to cfs
+mod/fs/swapfs/swapfs.c             XX moved to cfs
+mod/fs/swapfs/SwapFS.if            XX moved to cfs
+mod/fs/swapfs/Swap.if              XX moved to cfs
+dev/scsi/interfaces/SCSIDisk.if    XX moved to cfs
+dev/scsi/interfaces/SCSIController.if XX moved to cfs
+dev/scsi/interfaces/SCSICallback.ifXX moved to cfs
+dev/scsi/interfaces/SCSI.if        XX moved to cfs
+mod/fs/interfaces/RamDiskMod.if    XX moved to cfs
+mod/fs/interfaces/RamDisk.if       XX moved to cfs
+mod/fs/interfaces/MountRemote.if   XX moved to cfs
+mod/fs/interfaces/MountLocal.if    XX moved to cfs
+mod/fs/interfaces/Filesystem.if    XX moved to cfs
+mod/fs/interfaces/FSUtil.if        XX moved to cfs
+mod/fs/interfaces/FSTypes.if       XX moved to cfs
+mod/fs/interfaces/FSDir.if         XX moved to cfs
+mod/fs/interfaces/FSClient.if      XX moved to cfs
+mod/fs/interfaces/Disk.if          XX moved to cfs
+mod/fs/interfaces/BlockDev.if      XX moved to cfs
+mod/fs/nfs/nfs_xdr.c               XX moved to cfs
+mod/fs/nfs/nfs_st.h                XX moved to cfs
+mod/fs/nfs/nfs_prot.x              XX moved to cfs
+mod/fs/nfs/nfs_prot.h              XX moved to cfs
+mod/fs/nfs/nfs.c                   XX moved to cfs
+mod/fs/nfs/mount_xdr.c             XX moved to cfs
+mod/fs/nfs/mount.x                 XX moved to cfs
+mod/fs/nfs/mount.h                 XX moved to cfs
+mod/fs/nfs/mount.c                 XX moved to cfs
+mod/fs/nfs/fsoffer.h               XX moved to cfs
+mod/fs/nfs/fsclient.c              XX moved to cfs
+mod/fs/nfs/NFS.if                  XX moved to cfs
+mod/fs/util/fsutils.c              XX moved to cfs
+mod/fs/ramdisk/ramdisk.c           XX moved to cfs
+mod/fs/ramdisk/Makefile            XX moved to cfs
+dev/isa/ide/ideprivate.h           XX moved to cfs
+dev/isa/ide/ide.h                  XX moved to cfs
+dev/isa/ide/ide.c                  XX moved to cfs
+sys/interfaces/usd/USDMod.if       XX moved to cfs
+sys/interfaces/usd/USDDrive.if     XX moved to cfs
+sys/interfaces/usd/USDCtl.if       XX moved to cfs
+sys/interfaces/usd/USDCallback.if  XX moved to cfs
+sys/interfaces/usd/USD.if          XX moved to cfs
+mod/fs/ext2fs/uuid.h               XX moved to cfs
+mod/fs/ext2fs/unparse.c            XX moved to cfs
+mod/fs/ext2fs/inode.c              XX moved to cfs
+mod/fs/ext2fs/futils.c             XX moved to cfs
+mod/fs/ext2fs/fsclient.c           XX moved to cfs
+mod/fs/ext2fs/ext2mod.h            XX moved to cfs
+mod/fs/ext2fs/ext2mod.c            XX moved to cfs
+mod/fs/ext2fs/ext2fs.h             XX moved to cfs
+mod/fs/ext2fs/ext2.c               XX moved to cfs
+mod/fs/ext2fs/bcache.c             XX moved to cfs
+mod/fs/ext2fs/README               XX moved to cfs
+mod/fs/ext2fs/Ext2.if              XX moved to cfs
+mod/fs/usd/usd.h                   XX moved to cfs
+mod/fs/usd/usd.c                   XX moved to cfs
+mod/fs/usd/partition.c             XX moved to cfs
+mod/fs/usd/io.c                    XX moved to cfs
+mod/fs/usd/disklabel.h             XX moved to cfs
+mod/net/arp/ARP.c                  XX moved to cnet
+dev/pci/de4x5/fake.h               XX moved to cnet
+dev/pci/de4x5/de4x5.h              XX moved to cnet
+dev/pci/de4x5/de4x5.c              XX moved to cnet
+lib/static/sunrpc/h/Makefile       XX moved to cnet
+mod/net/flowman/udp_var.h          XX moved to cnet
+mod/net/flowman/udp_input.c        XX moved to cnet
+mod/net/flowman/udp.h              XX moved to cnet
+mod/net/flowman/tcpip.h            XX moved to cnet
+mod/net/flowman/tcp_var.h          XX moved to cnet
+mod/net/flowman/tcp_input.c        XX moved to cnet
+mod/net/flowman/tcp.h              XX moved to cnet
+mod/net/flowman/proto_ip.h         XX moved to cnet
+mod/net/flowman/proto_ip.c         XX moved to cnet
+mod/net/flowman/prot_stat.h        XX moved to cnet
+mod/net/flowman/kill.h             XX moved to cnet
+mod/net/flowman/kill.c             XX moved to cnet
+mod/net/flowman/ipconf.c           XX moved to cnet
+mod/net/flowman/ip_var.h           XX moved to cnet
+mod/net/flowman/ip_output.c        XX moved to cnet
+mod/net/flowman/ip_input.c         XX moved to cnet
+mod/net/flowman/ip_icmp.h          XX moved to cnet
+mod/net/flowman/ip_icmp.c          XX moved to cnet
+mod/net/flowman/ip.h               XX moved to cnet
+mod/net/flowman/in.h               XX moved to cnet
+mod/net/flowman/if_ether.h         XX moved to cnet
+mod/net/flowman/icmp_var.h         XX moved to cnet
+mod/net/flowman/icmp.c             XX moved to cnet
+mod/net/flowman/hosts.c            XX moved to cnet
+mod/net/flowman/fm_constants.h     XX moved to cnet
+mod/net/flowman/flowman_st.h       XX moved to cnet
+mod/net/flowman/flowman.c          XX moved to cnet
+mod/net/flowman/ethernet.h         XX moved to cnet
+mod/net/flowman/ether_output.c     XX moved to cnet
+mod/net/flowman/ether_input.c      XX moved to cnet
+mod/net/flowman/bootp.c            XX moved to cnet
+mod/net/resolver/resolver.c        XX moved to cnet
+mod/net/resolver/ResolverMod.if    XX moved to cnet
+mod/net/resolver/Resolver.if       XX moved to cnet
+mod/net/DNS/DNSMod.if              XX moved to cnet
+mod/net/DNS/DNS.if                 XX moved to cnet
+mod/net/DNS/DNS.c                  XX moved to cnet
+mod/net/socket/tcp/tcpu_xsum.c     XX moved to cnet
+mod/net/socket/tcp/tcpu_var.h      XX moved to cnet
+mod/net/socket/tcp/tcpu_usrreq.c   XX moved to cnet
+mod/net/socket/tcp/tcpu_timer.h    XX moved to cnet
+mod/net/socket/tcp/tcpu_timer.c    XX moved to cnet
+mod/net/socket/tcp/tcpu_subr.c     XX moved to cnet
+mod/net/socket/tcp/tcpu_seq.h      XX moved to cnet
+mod/net/socket/tcp/tcpu_output.c   XX moved to cnet
+mod/net/socket/tcp/tcpu_input.c    XX moved to cnet
+mod/net/socket/tcp/tcpu.h          XX moved to cnet
+mod/net/socket/tcp/tcpip.h         XX moved to cnet
+mod/net/socket/tcp/tcp_fsm.h       XX moved to cnet
+mod/net/socket/tcp/ip_var.h        XX moved to cnet
+mod/net/socket/tcp/ip.h            XX moved to cnet
+mod/net/socket/tcp/inet.h          XX moved to cnet
+mod/net/socket/tcp/event.h         XX moved to cnet
+mod/net/protos/ether/ether.c       XX moved to cnet
+mod/net/protos/ether/Makefile      XX moved to cnet
+mod/net/socket/udp/udp_socket.h    XX moved to cnet
+mod/net/socket/udp/udp_socket.c    XX moved to cnet
+mod/net/protos/ip/ip.c             XX moved to cnet
+mod/net/protos/ip/Makefile         XX moved to cnet
+mod/net/protos/queuedIO.c          XX moved to cnet
+mod/net/protos/fakeIO.h            XX moved to cnet
+mod/net/protos/fakeIO.c            XX moved to cnet
+mod/net/protos/Makefile            XX moved to cnet
+mod/net/term/netterm.c             XX moved to cnet
+lib/static/socket/socket.c         XX moved to cnet
+lib/static/socket/Makefile         XX moved to cnet
+mod/net/interfaces/UDPMod.if       XX moved to cnet
+mod/net/interfaces/UDP.if          XX moved to cnet
+mod/net/interfaces/TFTPMod.if      XX moved to cnet
+mod/net/interfaces/TFTP.if         XX moved to cnet
+mod/net/interfaces/SimpleIO.if     XX moved to cnet
+mod/net/interfaces/Protocol.if     XX moved to cnet
+mod/net/interfaces/PF.if           XX moved to cnet
+mod/net/interfaces/NetifMod.if     XX moved to cnet
+mod/net/interfaces/Netif.if        XX moved to cnet
+mod/net/interfaces/Netcard.if      XX moved to cnet
+mod/net/interfaces/Net.if          XX moved to cnet
+mod/net/interfaces/LMPFMod.if      XX moved to cnet
+mod/net/interfaces/LMPFCtl.if      XX moved to cnet
+mod/net/interfaces/InetCtl.if      XX moved to cnet
+mod/net/interfaces/IPMod.if        XX moved to cnet
+mod/net/interfaces/IPConf.if       XX moved to cnet
+mod/net/interfaces/IP.if           XX moved to cnet
+mod/net/interfaces/ICMPMod.if      XX moved to cnet
+mod/net/interfaces/ICMP.if         XX moved to cnet
+mod/net/interfaces/FlowMan.if      XX moved to cnet
+mod/net/interfaces/EtherMod.if     XX moved to cnet
+mod/net/interfaces/Ether.if        XX moved to cnet
+mod/net/interfaces/BaseProtocol.if XX moved to cnet
+mod/net/interfaces/ARPMod.if       XX moved to cnet
+mod/net/netif/pool.h               XX moved to cnet
+mod/net/netif/pool.c               XX moved to cnet
+mod/net/netif/netif.c              XX moved to cnet
+mod/net/netif/Makefile             XX moved to cnet
+mod/net/netif/FragPool.if          XX moved to cnet
+dev/isa/3c509/3c509_st.h           XX moved to cnet
+dev/isa/3c509/3c509.h              XX moved to cnet
+dev/isa/3c509/3c509.c              XX moved to cnet
+mod/net/protos/udp/udp.c           XX moved to cnet
+mod/net/protos/udp/Makefile        XX moved to cnet
+mod/nemesis/netcons/netcons.c      XX moved to cnet
+mod/nemesis/netcons/WrRedirMod.if  XX moved to cnet
+mod/nemesis/netcons/WrRedir.if     XX moved to cnet
+mod/nemesis/netcons/RdRedirMod.if  XX moved to cnet
+mod/nemesis/netcons/RdRedir.if     XX moved to cnet
+mod/net/protos/ipv6/ipv6.c         XX moved to cnet
+mod/net/protos/ipv6/Makefile       XX moved to cnet
+lib/static/sunrpc/h/rpc/xdr.h      XX moved to cnet
+lib/static/sunrpc/h/rpc/types.h    XX moved to cnet
+lib/static/sunrpc/h/rpc/svc_auth.h XX moved to cnet
+lib/static/sunrpc/h/rpc/svc.h      XX moved to cnet
+lib/static/sunrpc/h/rpc/rpc_msg.h  XX moved to cnet
+lib/static/sunrpc/h/rpc/rpc.h      XX moved to cnet
+lib/static/sunrpc/h/rpc/pmap_prot.hXX moved to cnet
+lib/static/sunrpc/h/rpc/pmap_clnt.hXX moved to cnet
+lib/static/sunrpc/h/rpc/clnt.h     XX moved to cnet
+lib/static/sunrpc/h/rpc/auth_unix.hXX moved to cnet
+lib/static/sunrpc/h/rpc/auth.h     XX moved to cnet
+lib/static/sunrpc/h/rpc/Makefile   XX moved to cnet
+mod/net/lmpf/pf.c                  XX moved to cnet
+lib/static/sunrpc/xdr_reference.c  XX moved to cnet
+lib/static/sunrpc/xdr_mem.c        XX moved to cnet
+lib/static/sunrpc/xdr_array.c      XX moved to cnet
+lib/static/sunrpc/xdr.c            XX moved to cnet
+lib/static/sunrpc/svc_udp.c        XX moved to cnet
+lib/static/sunrpc/svc_auth.c       XX moved to cnet
+lib/static/sunrpc/svc.c            XX moved to cnet
+lib/static/sunrpc/rpc_prot.c       XX moved to cnet
+lib/static/sunrpc/rpc_commondata.c XX moved to cnet
+lib/static/sunrpc/rpc_callmsg.c    XX moved to cnet
+lib/static/sunrpc/pmap_prot.c      XX moved to cnet
+lib/static/sunrpc/pmap_getport.c   XX moved to cnet
+lib/static/sunrpc/pmap_clnt.c      XX moved to cnet
+lib/static/sunrpc/clnt_udp.c       XX moved to cnet
+lib/static/sunrpc/clnt_tcp.c       XX moved to cnet
+lib/static/sunrpc/clnt_perror.c    XX moved to cnet
+lib/static/sunrpc/authunix_prot.c  XX moved to cnet
+lib/static/sunrpc/auth_none.c      XX moved to cnet
+lib/static/sunrpc/Makefile         XX moved to cnet
+dev/pci/s3/xrip/hnull/xf86Procs.h  XX moved to cws
+dev/pci/s3/xrip/hnull/vga.h        XX moved to cws
+dev/pci/s3/xrip/hnull/site.h       XX moved to cws
+dev/pci/s3/xrip/hnull/servermd.h   XX moved to cws
+dev/pci/s3/xrip/hnull/scrnintstr.h XX moved to cws
+dev/pci/s3/xrip/hnull/s3linear.h   XX moved to cws
+dev/pci/s3/xrip/hnull/pixmapstr.h  XX moved to cws
+dev/pci/s3/xrip/hnull/misc.h       XX moved to cws
+dev/pci/s3/xrip/hnull/input.h      XX moved to cws
+dev/pci/s3/xrip/hnull/fontstruct.h XX moved to cws
+dev/pci/s3/xrip/hnull/cfb32.h      XX moved to cws
+dev/pci/s3/xrip/hnull/cfb16.h      XX moved to cws
+dev/pci/s3/xrip/hnull/cfb.h        XX moved to cws
+dev/pci/s3/xrip/hnull/Xmd.h        XX moved to cws
+dev/pci/s3/xrip/hnull/X.h          XX moved to cws
+dev/pci/s3/xrip/hnull/Makefile     XX moved to cws
+dev/pci/s3/xrip/h/xrip.h           XX moved to cws
+dev/pci/s3/xrip/h/xf86_Option.h    XX moved to cws
+dev/pci/s3/xrip/h/xf86_OSlib.h     XX moved to cws
+dev/pci/s3/xrip/h/xf86_Config.h    XX moved to cws
+dev/pci/s3/xrip/h/compiler.h       XX moved to cws
+dev/pci/s3/xrip/h/assyntax.h       XX moved to cws
+dev/pci/s3/xrip/h/Ti302X.h         XX moved to cws
+dev/pci/s3/xrip/h/Makefile         XX moved to cws
+dev/pci/s3/xrip/h/IBMRGB.h         XX moved to cws
+app/launcher/launcher.h            XX moved to cws
+app/launcher/launcher.gui.py       XX moved to cws
+app/launcher/launcher.c            XX moved to cws
+app/launcher/buttons.xcf           XX moved to cws
+app/launcher/buttons.ppm           XX moved to cws
+app/launcher/Makefile              XX moved to cws
+mod/fb/interfaces/Region.if        XX moved to cws
+mod/fb/interfaces/HWCur.if         XX moved to cws
+mod/fb/interfaces/FBBlitMod.if     XX moved to cws
+mod/fb/interfaces/FBBlit.if        XX moved to cws
+mod/fb/interfaces/FB.if            XX moved to cws
+mod/ws/wsterm/wsterm.c             XX moved to cws
+mod/ws/wsterm/windows.c            XX moved to cws
+mod/ws/wsterm/strings.c            XX moved to cws
+mod/ws/wsterm/rectangles.c         XX moved to cws
+mod/ws/wsterm/points.c             XX moved to cws
+mod/ws/wsterm/lines.c              XX moved to cws
+mod/ws/wsterm/font.h               XX moved to cws
+mod/ws/wsterm/events.c             XX moved to cws
+mod/ws/wsterm/display.c            XX moved to cws
+mod/ws/wsterm/default8x16.c        XX moved to cws
+mod/ws/wsterm/WSprivate.h          XX moved to cws
+dev/pci/s3/xrip/hc/pegcursor2.xpm.cXX moved to cws
+dev/pci/s3/xrip/hc/Ti3026Curs.c    XX moved to cws
+dev/pci/s3/xrip/hc/Makefile        XX moved to cws
+dev/pci/s3/xrip/hc/IBMRGBCurs.c    XX moved to cws
+dev/pci/mga/mga_hw/vgatables.c     XX moved to cws
+dev/pci/mga/mga_hw/modes.c         XX moved to cws
+dev/pci/mga/mga_hw/mga_reg.h       XX moved to cws
+dev/pci/mga/mga_hw/mga_dac3026.c   XX moved to cws
+dev/pci/mga/mga_hw/mga_bios.h      XX moved to cws
+dev/pci/mga/mga_hw/mga.h           XX moved to cws
+dev/pci/mga/mga_hw/mga.c           XX moved to cws
+dev/pci/mga/mga_hw/Makefile        XX moved to cws
+dev/pci/s3/xrip/commonhw/xf86_PCI.hXX moved to cws
+dev/pci/s3/xrip/commonhw/xf86_PCI.cXX moved to cws
+dev/pci/s3/xrip/commonhw/xf86_HWlib.h XX moved to cws
+dev/pci/s3/xrip/commonhw/Ti302X.h  XX moved to cws
+dev/pci/s3/xrip/commonhw/Ti3026clk.c XX moved to cws
+dev/pci/s3/xrip/commonhw/Ti3025clk.c XX moved to cws
+dev/pci/s3/xrip/commonhw/SlowBcopy.c XX moved to cws
+dev/pci/s3/xrip/commonhw/SlowBcopy.S XX moved to cws
+dev/pci/s3/xrip/commonhw/STG1703clk.c XX moved to cws
+dev/pci/s3/xrip/commonhw/SC11412.h XX moved to cws
+dev/pci/s3/xrip/commonhw/SC11412.c XX moved to cws
+dev/pci/s3/xrip/commonhw/S3gendac.hXX moved to cws
+dev/pci/s3/xrip/commonhw/S3gendac.cXX moved to cws
+dev/pci/s3/xrip/commonhw/Makefile  XX moved to cws
+dev/pci/s3/xrip/commonhw/IODelay.c XX moved to cws
+dev/pci/s3/xrip/commonhw/IODelay.S XX moved to cws
+dev/pci/s3/xrip/commonhw/ICS2595.h XX moved to cws
+dev/pci/s3/xrip/commonhw/ICS2595.c XX moved to cws
+dev/pci/s3/xrip/commonhw/ICD2061A.hXX moved to cws
+dev/pci/s3/xrip/commonhw/IBMRGB.h  XX moved to cws
+dev/pci/s3/xrip/commonhw/IBMRGB.c  XX moved to cws
+dev/pci/s3/xrip/commonhw/I2061Aset.c XX moved to cws
+dev/pci/s3/xrip/commonhw/I2061Acal.c XX moved to cws
+dev/pci/s3/xrip/commonhw/I2061Aalt.c XX moved to cws
+dev/pci/s3/xrip/commonhw/CirrusClk.h XX moved to cws
+dev/pci/s3/xrip/commonhw/CirrusClk.c XX moved to cws
+dev/pci/s3/xrip/commonhw/Ch8391clk.c XX moved to cws
+dev/pci/s3/xrip/commonhw/BUSmemcpy.c XX moved to cws
+dev/pci/s3/xrip/commonhw/BUSmemcpy.S XX moved to cws
+dev/pci/s3/xrip/commonhw/ATTDac.c  XX moved to cws
+mod/fb/fbblit/FBBlitMod.c          XX moved to cws
+dev/pci/s3/xrip/xripmisc.c         XX moved to cws
+dev/pci/s3/xrip/xripio.c           XX moved to cws
+dev/pci/s3/xrip/xrip.c             XX moved to cws
+dev/pci/s3/xrip/vgaHW.c            XX moved to cws
+dev/pci/s3/xrip/Makefile           XX moved to cws
+mod/ws/README                      XX moved to cws
+dev/pci/s3/stub.S                  XX moved to cws
+dev/pci/s3/s3.h                    XX moved to cws
+dev/pci/s3/s3.c                    XX moved to cws
+dev/pci/s3/blit_16.c               XX moved to cws
+dev/pci/s3/Makefile                XX moved to cws
+dev/pci/s3/FB_st.h                 XX moved to cws
+dev/pci/mga/common_hw/xf86.h       XX moved to cws
+dev/pci/mga/common_hw/vgaHW.c      XX moved to cws
+dev/pci/mga/common_hw/vga.h        XX moved to cws
+dev/pci/mga/common_hw/pci_stuff.h  XX moved to cws
+dev/pci/mga/common_hw/pci_stuff.c  XX moved to cws
+dev/pci/mga/common_hw/Makefile     XX moved to cws
+mod/ws/region/Region.c             XX moved to cws
+dev/pci/mga/stub.S                 XX moved to cws
+dev/pci/mga/main.c                 XX moved to cws
+dev/pci/mga/cursor32.xpm.h         XX moved to cws
+dev/pci/mga/blit_16.c              XX moved to cws
+dev/pci/mga/Makefile               XX moved to cws
+dev/pci/mga/FB_st.h                XX moved to cws
+mod/ws/interfaces/WSF.if           XX moved to cws
+mod/ws/interfaces/WS.if            XX moved to cws
+mod/ws/interfaces/WMMod.if         XX moved to cws
+mod/ws/interfaces/WM.if            XX moved to cws
+mod/ws/interfaces/CRendPixmap.if   XX moved to cws
+mod/ws/interfaces/CRendDisplayMod.if XX moved to cws
+mod/ws/interfaces/CRendDisplay.if  XX moved to cws
+mod/ws/interfaces/CRend.if         XX moved to cws
+dev/pci/s3/xrip/s3/s3misc.c        XX moved to cws
+dev/pci/s3/xrip/s3/s3linear.h      XX moved to cws
+dev/pci/s3/xrip/s3/s3init.c        XX moved to cws
+dev/pci/s3/xrip/s3/s3im.c          XX moved to cws
+dev/pci/s3/xrip/s3/s3consts.h      XX moved to cws
+dev/pci/s3/xrip/s3/s3_generic.c    XX moved to cws
+dev/pci/s3/xrip/s3/s3ELSA.h        XX moved to cws
+dev/pci/s3/xrip/s3/s3ELSA.c        XX moved to cws
+dev/pci/s3/xrip/s3/s3Conf.c        XX moved to cws
+dev/pci/s3/xrip/s3/s3Bt485.h       XX moved to cws
+dev/pci/s3/xrip/s3/s3.h            XX moved to cws
+dev/pci/s3/xrip/s3/s3.c            XX moved to cws
+dev/pci/s3/xrip/s3/regs3.h         XX moved to cws
+dev/pci/s3/xrip/s3/mmio_928.c      XX moved to cws
+dev/pci/s3/xrip/s3/XF86_S3.c       XX moved to cws
+dev/pci/s3/xrip/s3/Makefile        XX moved to cws
+mod/ws/crend/pixmap.c              XX moved to cws
+mod/ws/crend/fontindex.c           XX moved to cws
+mod/ws/crend/fontdata.c            XX moved to cws
+mod/ws/crend/displaymod.c          XX moved to cws
+mod/ws/crend/display.c             XX moved to cws
+mod/ws/crend/crend.c               XX moved to cws
+mod/ws/crend/CRend_st.h            XX moved to cws
+mod/ws/crend/CRendDisplay_st.h     XX moved to cws
+mod/ws/crend/CRendDisplayMod_st.h  XX moved to cws
+mod/ws/savewm/savewm.c             XX moved to cws
+dev/atm/interfaces                 !! moved to catm
+dev/pci/oppo                       !! moved to catm
+dev/pci/nicstar                    !! moved to catm
+dev/isa/lksound                    !! moved to caudio
+dev/scsi/disk                      !! moved to cfs
+dev/scsi/ncr53c8xx                 !! moved to cfs
+dev/scsi/interfaces                !! moved to cfs
+mod/fs/swapfs                      !! moved to cfs
+mod/fs/interfaces                  !! moved to cfs
+mod/fs/nfs                         !! moved to cfs
+mod/fs/util                        !! moved to cfs
+mod/fs/ramdisk                     !! moved to cfs
+dev/isa/ide                        !! moved to cfs
+sys/interfaces/usd                 !! moved to cfs
+mod/fs/ext2fs                      !! moved to cfs
+mod/fs/usd                         !! moved to cfs
+mod/net/arp                        !! moved to cnet
+dev/pci/de4x5                      !! moved to cnet
+lib/static/sunrpc/h/rpc            !! moved to cnet
+lib/static/sunrpc/h                !! moved to cnet
+mod/net/flowman                    !! moved to cnet
+mod/net/resolver                   !! moved to cnet
+mod/net/DNS                        !! moved to cnet
+mod/net/socket/tcp                 !! moved to cnet
+mod/net/protos/ether               !! moved to cnet
+mod/net/socket/udp                 !! moved to cnet
+mod/net/protos/ip                  !! moved to cnet
+mod/net/term                       !! moved to cnet
+lib/static/socket                  !! moved to cnet
+mod/net/socket                     !! moved to cnet
+mod/net/interfaces                 !! moved to cnet
+mod/net/netif                      !! moved to cnet
+dev/isa/3c509                      !! moved to cnet
+mod/net/protos/udp                 !! moved to cnet
+mod/nemesis/netcons                !! moved to cnet
+mod/net/protos/ipv6                !! moved to cnet
+mod/net/lmpf                       !! moved to cnet
+lib/static/sunrpc                  !! moved to cnet
+dev/pci/s3/xrip/hnull              !! moved to cws
+dev/pci/s3/xrip/h                  !! moved to cws
+app/launcher                       !! moved to cws
+mod/fb/interfaces                  !! moved to cws
+mod/ws/wsterm                      !! moved to cws
+dev/pci/s3/xrip/hc                 !! moved to cws
+dev/pci/mga/mga_hw                 !! moved to cws
+dev/pci/s3/xrip/commonhw           !! moved to cws
+mod/fb/fbblit                      !! moved to cws
+dev/pci/s3/xrip/s3                 !! moved to cws
+dev/pci/s3/xrip                    !! moved to cws
+dev/pci/s3                         !! moved to cws
+dev/pci/mga/common_hw              !! moved to cws
+mod/ws/region                      !! moved to cws
+dev/pci/mga                        !! moved to cws
+mod/ws/interfaces                  !! moved to cws
+mod/ws/crend                       !! moved to cws
+mod/ws/savewm                      !! moved to cws
+dev/atm                            !! moved to cnet
+mod/au                             !! moved to caudio
+app/amp                            !! moved to caudio
+app/timidity                       !! moved to caudio
+mod/net/protos                     !! moved to cnet
+mod/net                            !! moved to cnet
+mod/ws                             !! moved to cws
+mod/fb                             !! moved to cws
+dev/scsi                           !! moved to cfs
+
+#00002 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Dec 15 14:37:13 1998
+--------------------------------------------------------------------------
+
+Changes between the live and release trees during the release process.
+The release directory was created on Nov 17 1998. Since then, the following
+files changed:
+glue/generic_blueprint.py  (SMH)
+mod/nemesis/mmentry/[mmnotify.c (SMH) , mmentry.c (SMH)]
+mod/fs/usd/io.c (MJH)
+sys/nemesis/ModData.c (SMH) 
+sys/memroy/ifaces_xpt/StretchDriver.if (SMH)
+sys/memory/ifaces_expt/FaultHandler.if (SMH)
+mod/nemesis/sdriver/stretchdriver.c (SMH)
+
+Also includes a couple of build fixes by Dickon Reed
+
+glue/generic_blueprint.py          -- Build new interfaces
+mod/nemesis/mmentry/mmnotify.c     -- support for user thread handlers
+mod/nemesis/mmentry/mmentry.c      -- worker threads are daemons
+mod/fs/usd/io.c                    -- Return RC anf fix for race condition
+sys/memory/ifaces_expt/FaultHandler.if ++ faults outside sdriver
+sys/nemesis/ModData.c              -- don't drop out of kernel mode
+sys/memory/ifaces_expt/StretchDriver.if -- Added some new operations
+mod/nemesis/sdriver/stretchdriver.c-- Added new operations
+mod/nemesis/stubs/Makefile         -- invoke script through sh
+
+#00001 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Dec 15 11:44:19 1998
+--------------------------------------------------------------------------
+Create the Nemesis Release
+                                   ** Root of tree
+app                                ** Applications
+doc                                ** Documents
+glue                               ** Nuild System Glue
+h                                  ** Headers
+h/dev                              ** Device driver headers
+lib                                ** Libraries
+links                              ** Install links
+mk                                 ** Makefiles
+mod                                ** Modules
+ntsc                               ** Nemesis Trusted Supervisor Code
+repo                               ** Interface Repository
+sys                                ** System services
+Makefile                           ++ describeme
+app                                ** NEW DIRECTORY
+app/amp                            ** NEW DIRECTORY
+app/amp/amp.h                      ++ describeme
+app/amp/args.c                     ++ describeme
+app/amp/audio.c                    ++ describeme
+app/amp/audio.h                    ++ describeme
+app/amp/audioIO.c                  ++ describeme
+app/amp/audioIO.h                  ++ describeme
+app/amp/audioIO_aubuf.c            ++ describeme
+app/amp/controldata.h              ++ describeme
+app/amp/dump.c                     ++ describeme
+app/amp/dump.h                     ++ describeme
+app/amp/formats.c                  ++ describeme
+app/amp/formats.h                  ++ describeme
+app/amp/getbits.c                  ++ describeme
+app/amp/getbits.h                  ++ describeme
+app/amp/getdata.c                  ++ describeme
+app/amp/getdata.h                  ++ describeme
+app/amp/getopt.c                   ++ describeme
+app/amp/getopt.h                   ++ describeme
+app/amp/getopt1.c                  ++ describeme
+app/amp/guicontrol.c               ++ describeme
+app/amp/guicontrol.h               ++ describeme
+app/amp/huffman.c                  ++ describeme
+app/amp/huffman.h                  ++ describeme
+app/amp/layer2.c                   ++ describeme
+app/amp/layer2.h                   ++ describeme
+app/amp/layer3.c                   ++ describeme
+app/amp/layer3.h                   ++ describeme
+app/amp/misc2.c                    ++ describeme
+app/amp/misc2.h                    ++ describeme
+app/amp/nemstuff.c                 ++ describeme
+app/amp/position.c                 ++ describeme
+app/amp/position.h                 ++ describeme
+app/amp/proto.h                    ++ describeme
+app/amp/readppm.c                  ++ describeme
+app/amp/rtbuf.c                    ++ describeme
+app/amp/rtbuf.h                    ++ describeme
+app/amp/transform.c                ++ describeme
+app/amp/transform.h                ++ describeme
+app/amp/util.c                     ++ describeme
+app                                ** NEW DIRECTORY
+app/launcher                       ** NEW DIRECTORY
+app/launcher/Makefile              ++ describeme
+app/launcher/buttons.ppm           ++ describeme
+app/launcher/buttons.xcf           ++ describeme
+app/launcher/launcher.c            ++ describeme
+app/launcher/launcher.gui.py       ++ describeme
+app/launcher/launcher.h            ++ describeme
+app                                ** NEW DIRECTORY
+app/timidity                       ** NEW DIRECTORY
+app/timidity/COPYING               ++ describeme
+app/timidity/Makefile              ++ describeme
+app/timidity/README                ++ describeme
+app/timidity/common.c              ++ describeme
+app/timidity/common.h              ++ describeme
+app/timidity/config.h              ++ describeme
+app/timidity/controls.c            ++ describeme
+app/timidity/controls.h            ++ describeme
+app/timidity/filter.c              ++ describeme
+app/timidity/filter.h              ++ describeme
+app/timidity/instrum.c             ++ describeme
+app/timidity/instrum.h             ++ describeme
+app/timidity/misc.tcl              ++ describeme
+app/timidity/mix.c                 ++ describeme
+app/timidity/mix.h                 ++ describeme
+app/timidity/nemesis_a.c           ++ describeme
+app/timidity/nemesis_c.c           ++ describeme
+app/timidity/nemmain.c             ++ describeme
+app/timidity/output.c              ++ describeme
+app/timidity/output.h              ++ describeme
+app/timidity/playmidi.c            ++ describeme
+app/timidity/playmidi.h            ++ describeme
+app/timidity/readmidi.c            ++ describeme
+app/timidity/readmidi.h            ++ describeme
+app/timidity/readppm.c             ++ describeme
+app/timidity/resample.c            ++ describeme
+app/timidity/resample.h            ++ describeme
+app/timidity/tables.c              ++ describeme
+app/timidity/tables.h              ++ describeme
+app/timidity/timidity.c            ++ describeme
+app/timidity/timidity.obj          ++ describeme
+boot                               ** NEW DIRECTORY
+boot/Makefile                      ++ describeme
+boot                               ** NEW DIRECTORY
+boot/images                        ** NEW DIRECTORY
+boot/images/gensrc                 ++ describeme
+boot/images/standard.rc            ++ describeme
+boot                               ** NEW DIRECTORY
+boot/initscripts                   ** NEW DIRECTORY
+boot/initscripts/Makefile          ++ describeme
+boot/initscripts/banner            ++ describeme
+boot/initscripts/init.rc.py        ++ describeme
+dev                                ** NEW DIRECTORY
+dev/atm                            ** NEW DIRECTORY
+dev/atm/interfaces                 ** NEW DIRECTORY
+dev/atm/interfaces/AALPod.if       ++ describeme
+dev/atm/interfaces/ATM.if          ++ describeme
+dev                                ** NEW DIRECTORY
+dev/interfaces                     ** NEW DIRECTORY
+dev/interfaces/Au.if               ++ describeme
+dev/interfaces/AuMod.if            ++ describeme
+dev/interfaces/AuPlaybackWriter.if ++ describeme
+dev/interfaces/Kbd.if              ++ describeme
+dev/interfaces/Mouse.if            ++ describeme
+dev/interfaces/RTC.if              ++ describeme
+dev/interfaces/Serial.if           ++ describeme
+dev/interfaces/Timer.if            ++ describeme
+dev/interfaces/WTime.if            ++ describeme
+dev/interfaces/WTimeUpdate.if      ++ describeme
+dev                                ** NEW DIRECTORY
+dev/isa                            ** NEW DIRECTORY
+dev/isa/3c509                      ** NEW DIRECTORY
+dev/isa/3c509/3c509.c              ++ describeme
+dev/isa/3c509/3c509.h              ++ describeme
+dev/isa/3c509/3c509_st.h           ++ describeme
+dev                                ** NEW DIRECTORY
+dev/isa                            ** NEW DIRECTORY
+dev/isa/beep                       ** NEW DIRECTORY
+dev/isa/beep/Beep.if               ++ describeme
+dev/isa/beep/beep.c                ++ describeme
+dev                                ** NEW DIRECTORY
+dev/isa                            ** NEW DIRECTORY
+dev/isa/ide                        ** NEW DIRECTORY
+dev/isa/ide/ide.c                  ++ describeme
+dev/isa/ide/ide.h                  ++ describeme
+dev/isa/ide/ideprivate.h           ++ describeme
+dev                                ** NEW DIRECTORY
+dev/isa                            ** NEW DIRECTORY
+dev/isa/lksound                    ** NEW DIRECTORY
+dev/isa/lksound/ad1848_mixer.h     ++ describeme
+dev/isa/lksound/aubuf.h            ++ describeme
+dev/isa/lksound/coproc.h           ++ describeme
+dev/isa/lksound/dev_table.c        ++ describeme
+dev/isa/lksound/dev_table.h        ++ describeme
+dev/isa/lksound/dmasound.h         ++ describeme
+dev/isa/lksound/finetune.h         ++ describeme
+dev/isa/lksound/gus_hw.h           ++ describeme
+dev/isa/lksound/gus_linearvol.h    ++ describeme
+dev/isa/lksound/iwmem.h            ++ describeme
+dev/isa/lksound/lksound.c          ++ describeme
+dev/isa/lksound/lksound.h          ++ describeme
+dev/isa/lksound/midi_ctrl.h        ++ describeme
+dev/isa/lksound/midi_synth.h       ++ describeme
+dev/isa/lksound/opl3.h             ++ describeme
+dev/isa/lksound/os.h               ++ describeme
+dev/isa/lksound/sb.h               ++ describeme
+dev/isa/lksound/sb_audio.c         ++ describeme
+dev/isa/lksound/sb_common.c        ++ describeme
+dev/isa/lksound/sb_midi.c          ++ describeme
+dev/isa/lksound/sb_mixer.c         ++ describeme
+dev/isa/lksound/sb_mixer.h         ++ describeme
+dev/isa/lksound/softoss.h          ++ describeme
+dev/isa/lksound/sound_calls.h      ++ describeme
+dev/isa/lksound/sound_config.h     ++ describeme
+dev/isa/lksound/sound_firmware.h   ++ describeme
+dev/isa/lksound/soundmodule.h      ++ describeme
+dev/isa/lksound/soundvers.h        ++ describeme
+dev/isa/lksound/tuning.h           ++ describeme
+dev/isa/lksound/ulaw.h             ++ describeme
+dev/isa/lksound/v_midi.h           ++ describeme
+dev/isa/lksound/vidc.h             ++ describeme
+dev                                ** NEW DIRECTORY
+dev/isa                            ** NEW DIRECTORY
+dev/isa/mc146818                   ** NEW DIRECTORY
+dev/isa/mc146818/RTC.c             ++ describeme
+dev                                ** NEW DIRECTORY
+dev/isa                            ** NEW DIRECTORY
+dev/isa/ns16550                    ** NEW DIRECTORY
+dev/isa/ns16550/SerialMod.if       ++ describeme
+dev/isa/ns16550/Serial_st.h        ++ describeme
+dev/isa/ns16550/readers.c          ++ describeme
+dev/isa/ns16550/serial.c           ++ describeme
+dev                                ** NEW DIRECTORY
+dev/isa                            ** NEW DIRECTORY
+dev/isa/ps2                        ** NEW DIRECTORY
+dev/isa/ps2/ps2.c                  ++ describeme
+dev/isa/ps2/ps2_st.h               ++ describeme
+dev/isa/ps2/table.c                ++ describeme
+dev                                ** NEW DIRECTORY
+dev/isa                            ** NEW DIRECTORY
+dev/isa/vgaconsole                 ** NEW DIRECTORY
+dev/isa/vgaconsole/VGATextMod.if   ++ describeme
+dev/isa/vgaconsole/console.c       ++ describeme
+dev                                ** NEW DIRECTORY
+dev/pci                            ** NEW DIRECTORY
+dev/pci/de4x5                      ** NEW DIRECTORY
+dev/pci/de4x5/de4x5.c              ++ describeme
+dev/pci/de4x5/de4x5.h              ++ describeme
+dev/pci/de4x5/fake.h               ++ describeme
+dev                                ** NEW DIRECTORY
+dev/pci                            ** NEW DIRECTORY
+dev/pci/mga                        ** NEW DIRECTORY
+dev/pci/mga/FB_st.h                ++ describeme
+dev/pci/mga/Makefile               ++ describeme
+dev/pci/mga/blit_16.c              ++ describeme
+dev                                ** NEW DIRECTORY
+dev/pci                            ** NEW DIRECTORY
+dev/pci/mga                        ** NEW DIRECTORY
+dev/pci/mga/common_hw              ** NEW DIRECTORY
+dev/pci/mga/common_hw/Makefile     ++ describeme
+dev/pci/mga/common_hw/pci_stuff.c  ++ describeme
+dev/pci/mga/common_hw/pci_stuff.h  ++ describeme
+dev/pci/mga/common_hw/vga.h        ++ describeme
+dev/pci/mga/common_hw/vgaHW.c      ++ describeme
+dev/pci/mga/common_hw/xf86.h       ++ describeme
+dev/pci/mga/cursor32.xpm.h         ++ describeme
+dev/pci/mga/main.c                 ++ describeme
+dev                                ** NEW DIRECTORY
+dev/pci                            ** NEW DIRECTORY
+dev/pci/mga                        ** NEW DIRECTORY
+dev/pci/mga/mga_hw                 ** NEW DIRECTORY
+dev/pci/mga/mga_hw/Makefile        ++ describeme
+dev/pci/mga/mga_hw/mga.c           ++ describeme
+dev/pci/mga/mga_hw/mga.h           ++ describeme
+dev/pci/mga/mga_hw/mga_bios.h      ++ describeme
+dev/pci/mga/mga_hw/mga_dac3026.c   ++ describeme
+dev/pci/mga/mga_hw/mga_reg.h       ++ describeme
+dev/pci/mga/mga_hw/modes.c         ++ describeme
+dev/pci/mga/mga_hw/vgatables.c     ++ describeme
+dev/pci/mga/stub.S                 ++ describeme
+dev                                ** NEW DIRECTORY
+dev/pci                            ** NEW DIRECTORY
+dev/pci/nicstar                    ** NEW DIRECTORY
+dev/pci/nicstar/nicstar.c          ++ describeme
+dev/pci/nicstar/nicstar.h          ++ describeme
+dev/pci/nicstar/nicstar_aal5.c     ++ describeme
+dev/pci/nicstar/rbuf.h             ++ describeme
+dev                                ** NEW DIRECTORY
+dev/pci                            ** NEW DIRECTORY
+dev/pci/oppo                       ** NEW DIRECTORY
+dev/pci/oppo/DirectOppo.if         ++ describeme
+dev/pci/oppo/direct.c              ++ describeme
+dev/pci/oppo/main.c                ++ describeme
+dev/pci/oppo/otto.c                ++ describeme
+dev/pci/oppo/otto.h                ++ describeme
+dev/pci/oppo/otto_aal5.c           ++ describeme
+dev/pci/oppo/otto_exec.h           ++ describeme
+dev/pci/oppo/otto_hw.c             ++ describeme
+dev/pci/oppo/otto_hw.h             ++ describeme
+dev/pci/oppo/otto_platform.h       ++ describeme
+dev/pci/oppo/otto_regs.h           ++ describeme
+dev/pci/oppo/otto_xilinx.c         ++ describeme
+dev/pci/oppo/rbuf.h                ++ describeme
+dev/pci/oppo/state.h               ++ describeme
+dev/pci/oppo/suni.h                ++ describeme
+dev                                ** NEW DIRECTORY
+dev/pci                            ** NEW DIRECTORY
+dev/pci/s3                         ** NEW DIRECTORY
+dev/pci/s3/FB_st.h                 ++ describeme
+dev/pci/s3/Makefile                ++ describeme
+dev/pci/s3/blit_16.c               ++ describeme
+dev/pci/s3/s3.c                    ++ describeme
+dev/pci/s3/s3.h                    ++ describeme
+dev/pci/s3/stub.S                  ++ describeme
+dev                                ** NEW DIRECTORY
+dev/pci                            ** NEW DIRECTORY
+dev/pci/s3                         ** NEW DIRECTORY
+dev/pci/s3/xrip                    ** NEW DIRECTORY
+dev/pci/s3/xrip/Makefile           ++ describeme
+dev                                ** NEW DIRECTORY
+dev/pci                            ** NEW DIRECTORY
+dev/pci/s3                         ** NEW DIRECTORY
+dev/pci/s3/xrip                    ** NEW DIRECTORY
+dev/pci/s3/xrip/commonhw           ** NEW DIRECTORY
+dev/pci/s3/xrip/commonhw/ATTDac.c  ++ describeme
+dev/pci/s3/xrip/commonhw/BUSmemcpy.S ++ describeme
+dev/pci/s3/xrip/commonhw/BUSmemcpy.c ++ describeme
+dev/pci/s3/xrip/commonhw/Ch8391clk.c ++ describeme
+dev/pci/s3/xrip/commonhw/CirrusClk.c ++ describeme
+dev/pci/s3/xrip/commonhw/CirrusClk.h ++ describeme
+dev/pci/s3/xrip/commonhw/I2061Aalt.c ++ describeme
+dev/pci/s3/xrip/commonhw/I2061Acal.c ++ describeme
+dev/pci/s3/xrip/commonhw/I2061Aset.c ++ describeme
+dev/pci/s3/xrip/commonhw/IBMRGB.c  ++ describeme
+dev/pci/s3/xrip/commonhw/IBMRGB.h  ++ describeme
+dev/pci/s3/xrip/commonhw/ICD2061A.h++ describeme
+dev/pci/s3/xrip/commonhw/ICS2595.c ++ describeme
+dev/pci/s3/xrip/commonhw/ICS2595.h ++ describeme
+dev/pci/s3/xrip/commonhw/IODelay.S ++ describeme
+dev/pci/s3/xrip/commonhw/IODelay.c ++ describeme
+dev/pci/s3/xrip/commonhw/Makefile  ++ describeme
+dev/pci/s3/xrip/commonhw/S3gendac.c++ describeme
+dev/pci/s3/xrip/commonhw/S3gendac.h++ describeme
+dev/pci/s3/xrip/commonhw/SC11412.c ++ describeme
+dev/pci/s3/xrip/commonhw/SC11412.h ++ describeme
+dev/pci/s3/xrip/commonhw/STG1703clk.c ++ describeme
+dev/pci/s3/xrip/commonhw/SlowBcopy.S ++ describeme
+dev/pci/s3/xrip/commonhw/SlowBcopy.c ++ describeme
+dev/pci/s3/xrip/commonhw/Ti3025clk.c ++ describeme
+dev/pci/s3/xrip/commonhw/Ti3026clk.c ++ describeme
+dev/pci/s3/xrip/commonhw/Ti302X.h  ++ describeme
+dev/pci/s3/xrip/commonhw/xf86_HWlib.h ++ describeme
+dev/pci/s3/xrip/commonhw/xf86_PCI.c++ describeme
+dev/pci/s3/xrip/commonhw/xf86_PCI.h++ describeme
+dev                                ** NEW DIRECTORY
+dev/pci                            ** NEW DIRECTORY
+dev/pci/s3                         ** NEW DIRECTORY
+dev/pci/s3/xrip                    ** NEW DIRECTORY
+dev/pci/s3/xrip/h                  ** NEW DIRECTORY
+dev/pci/s3/xrip/h/IBMRGB.h         ++ describeme
+dev/pci/s3/xrip/h/Makefile         ++ describeme
+dev/pci/s3/xrip/h/Ti302X.h         ++ describeme
+dev/pci/s3/xrip/h/assyntax.h       ++ describeme
+dev/pci/s3/xrip/h/compiler.h       ++ describeme
+dev/pci/s3/xrip/h/xf86_Config.h    ++ describeme
+dev/pci/s3/xrip/h/xf86_OSlib.h     ++ describeme
+dev/pci/s3/xrip/h/xf86_Option.h    ++ describeme
+dev/pci/s3/xrip/h/xrip.h           ++ describeme
+dev                                ** NEW DIRECTORY
+dev/pci                            ** NEW DIRECTORY
+dev/pci/s3                         ** NEW DIRECTORY
+dev/pci/s3/xrip                    ** NEW DIRECTORY
+dev/pci/s3/xrip/hc                 ** NEW DIRECTORY
+dev/pci/s3/xrip/hc/IBMRGBCurs.c    ++ describeme
+dev/pci/s3/xrip/hc/Makefile        ++ describeme
+dev/pci/s3/xrip/hc/Ti3026Curs.c    ++ describeme
+dev/pci/s3/xrip/hc/pegcursor2.xpm.c++ describeme
+dev                                ** NEW DIRECTORY
+dev/pci                            ** NEW DIRECTORY
+dev/pci/s3                         ** NEW DIRECTORY
+dev/pci/s3/xrip                    ** NEW DIRECTORY
+dev/pci/s3/xrip/hnull              ** NEW DIRECTORY
+dev/pci/s3/xrip/hnull/Makefile     ++ describeme
+dev/pci/s3/xrip/hnull/X.h          ++ describeme
+dev/pci/s3/xrip/hnull/Xmd.h        ++ describeme
+dev/pci/s3/xrip/hnull/cfb.h        ++ describeme
+dev/pci/s3/xrip/hnull/cfb16.h      ++ describeme
+dev/pci/s3/xrip/hnull/cfb32.h      ++ describeme
+dev/pci/s3/xrip/hnull/fontstruct.h ++ describeme
+dev/pci/s3/xrip/hnull/input.h      ++ describeme
+dev/pci/s3/xrip/hnull/misc.h       ++ describeme
+dev/pci/s3/xrip/hnull/pixmapstr.h  ++ describeme
+dev/pci/s3/xrip/hnull/s3linear.h   ++ describeme
+dev/pci/s3/xrip/hnull/scrnintstr.h ++ describeme
+dev/pci/s3/xrip/hnull/servermd.h   ++ describeme
+dev/pci/s3/xrip/hnull/site.h       ++ describeme
+dev/pci/s3/xrip/hnull/vga.h        ++ describeme
+dev/pci/s3/xrip/hnull/xf86Procs.h  ++ describeme
+dev                                ** NEW DIRECTORY
+dev/pci                            ** NEW DIRECTORY
+dev/pci/s3                         ** NEW DIRECTORY
+dev/pci/s3/xrip                    ** NEW DIRECTORY
+dev/pci/s3/xrip/s3                 ** NEW DIRECTORY
+dev/pci/s3/xrip/s3/Makefile        ++ describeme
+dev/pci/s3/xrip/s3/XF86_S3.c       ++ describeme
+dev/pci/s3/xrip/s3/mmio_928.c      ++ describeme
+dev/pci/s3/xrip/s3/regs3.h         ++ describeme
+dev/pci/s3/xrip/s3/s3.c            ++ describeme
+dev/pci/s3/xrip/s3/s3.h            ++ describeme
+dev/pci/s3/xrip/s3/s3Bt485.h       ++ describeme
+dev/pci/s3/xrip/s3/s3Conf.c        ++ describeme
+dev/pci/s3/xrip/s3/s3ELSA.c        ++ describeme
+dev/pci/s3/xrip/s3/s3ELSA.h        ++ describeme
+dev/pci/s3/xrip/s3/s3_generic.c    ++ describeme
+dev/pci/s3/xrip/s3/s3consts.h      ++ describeme
+dev/pci/s3/xrip/s3/s3im.c          ++ describeme
+dev/pci/s3/xrip/s3/s3init.c        ++ describeme
+dev/pci/s3/xrip/s3/s3linear.h      ++ describeme
+dev/pci/s3/xrip/s3/s3misc.c        ++ describeme
+dev/pci/s3/xrip/vgaHW.c            ++ describeme
+dev/pci/s3/xrip/xrip.c             ++ describeme
+dev/pci/s3/xrip/xripio.c           ++ describeme
+dev/pci/s3/xrip/xripmisc.c         ++ describeme
+dev                                ** NEW DIRECTORY
+dev/scsi                           ** NEW DIRECTORY
+dev/scsi/disk                      ** NEW DIRECTORY
+dev/scsi/disk/sd.c                 ++ describeme
+dev                                ** NEW DIRECTORY
+dev/scsi                           ** NEW DIRECTORY
+dev/scsi/interfaces                ** NEW DIRECTORY
+dev/scsi/interfaces/SCSI.if        ++ describeme
+dev/scsi/interfaces/SCSICallback.if++ describeme
+dev/scsi/interfaces/SCSIController.if ++ describeme
+dev/scsi/interfaces/SCSIDisk.if    ++ describeme
+dev                                ** NEW DIRECTORY
+dev/scsi                           ** NEW DIRECTORY
+dev/scsi/ncr53c8xx                 ** NEW DIRECTORY
+dev/scsi/ncr53c8xx/fake.h          ++ describeme
+dev/scsi/ncr53c8xx/main.c          ++ describeme
+dev/scsi/ncr53c8xx/ncr53c8xx.c     ++ describeme
+dev/scsi/ncr53c8xx/ncr53c8xx.h     ++ describeme
+dev/scsi/ncr53c8xx/sc.c            ++ describeme
+glue/audit.py                      ++ describeme
+glue/blueprint.py                  ++ describeme
+glue/buildutils.py                 ++ describeme
+glue/changeconfig.tcl              ++ describeme
+glue/choicesgui.py                 ++ describeme
+glue/configutils.py                ++ describeme
+glue/createiflinks.py              ++ describeme
+glue/customizer.py                 ++ describeme
+glue/depsshow.py                   ++ describeme
+glue/gendetails.py                 ++ describeme
+glue/gendirs.py                    ++ describeme
+glue/generic_blueprint.py          ++ describeme
+glue/gengraph.py                   ++ describeme
+glue/geninfrastructure.py          ++ describeme
+glue/geninstalllinks.py            ++ describeme
+glue/genmakefile.py                ++ describeme
+glue/gennbf.py                     ++ describeme
+glue/growtree.py                   ++ describeme
+glue/guicompiler.py                ++ describeme
+glue/ifbuildercachetodb.py         ++ describeme
+glue/intfbuilder.py                ++ describeme
+glue/layfoundations.py             ++ describeme
+glue/livedbend                     ++ describeme
+glue/livedbstart                   ++ describeme
+glue/nemclasses.py                 ++ describeme
+glue/plumbtree.py                  ++ describeme
+glue/qosutil.py                    ++ describeme
+glue/regenerate_blueprint.py       ++ describeme
+glue/sourcemanager.py              ++ describeme
+glue/tagstodb.py                   ++ describeme
+h/IDCMacros.h                      ++ describeme
+h/IDCMarshal.h                     ++ describeme
+h/IOMacros.h                       ++ describeme
+h/ShmTransport.h                   ++ describeme
+h/TypeSystem_st.h                  ++ describeme
+h/WS.h                             ++ describeme
+h/assert.h                         ++ describeme
+h/bstring.h                        ++ describeme
+h/compat.h                         ++ describeme
+h/contexts.h                       ++ describeme
+h/ctype.h                          ++ describeme
+h/dev/ansicolour.h                 ++ describeme
+h/dev/ds1287a.h                    ++ describeme
+h/dev/i8254.h                      ++ describeme
+h/dev/i8259.h                      ++ describeme
+h/dev/ide.h                        ++ describeme
+h/dev/mc146818rtc.h                ++ describeme
+h/dev/ns16550.h                    ++ describeme
+h/dev/pci.h                        ++ describeme
+h/dev/pckbd.h                      ++ describeme
+h/domid.h                          ++ describeme
+h/ecs.h                            ++ describeme
+h/environment.h                    ++ describeme
+h/ether.h                          ++ describeme
+h/exceptions.h                     ++ describeme
+h/exit.h                           ++ describeme
+h/frames.h                         ++ describeme
+h/huge_val.h                       ++ describeme
+h/kernel.h                         ++ describeme
+h/keysym.h                         ++ describeme
+h/links.h                          ++ describeme
+h/littleEndian.h                   ++ describeme
+h/math.h                           ++ describeme
+h/memcopy.h                        ++ describeme
+h/mod_data.h                       ++ describeme
+h/mutex.h                          ++ describeme
+h/nan.h                            ++ describeme
+h/nemesis.h                        ++ describeme
+h/nemesis_types.h                  ++ describeme
+h/netdb.h                          ++ describeme
+h/netorder.h                       ++ describeme
+h/nettrace.h                       ++ describeme
+h/nexus.h                          ++ describeme
+h/ntsc.h                           ++ describeme
+h/pervasives.h                     ++ describeme
+h/pktcx.h                          ++ describeme
+h/pqueues.h                        ++ describeme
+h/regionstr.h                      ++ describeme
+h/resolver.h                       ++ describeme
+h/salloc.h                         ++ describeme
+h/sdom.h                           ++ describeme
+h/sequence.h                       ++ describeme
+h/setjmp.h                         ++ describeme
+h/slab.c                           ++ describeme
+h/slab.h                           ++ describeme
+h/socket.h                         ++ describeme
+h/stddef.h                         ++ describeme
+h/stdio.h                          ++ describeme
+h/stdlib.h                         ++ describeme
+h/string.h                         ++ describeme
+h/time.h                           ++ describeme
+h/unistd.h                         ++ describeme
+lib/Makefile                       ++ describeme
+lib/README                         ++ describeme
+lib                                ** NEW DIRECTORY
+lib/static                         ** NEW DIRECTORY
+lib/static/README                  ++ describeme
+lib                                ** NEW DIRECTORY
+lib/static                         ** NEW DIRECTORY
+lib/static/debug                   ** NEW DIRECTORY
+lib/static/debug/Makefile          ++ describeme
+lib/static/debug/triv_wr.c         ++ describeme
+lib/static/h                       ++ describeme
+lib                                ** NEW DIRECTORY
+lib/static                         ** NEW DIRECTORY
+lib/static/intmath                 ** NEW DIRECTORY
+lib/static/intmath/Makefile        ++ describeme
+lib                                ** NEW DIRECTORY
+lib/static                         ** NEW DIRECTORY
+lib/static/io                      ** NEW DIRECTORY
+lib/static/io/Makefile             ++ describeme
+lib/static/io/io.c                 ++ describeme
+lib                                ** NEW DIRECTORY
+lib/static                         ** NEW DIRECTORY
+lib/static/posix                   ** NEW DIRECTORY
+lib/static/posix/Makefile          ++ describeme
+lib/static/posix/posixmain.c       ++ describeme
+lib                                ** NEW DIRECTORY
+lib/static                         ** NEW DIRECTORY
+lib/static/socket                  ** NEW DIRECTORY
+lib/static/socket/Makefile         ++ describeme
+lib/static/socket/socket.c         ++ describeme
+lib                                ** NEW DIRECTORY
+lib/static                         ** NEW DIRECTORY
+lib/static/sunrpc                  ** NEW DIRECTORY
+lib/static/sunrpc/Makefile         ++ describeme
+lib/static/sunrpc/auth_none.c      ++ describeme
+lib/static/sunrpc/authunix_prot.c  ++ describeme
+lib/static/sunrpc/clnt_perror.c    ++ describeme
+lib/static/sunrpc/clnt_tcp.c       ++ describeme
+lib/static/sunrpc/clnt_udp.c       ++ describeme
+lib                                ** NEW DIRECTORY
+lib/static                         ** NEW DIRECTORY
+lib/static/sunrpc                  ** NEW DIRECTORY
+lib/static/sunrpc/h                ** NEW DIRECTORY
+lib/static/sunrpc/h/Makefile       ++ describeme
+lib                                ** NEW DIRECTORY
+lib/static                         ** NEW DIRECTORY
+lib/static/sunrpc                  ** NEW DIRECTORY
+lib/static/sunrpc/h                ** NEW DIRECTORY
+lib/static/sunrpc/h/rpc            ** NEW DIRECTORY
+lib/static/sunrpc/h/rpc/Makefile   ++ describeme
+lib/static/sunrpc/h/rpc/auth.h     ++ describeme
+lib/static/sunrpc/h/rpc/auth_unix.h++ describeme
+lib/static/sunrpc/h/rpc/clnt.h     ++ describeme
+lib/static/sunrpc/h/rpc/pmap_clnt.h++ describeme
+lib/static/sunrpc/h/rpc/pmap_prot.h++ describeme
+lib/static/sunrpc/h/rpc/rpc.h      ++ describeme
+lib/static/sunrpc/h/rpc/rpc_msg.h  ++ describeme
+lib/static/sunrpc/h/rpc/svc.h      ++ describeme
+lib/static/sunrpc/h/rpc/svc_auth.h ++ describeme
+lib/static/sunrpc/h/rpc/types.h    ++ describeme
+lib/static/sunrpc/h/rpc/xdr.h      ++ describeme
+lib/static/sunrpc/pmap_clnt.c      ++ describeme
+lib/static/sunrpc/pmap_getport.c   ++ describeme
+lib/static/sunrpc/pmap_prot.c      ++ describeme
+lib/static/sunrpc/rpc_callmsg.c    ++ describeme
+lib/static/sunrpc/rpc_commondata.c ++ describeme
+lib/static/sunrpc/rpc_prot.c       ++ describeme
+lib/static/sunrpc/svc.c            ++ describeme
+lib/static/sunrpc/svc_auth.c       ++ describeme
+lib/static/sunrpc/svc_udp.c        ++ describeme
+lib/static/sunrpc/xdr.c            ++ describeme
+lib/static/sunrpc/xdr_array.c      ++ describeme
+lib/static/sunrpc/xdr_mem.c        ++ describeme
+lib/static/sunrpc/xdr_reference.c  ++ describeme
+lib                                ** NEW DIRECTORY
+lib/static                         ** NEW DIRECTORY
+lib/static/system                  ** NEW DIRECTORY
+lib/static/system/Makefile         ++ describeme
+lib/static/system/main.c           ++ describeme
+lib                                ** NEW DIRECTORY
+lib/veneer                         ** NEW DIRECTORY
+lib/veneer/c                       ** NEW DIRECTORY
+lib/veneer/c/Makefile              ++ describeme
+lib/veneer/c/libc.ven              ++ describeme
+links/Makefile                     ++ describeme
+mk/README                          ++ describeme
+mk/config.awk                      ++ describeme
+mk/config.mk                       ++ describeme
+mk/etags.mk                        ++ describeme
+mk/local.rules.mk                  ++ describeme
+mk/local.rules.mk.sample           ++ describeme
+mk/rules.mk                        ++ describeme
+mod                                ** NEW DIRECTORY
+mod/au                             ** NEW DIRECTORY
+mod/au/AsyncAuPlaybackWriter.c     ++ describeme
+mod/au/AuMod.c                     ++ describeme
+mod/au/AuPlaybackWriter.c          ++ describeme
+mod/au/AuPlaybackWriter_st.h       ++ describeme
+mod                                ** NEW DIRECTORY
+mod/clanger                        ** NEW DIRECTORY
+mod/clanger/CExec.if               ++ describeme
+mod/clanger/Clammar.y              ++ describeme
+mod/clanger/Clanger.if             ++ describeme
+mod/clanger/ClangerMod.if          ++ describeme
+mod/clanger/Clanger_st.h           ++ describeme
+mod/clanger/Functions.c            ++ describeme
+mod/clanger/Interp.c               ++ describeme
+mod/clanger/Lexer.c                ++ describeme
+mod/clanger/Makefile               ++ describeme
+mod/clanger/Nodes.c                ++ describeme
+mod/clanger/bison.nemesis          ++ describeme
+mod/clanger/cexec.c                ++ describeme
+mod/clanger/cexec_st.h             ++ describeme
+mod/clanger/clanger.c              ++ describeme
+mod/clanger/clangermod.c           ++ describeme
+mod                                ** NEW DIRECTORY
+mod/cline                          ** NEW DIRECTORY
+mod/cline/CLine.if                 ++ describeme
+mod/cline/CLineCtl.if              ++ describeme
+mod/cline/cline.c                  ++ describeme
+mod                                ** NEW DIRECTORY
+mod/fb                             ** NEW DIRECTORY
+mod/fb/fbblit                      ** NEW DIRECTORY
+mod/fb/fbblit/FBBlitMod.c          ++ describeme
+mod                                ** NEW DIRECTORY
+mod/fb                             ** NEW DIRECTORY
+mod/fb/interfaces                  ** NEW DIRECTORY
+mod/fb/interfaces/FB.if            ++ describeme
+mod/fb/interfaces/FBBlit.if        ++ describeme
+mod/fb/interfaces/FBBlitMod.if     ++ describeme
+mod/fb/interfaces/HWCur.if         ++ describeme
+mod/fb/interfaces/Region.if        ++ describeme
+mod                                ** NEW DIRECTORY
+mod/fs                             ** NEW DIRECTORY
+mod/fs/ext2fs                      ** NEW DIRECTORY
+mod/fs/ext2fs/Ext2.if              ++ describeme
+mod/fs/ext2fs/README               ++ describeme
+mod/fs/ext2fs/bcache.c             ++ describeme
+mod/fs/ext2fs/ext2.c               ++ describeme
+mod/fs/ext2fs/ext2fs.h             ++ describeme
+mod/fs/ext2fs/ext2mod.c            ++ describeme
+mod/fs/ext2fs/ext2mod.h            ++ describeme
+mod/fs/ext2fs/fsclient.c           ++ describeme
+mod/fs/ext2fs/futils.c             ++ describeme
+mod/fs/ext2fs/inode.c              ++ describeme
+mod/fs/ext2fs/unparse.c            ++ describeme
+mod/fs/ext2fs/uuid.h               ++ describeme
+mod                                ** NEW DIRECTORY
+mod/fs                             ** NEW DIRECTORY
+mod/fs/interfaces                  ** NEW DIRECTORY
+mod/fs/interfaces/BlockDev.if      ++ describeme
+mod/fs/interfaces/Disk.if          ++ describeme
+mod/fs/interfaces/FSClient.if      ++ describeme
+mod/fs/interfaces/FSDir.if         ++ describeme
+mod/fs/interfaces/FSTypes.if       ++ describeme
+mod/fs/interfaces/FSUtil.if        ++ describeme
+mod/fs/interfaces/Filesystem.if    ++ describeme
+mod/fs/interfaces/MountLocal.if    ++ describeme
+mod/fs/interfaces/MountRemote.if   ++ describeme
+mod/fs/interfaces/RamDisk.if       ++ describeme
+mod/fs/interfaces/RamDiskMod.if    ++ describeme
+mod                                ** NEW DIRECTORY
+mod/fs                             ** NEW DIRECTORY
+mod/fs/nfs                         ** NEW DIRECTORY
+mod/fs/nfs/NFS.if                  ++ describeme
+mod/fs/nfs/fsclient.c              ++ describeme
+mod/fs/nfs/fsoffer.h               ++ describeme
+mod/fs/nfs/mount.c                 ++ describeme
+mod/fs/nfs/mount.h                 ++ describeme
+mod/fs/nfs/mount.x                 ++ describeme
+mod/fs/nfs/mount_xdr.c             ++ describeme
+mod/fs/nfs/nfs.c                   ++ describeme
+mod/fs/nfs/nfs_prot.h              ++ describeme
+mod/fs/nfs/nfs_prot.x              ++ describeme
+mod/fs/nfs/nfs_st.h                ++ describeme
+mod/fs/nfs/nfs_xdr.c               ++ describeme
+mod                                ** NEW DIRECTORY
+mod/fs                             ** NEW DIRECTORY
+mod/fs/ramdisk                     ** NEW DIRECTORY
+mod/fs/ramdisk/Makefile            ++ describeme
+mod/fs/ramdisk/ramdisk.c           ++ describeme
+mod                                ** NEW DIRECTORY
+mod/fs                             ** NEW DIRECTORY
+mod/fs/swapfs                      ** NEW DIRECTORY
+mod/fs/swapfs/Swap.if              ++ describeme
+mod/fs/swapfs/SwapFS.if            ++ describeme
+mod/fs/swapfs/swapfs.c             ++ describeme
+mod                                ** NEW DIRECTORY
+mod/fs                             ** NEW DIRECTORY
+mod/fs/usd                         ** NEW DIRECTORY
+mod/fs/usd/disklabel.h             ++ describeme
+mod/fs/usd/io.c                    ++ describeme
+mod/fs/usd/partition.c             ++ describeme
+mod/fs/usd/usd.c                   ++ describeme
+mod/fs/usd/usd.h                   ++ describeme
+mod                                ** NEW DIRECTORY
+mod/fs                             ** NEW DIRECTORY
+mod/fs/util                        ** NEW DIRECTORY
+mod/fs/util/fsutils.c              ++ describeme
+mod                                ** NEW DIRECTORY
+mod/hash                           ** NEW DIRECTORY
+mod/hash/interfaces                ** NEW DIRECTORY
+mod/hash/interfaces/Hash.if        ++ describeme
+mod/hash/interfaces/HashMod.if     ++ describeme
+mod                                ** NEW DIRECTORY
+mod/hash                           ** NEW DIRECTORY
+mod/hash/md5                       ** NEW DIRECTORY
+mod/hash/md5/md5.c                 ++ describeme
+mod/hash/md5/md5.h                 ++ describeme
+mod                                ** NEW DIRECTORY
+mod/loader                         ** NEW DIRECTORY
+mod/loader/Makefile                ++ describeme
+mod/loader/exec.c                  ++ describeme
+mod/loader/load.h                  ++ describeme
+mod/loader/load_ix86.c             ++ describeme
+mod/loader/relocation_aout.h       ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nashmod                        ** NEW DIRECTORY
+mod/nashmod/Nash.c                 ++ describeme
+mod/nashmod/Nash.if                ++ describeme
+mod/nashmod/NashMod.c              ++ describeme
+mod/nashmod/NashMod.if             ++ describeme
+mod/nashmod/autoexec.nash          ++ describeme
+mod/nashmod/boot.c                 ++ describeme
+mod/nashmod/commands.c             ++ describeme
+mod/nashmod/nashst.h               ++ describeme
+mod/nashmod/profile.nash           ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/activations            ** NEW DIRECTORY
+mod/nemesis/activations/activations.c ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/benchmarks             ** NEW DIRECTORY
+mod/nemesis/benchmarks/bm.c        ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/builder                ** NEW DIRECTORY
+mod/nemesis/builder/Builder.c      ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/context                ** NEW DIRECTORY
+mod/nemesis/context/Context.c      ++ describeme
+mod/nemesis/context/ContextMod.if  ++ describeme
+mod/nemesis/context/ContextUtil.if ++ describeme
+mod/nemesis/context/MergedContext.if ++ describeme
+mod/nemesis/context/util.c         ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/csidc                  ** NEW DIRECTORY
+mod/nemesis/csidc/CSClientStubMod.if ++ describeme
+mod/nemesis/csidc/CSIDCTransport.if++ describeme
+mod/nemesis/csidc/Makefile         ++ describeme
+mod/nemesis/csidc/csidc.c          ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/entry                  ** NEW DIRECTORY
+mod/nemesis/entry/entry.c          ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/events                 ** NEW DIRECTORY
+mod/nemesis/events/events.c        ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/exception              ** NEW DIRECTORY
+mod/nemesis/exception/ExnSetjmpMod.c ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/gatekeeper             ** NEW DIRECTORY
+mod/nemesis/gatekeeper/Gatekeeper.if ++ describeme
+mod/nemesis/gatekeeper/GatekeeperMod.if ++ describeme
+mod/nemesis/gatekeeper/gatekeeper.c++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/heap                   ** NEW DIRECTORY
+mod/nemesis/heap/heapmod.c         ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/idc                    ** NEW DIRECTORY
+mod/nemesis/idc/IDCOfferMod.c      ++ describeme
+mod/nemesis/idc/ObjectTbl.c        ++ describeme
+mod/nemesis/idc/ShmMarshal.c       ++ describeme
+mod/nemesis/idc/ShmTransport.c     ++ describeme
+mod/nemesis/idc/callback.c         ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/io                     ** NEW DIRECTORY
+mod/nemesis/io/FIFOMod.c           ++ describeme
+mod/nemesis/io/IOEntry.c           ++ describeme
+mod/nemesis/io/IOMod.c             ++ describeme
+mod/nemesis/io/IOTransport.c       ++ describeme
+mod/nemesis/io/fifo.h              ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/iocallpriv             ** NEW DIRECTORY
+mod/nemesis/iocallpriv/IOCallPriv.c++ describeme
+mod/nemesis/iocallpriv/IOCallPrivTransport.c ++ describeme
+mod/nemesis/iocallpriv/Makefile    ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/memfile                ** NEW DIRECTORY
+mod/nemesis/memfile/MemFile.if     ++ describeme
+mod/nemesis/memfile/MemFileMod.c   ++ describeme
+mod/nemesis/memfile/MemFileMod.if  ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/mmentry                ** NEW DIRECTORY
+mod/nemesis/mmentry/mm_st.h        ++ describeme
+mod/nemesis/mmentry/mmentry.c      ++ describeme
+mod/nemesis/mmentry/mmnotify.c     ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/netcons                ** NEW DIRECTORY
+mod/nemesis/netcons/RdRedir.if     ++ describeme
+mod/nemesis/netcons/RdRedirMod.if  ++ describeme
+mod/nemesis/netcons/WrRedir.if     ++ describeme
+mod/nemesis/netcons/WrRedirMod.if  ++ describeme
+mod/nemesis/netcons/netcons.c      ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/pvscx                  ** NEW DIRECTORY
+mod/nemesis/pvscx/PvsContext.c     ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/qosentry               ** NEW DIRECTORY
+mod/nemesis/qosentry/qosentry.c    ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/rdwr                   ** NEW DIRECTORY
+mod/nemesis/rdwr/MemRd.c           ++ describeme
+mod/nemesis/rdwr/RdWrMod.if        ++ describeme
+mod/nemesis/rdwr/join.c            ++ describeme
+mod/nemesis/rdwr/mod.c             ++ describeme
+mod/nemesis/rdwr/null.c            ++ describeme
+mod/nemesis/rdwr/pipe.c            ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/redir                  ** NEW DIRECTORY
+mod/nemesis/redir/rd.c             ++ describeme
+mod/nemesis/redir/wr.c             ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/rpc                    ** NEW DIRECTORY
+mod/nemesis/rpc/Bouncer.if         ++ describeme
+mod/nemesis/rpc/RPCMarshal.c       ++ describeme
+mod/nemesis/rpc/RPCMod.if          ++ describeme
+mod/nemesis/rpc/RPCTransport.c     ++ describeme
+mod/nemesis/rpc/RPCTransport.h     ++ describeme
+mod/nemesis/rpc/RPCTransport.if    ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/sdriver                ** NEW DIRECTORY
+mod/nemesis/sdriver/stretchdriver.c++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/sgen                   ** NEW DIRECTORY
+mod/nemesis/sgen/IDCMarshalCtl.if  ++ describeme
+mod/nemesis/sgen/Makefile          ++ describeme
+mod/nemesis/sgen/StubGen.if        ++ describeme
+mod/nemesis/sgen/canned_stubs.c    ++ describeme
+mod/nemesis/sgen/engine.c          ++ describeme
+mod/nemesis/sgen/stackframe.h      ++ describeme
+mod/nemesis/sgen/stubgen.c         ++ describeme
+mod/nemesis/sgen/stubgen.h         ++ describeme
+mod/nemesis/sgen/synthgen.c        ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/singlethread           ** NEW DIRECTORY
+mod/nemesis/singlethread/SingleThread.c ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/spawn                  ** NEW DIRECTORY
+mod/nemesis/spawn/Spawn.if         ++ describeme
+mod/nemesis/spawn/SpawnMarshal.c   ++ describeme
+mod/nemesis/spawn/SpawnMod.if      ++ describeme
+mod/nemesis/spawn/SpawnReturn.if   ++ describeme
+mod/nemesis/spawn/spawn.c          ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/srcthreads             ** NEW DIRECTORY
+mod/nemesis/srcthreads/srcthread.c ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/stubs                  ** NEW DIRECTORY
+mod/nemesis/stubs/IDC_CS_ConsoleWr.c ++ describeme
+mod/nemesis/stubs/Makefile         ++ describeme
+mod/nemesis/stubs/genstubs         ++ describeme
+mod/nemesis/stubs/stubs.c          ++ describeme
+mod/nemesis/stubs/stubs.h          ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/tables                 ** NEW DIRECTORY
+mod/nemesis/tables/LongCardTbl.if  ++ describeme
+mod/nemesis/tables/LongCardTblIter.if ++ describeme
+mod/nemesis/tables/LongCardTblMod.c++ describeme
+mod/nemesis/tables/LongCardTblMod.if ++ describeme
+mod/nemesis/tables/StretchTbl.if   ++ describeme
+mod/nemesis/tables/StretchTblMod.c ++ describeme
+mod/nemesis/tables/StretchTblMod.if++ describeme
+mod/nemesis/tables/StringTbl.if    ++ describeme
+mod/nemesis/tables/StringTblIter.if++ describeme
+mod/nemesis/tables/StringTblMod.c  ++ describeme
+mod/nemesis/tables/StringTblMod.if ++ describeme
+mod/nemesis/tables/WordTbl.if      ++ describeme
+mod/nemesis/tables/WordTblIter.if  ++ describeme
+mod/nemesis/tables/WordTblMod.c    ++ describeme
+mod/nemesis/tables/WordTblMod.if   ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/tasks                  ** NEW DIRECTORY
+mod/nemesis/tasks/Makefile         ++ describeme
+mod/nemesis/tasks/tasks.c          ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/threads                ** NEW DIRECTORY
+mod/nemesis/threads/Makefile       ++ describeme
+mod/nemesis/threads/stack.h        ++ describeme
+mod/nemesis/threads/threads.c      ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/tradedcontext          ** NEW DIRECTORY
+mod/nemesis/tradedcontext/TradedContext.c ++ describeme
+mod/nemesis/tradedcontext/TradedContext.if ++ describeme
+mod/nemesis/tradedcontext/TradedContextMod.if ++ describeme
+mod                                ** NEW DIRECTORY
+mod/nemesis                        ** NEW DIRECTORY
+mod/nemesis/ugdb                   ** NEW DIRECTORY
+mod/nemesis/ugdb/GDB_st.h          ++ describeme
+mod/nemesis/ugdb/Makefile          ++ describeme
+mod/nemesis/ugdb/ugdb.c            ++ describeme
+mod                                ** NEW DIRECTORY
+mod/net                            ** NEW DIRECTORY
+mod/net/DNS                        ** NEW DIRECTORY
+mod/net/DNS/DNS.c                  ++ describeme
+mod/net/DNS/DNS.if                 ++ describeme
+mod/net/DNS/DNSMod.if              ++ describeme
+mod                                ** NEW DIRECTORY
+mod/net                            ** NEW DIRECTORY
+mod/net/arp                        ** NEW DIRECTORY
+mod/net/arp/ARP.c                  ++ describeme
+mod                                ** NEW DIRECTORY
+mod/net                            ** NEW DIRECTORY
+mod/net/bpf                        ** NEW DIRECTORY
+mod/net/bpf/BPF.c                  ++ describeme
+mod                                ** NEW DIRECTORY
+mod/net                            ** NEW DIRECTORY
+mod/net/flowman                    ** NEW DIRECTORY
+mod/net/flowman/bootp.c            ++ describeme
+mod/net/flowman/ether_input.c      ++ describeme
+mod/net/flowman/ether_output.c     ++ describeme
+mod/net/flowman/ethernet.h         ++ describeme
+mod/net/flowman/flowman.c          ++ describeme
+mod/net/flowman/flowman_st.h       ++ describeme
+mod/net/flowman/fm_constants.h     ++ describeme
+mod/net/flowman/hosts.c            ++ describeme
+mod/net/flowman/icmp.c             ++ describeme
+mod/net/flowman/icmp_var.h         ++ describeme
+mod/net/flowman/if_ether.h         ++ describeme
+mod/net/flowman/in.h               ++ describeme
+mod/net/flowman/ip.h               ++ describeme
+mod/net/flowman/ip_icmp.c          ++ describeme
+mod/net/flowman/ip_icmp.h          ++ describeme
+mod/net/flowman/ip_input.c         ++ describeme
+mod/net/flowman/ip_output.c        ++ describeme
+mod/net/flowman/ip_var.h           ++ describeme
+mod/net/flowman/ipconf.c           ++ describeme
+mod/net/flowman/kill.c             ++ describeme
+mod/net/flowman/kill.h             ++ describeme
+mod/net/flowman/prot_stat.h        ++ describeme
+mod/net/flowman/proto_ip.c         ++ describeme
+mod/net/flowman/proto_ip.h         ++ describeme
+mod/net/flowman/tcp.h              ++ describeme
+mod/net/flowman/tcp_input.c        ++ describeme
+mod/net/flowman/tcp_var.h          ++ describeme
+mod/net/flowman/tcpip.h            ++ describeme
+mod/net/flowman/udp.h              ++ describeme
+mod/net/flowman/udp_input.c        ++ describeme
+mod/net/flowman/udp_var.h          ++ describeme
+mod                                ** NEW DIRECTORY
+mod/net                            ** NEW DIRECTORY
+mod/net/interfaces                 ** NEW DIRECTORY
+mod/net/interfaces/ARPMod.if       ++ describeme
+mod/net/interfaces/BaseProtocol.if ++ describeme
+mod/net/interfaces/Ether.if        ++ describeme
+mod/net/interfaces/EtherMod.if     ++ describeme
+mod/net/interfaces/FlowMan.if      ++ describeme
+mod/net/interfaces/ICMP.if         ++ describeme
+mod/net/interfaces/ICMPMod.if      ++ describeme
+mod/net/interfaces/IP.if           ++ describeme
+mod/net/interfaces/IPConf.if       ++ describeme
+mod/net/interfaces/IPMod.if        ++ describeme
+mod/net/interfaces/InetCtl.if      ++ describeme
+mod/net/interfaces/LMPFCtl.if      ++ describeme
+mod/net/interfaces/LMPFMod.if      ++ describeme
+mod/net/interfaces/Net.if          ++ describeme
+mod/net/interfaces/Netcard.if      ++ describeme
+mod/net/interfaces/Netif.if        ++ describeme
+mod/net/interfaces/NetifMod.if     ++ describeme
+mod/net/interfaces/PF.if           ++ describeme
+mod/net/interfaces/Protocol.if     ++ describeme
+mod/net/interfaces/SimpleIO.if     ++ describeme
+mod/net/interfaces/TFTP.if         ++ describeme
+mod/net/interfaces/TFTPMod.if      ++ describeme
+mod/net/interfaces/UDP.if          ++ describeme
+mod/net/interfaces/UDPMod.if       ++ describeme
+mod                                ** NEW DIRECTORY
+mod/net                            ** NEW DIRECTORY
+mod/net/lmpf                       ** NEW DIRECTORY
+mod/net/lmpf/pf.c                  ++ describeme
+mod                                ** NEW DIRECTORY
+mod/net                            ** NEW DIRECTORY
+mod/net/netif                      ** NEW DIRECTORY
+mod/net/netif/FragPool.if          ++ describeme
+mod/net/netif/Makefile             ++ describeme
+mod/net/netif/netif.c              ++ describeme
+mod/net/netif/pool.c               ++ describeme
+mod/net/netif/pool.h               ++ describeme
+mod                                ** NEW DIRECTORY
+mod/net                            ** NEW DIRECTORY
+mod/net/protos                     ** NEW DIRECTORY
+mod/net/protos/Makefile            ++ describeme
+mod                                ** NEW DIRECTORY
+mod/net                            ** NEW DIRECTORY
+mod/net/protos                     ** NEW DIRECTORY
+mod/net/protos/ether               ** NEW DIRECTORY
+mod/net/protos/ether/Makefile      ++ describeme
+mod/net/protos/ether/ether.c       ++ describeme
+mod/net/protos/fakeIO.c            ++ describeme
+mod/net/protos/fakeIO.h            ++ describeme
+mod                                ** NEW DIRECTORY
+mod/net                            ** NEW DIRECTORY
+mod/net/protos                     ** NEW DIRECTORY
+mod/net/protos/ip                  ** NEW DIRECTORY
+mod/net/protos/ip/Makefile         ++ describeme
+mod/net/protos/ip/ip.c             ++ describeme
+mod                                ** NEW DIRECTORY
+mod/net                            ** NEW DIRECTORY
+mod/net/protos                     ** NEW DIRECTORY
+mod/net/protos/ipv6                ** NEW DIRECTORY
+mod/net/protos/ipv6/Makefile       ++ describeme
+mod/net/protos/ipv6/ipv6.c         ++ describeme
+mod/net/protos/queuedIO.c          ++ describeme
+mod                                ** NEW DIRECTORY
+mod/net                            ** NEW DIRECTORY
+mod/net/protos                     ** NEW DIRECTORY
+mod/net/protos/udp                 ** NEW DIRECTORY
+mod/net/protos/udp/Makefile        ++ describeme
+mod/net/protos/udp/udp.c           ++ describeme
+mod                                ** NEW DIRECTORY
+mod/net                            ** NEW DIRECTORY
+mod/net/resolver                   ** NEW DIRECTORY
+mod/net/resolver/Resolver.if       ++ describeme
+mod/net/resolver/ResolverMod.if    ++ describeme
+mod/net/resolver/resolver.c        ++ describeme
+mod                                ** NEW DIRECTORY
+mod/net                            ** NEW DIRECTORY
+mod/net/socket                     ** NEW DIRECTORY
+mod/net/socket/tcp                 ** NEW DIRECTORY
+mod/net/socket/tcp/event.h         ++ describeme
+mod/net/socket/tcp/inet.h          ++ describeme
+mod/net/socket/tcp/ip.h            ++ describeme
+mod/net/socket/tcp/ip_var.h        ++ describeme
+mod/net/socket/tcp/tcp_fsm.h       ++ describeme
+mod/net/socket/tcp/tcpip.h         ++ describeme
+mod/net/socket/tcp/tcpu.h          ++ describeme
+mod/net/socket/tcp/tcpu_input.c    ++ describeme
+mod/net/socket/tcp/tcpu_output.c   ++ describeme
+mod/net/socket/tcp/tcpu_seq.h      ++ describeme
+mod/net/socket/tcp/tcpu_subr.c     ++ describeme
+mod/net/socket/tcp/tcpu_timer.c    ++ describeme
+mod/net/socket/tcp/tcpu_timer.h    ++ describeme
+mod/net/socket/tcp/tcpu_usrreq.c   ++ describeme
+mod/net/socket/tcp/tcpu_var.h      ++ describeme
+mod/net/socket/tcp/tcpu_xsum.c     ++ describeme
+mod                                ** NEW DIRECTORY
+mod/net                            ** NEW DIRECTORY
+mod/net/socket                     ** NEW DIRECTORY
+mod/net/socket/udp                 ** NEW DIRECTORY
+mod/net/socket/udp/udp_socket.c    ++ describeme
+mod/net/socket/udp/udp_socket.h    ++ describeme
+mod                                ** NEW DIRECTORY
+mod/net                            ** NEW DIRECTORY
+mod/net/term                       ** NEW DIRECTORY
+mod/net/term/netterm.c             ++ describeme
+mod                                ** NEW DIRECTORY
+mod/net                            ** NEW DIRECTORY
+mod/net/tftp                       ** NEW DIRECTORY
+mod/net/tftp/Makefile              ++ describeme
+mod/net/tftp/tftp.c                ++ describeme
+mod                                ** NEW DIRECTORY
+mod/pci                            ** NEW DIRECTORY
+mod/pci/Makefile                   ++ describeme
+mod/pci/PCIBios.if                 ++ describeme
+mod/pci/PCIBiosMod.c               ++ describeme
+mod/pci/PCIBiosMod.if              ++ describeme
+mod/pci/bios32.h                   ++ describeme
+mod/pci/pci.c                      ++ describeme
+mod/pci/pci_st.h                   ++ describeme
+mod                                ** NEW DIRECTORY
+mod/security                       ** NEW DIRECTORY
+mod/security/interfaces            ** NEW DIRECTORY
+mod/security/interfaces/Login.if   ++ describeme
+mod                                ** NEW DIRECTORY
+mod/security                       ** NEW DIRECTORY
+mod/security/loginprompt           ** NEW DIRECTORY
+mod/security/loginprompt/LoginPrompt.if ++ describeme
+mod/security/loginprompt/prompt.c  ++ describeme
+mod                                ** NEW DIRECTORY
+mod/security                       ** NEW DIRECTORY
+mod/security/pcnfs                 ** NEW DIRECTORY
+mod/security/pcnfs/PcnfsLoginMod.if++ describeme
+mod/security/pcnfs/common.h        ++ describeme
+mod/security/pcnfs/login.c         ++ describeme
+mod/security/pcnfs/pcnfsd.h        ++ describeme
+mod/security/pcnfs/pcnfsd_xdr.c    ++ describeme
+mod                                ** NEW DIRECTORY
+mod/security                       ** NEW DIRECTORY
+mod/security/unix                  ** NEW DIRECTORY
+mod/security/unix/UnixLoginMod.if  ++ describeme
+mod/security/unix/login.c          ++ describeme
+mod                                ** NEW DIRECTORY
+mod/stringutil                     ** NEW DIRECTORY
+mod/stringutil/StringUtil.if       ++ describeme
+mod/stringutil/stringutil.c        ++ describeme
+mod                                ** NEW DIRECTORY
+mod/ttyterm                        ** NEW DIRECTORY
+mod/ttyterm/KbdtoRd.c              ++ describeme
+mod/ttyterm/ttyterm.c              ++ describeme
+mod                                ** NEW DIRECTORY
+mod/venimpl                        ** NEW DIRECTORY
+mod/venimpl/c                      ** NEW DIRECTORY
+mod/venimpl/c/Makefile             ++ describeme
+mod/venimpl/c/jmptbl.c             ++ describeme
+mod                                ** NEW DIRECTORY
+mod/venimpl                        ** NEW DIRECTORY
+mod/venimpl/c                      ** NEW DIRECTORY
+mod/venimpl/c/math                 ** NEW DIRECTORY
+mod/venimpl/c/math/Makefile        ++ describeme
+mod/venimpl/c/math/copysign.c      ++ describeme
+mod/venimpl/c/math/drem.c          ++ describeme
+mod/venimpl/c/math/exp__E.c        ++ describeme
+mod/venimpl/c/math/finite.c        ++ describeme
+mod/venimpl/c/math/intmath.c       ++ describeme
+mod/venimpl/c/math/isinf.c         ++ describeme
+mod/venimpl/c/math/isnan.c         ++ describeme
+mod/venimpl/c/math/ldexp.c         ++ describeme
+mod/venimpl/c/math/log__L.c        ++ describeme
+mod/venimpl/c/math/logb.c          ++ describeme
+mod/venimpl/c/math/pow.c           ++ describeme
+mod/venimpl/c/math/sqrt.c          ++ describeme
+mod                                ** NEW DIRECTORY
+mod/venimpl                        ** NEW DIRECTORY
+mod/venimpl/c                      ** NEW DIRECTORY
+mod/venimpl/c/stdio                ** NEW DIRECTORY
+mod/venimpl/c/stdio/Makefile       ++ describeme
+mod/venimpl/c/stdio/common-fs.c    ++ describeme
+mod/venimpl/c/stdio/common-fs.h    ++ describeme
+mod/venimpl/c/stdio/doprnt.c       ++ describeme
+mod/venimpl/c/stdio/doscan.c       ++ describeme
+mod/venimpl/c/stdio/fclose.c       ++ describeme
+mod/venimpl/c/stdio/ferror.c       ++ describeme
+mod/venimpl/c/stdio/fflush.c       ++ describeme
+mod/venimpl/c/stdio/fgetc.c        ++ describeme
+mod/venimpl/c/stdio/fgets.c        ++ describeme
+mod/venimpl/c/stdio/fopen.c        ++ describeme
+mod/venimpl/c/stdio/fprintf.c      ++ describeme
+mod/venimpl/c/stdio/fputc.c        ++ describeme
+mod/venimpl/c/stdio/fputs.c        ++ describeme
+mod/venimpl/c/stdio/fread.c        ++ describeme
+mod/venimpl/c/stdio/fscanf.c       ++ describeme
+mod/venimpl/c/stdio/fwrite.c       ++ describeme
+mod/venimpl/c/stdio/printf.c       ++ describeme
+mod/venimpl/c/stdio/scanf.c        ++ describeme
+mod/venimpl/c/stdio/sprintf.c      ++ describeme
+mod/venimpl/c/stdio/sscanf.c       ++ describeme
+mod/venimpl/c/stdio/vprintf.c      ++ describeme
+mod                                ** NEW DIRECTORY
+mod/venimpl                        ** NEW DIRECTORY
+mod/venimpl/c                      ** NEW DIRECTORY
+mod/venimpl/c/stdlib               ** NEW DIRECTORY
+mod/venimpl/c/stdlib/Makefile      ++ describeme
+mod/venimpl/c/stdlib/abort.c       ++ describeme
+mod/venimpl/c/stdlib/abs.c         ++ describeme
+mod/venimpl/c/stdlib/assert.c      ++ describeme
+mod/venimpl/c/stdlib/atof.c        ++ describeme
+mod/venimpl/c/stdlib/atoi.c        ++ describeme
+mod/venimpl/c/stdlib/atol.c        ++ describeme
+mod/venimpl/c/stdlib/bsearch.c     ++ describeme
+mod/venimpl/c/stdlib/ctype.c       ++ describeme
+mod/venimpl/c/stdlib/div.c         ++ describeme
+mod/venimpl/c/stdlib/exit.c        ++ describeme
+mod/venimpl/c/stdlib/getenv.c      ++ describeme
+mod/venimpl/c/stdlib/malloc.c      ++ describeme
+mod/venimpl/c/stdlib/qsort.c       ++ describeme
+mod/venimpl/c/stdlib/strto64.c     ++ describeme
+mod/venimpl/c/stdlib/strtod.c      ++ describeme
+mod/venimpl/c/stdlib/strtol.c      ++ describeme
+mod/venimpl/c/stdlib/strtou64.c    ++ describeme
+mod/venimpl/c/stdlib/strtoul.c     ++ describeme
+mod                                ** NEW DIRECTORY
+mod/venimpl                        ** NEW DIRECTORY
+mod/venimpl/c                      ** NEW DIRECTORY
+mod/venimpl/c/str                  ** NEW DIRECTORY
+mod/venimpl/c/str/Makefile         ++ describeme
+mod/venimpl/c/str/_wordcopy.c      ++ describeme
+mod/venimpl/c/str/memchr.c         ++ describeme
+mod/venimpl/c/str/memcmp.c         ++ describeme
+mod/venimpl/c/str/memcpy.c         ++ describeme
+mod/venimpl/c/str/memmove.c        ++ describeme
+mod/venimpl/c/str/memset.c         ++ describeme
+mod/venimpl/c/str/strcat.c         ++ describeme
+mod/venimpl/c/str/strchr.c         ++ describeme
+mod/venimpl/c/str/strcmp.c         ++ describeme
+mod/venimpl/c/str/strcpy.c         ++ describeme
+mod/venimpl/c/str/strcspn.c        ++ describeme
+mod/venimpl/c/str/strdup.c         ++ describeme
+mod/venimpl/c/str/strlen.c         ++ describeme
+mod/venimpl/c/str/strncat.c        ++ describeme
+mod/venimpl/c/str/strncmp.c        ++ describeme
+mod/venimpl/c/str/strncpy.c        ++ describeme
+mod/venimpl/c/str/strpbrk.c        ++ describeme
+mod/venimpl/c/str/strrchr.c        ++ describeme
+mod/venimpl/c/str/strsep.c         ++ describeme
+mod/venimpl/c/str/strspn.c         ++ describeme
+mod/venimpl/c/str/strstr.c         ++ describeme
+mod                                ** NEW DIRECTORY
+mod/ws                             ** NEW DIRECTORY
+mod/ws/README                      ++ describeme
+mod                                ** NEW DIRECTORY
+mod/ws                             ** NEW DIRECTORY
+mod/ws/crend                       ** NEW DIRECTORY
+mod/ws/crend/CRendDisplayMod_st.h  ++ describeme
+mod/ws/crend/CRendDisplay_st.h     ++ describeme
+mod/ws/crend/CRend_st.h            ++ describeme
+mod/ws/crend/crend.c               ++ describeme
+mod/ws/crend/display.c             ++ describeme
+mod/ws/crend/displaymod.c          ++ describeme
+mod/ws/crend/fontdata.c            ++ describeme
+mod/ws/crend/fontindex.c           ++ describeme
+mod/ws/crend/pixmap.c              ++ describeme
+mod                                ** NEW DIRECTORY
+mod/ws                             ** NEW DIRECTORY
+mod/ws/interfaces                  ** NEW DIRECTORY
+mod/ws/interfaces/CRend.if         ++ describeme
+mod/ws/interfaces/CRendDisplay.if  ++ describeme
+mod/ws/interfaces/CRendDisplayMod.if ++ describeme
+mod/ws/interfaces/CRendPixmap.if   ++ describeme
+mod/ws/interfaces/WM.if            ++ describeme
+mod/ws/interfaces/WMMod.if         ++ describeme
+mod/ws/interfaces/WS.if            ++ describeme
+mod/ws/interfaces/WSF.if           ++ describeme
+mod                                ** NEW DIRECTORY
+mod/ws                             ** NEW DIRECTORY
+mod/ws/region                      ** NEW DIRECTORY
+mod/ws/region/Region.c             ++ describeme
+mod                                ** NEW DIRECTORY
+mod/ws                             ** NEW DIRECTORY
+mod/ws/savewm                      ** NEW DIRECTORY
+mod/ws/savewm/savewm.c             ++ describeme
+mod                                ** NEW DIRECTORY
+mod/ws                             ** NEW DIRECTORY
+mod/ws/wsterm                      ** NEW DIRECTORY
+mod/ws/wsterm/WSprivate.h          ++ describeme
+mod/ws/wsterm/default8x16.c        ++ describeme
+mod/ws/wsterm/display.c            ++ describeme
+mod/ws/wsterm/events.c             ++ describeme
+mod/ws/wsterm/font.h               ++ describeme
+mod/ws/wsterm/lines.c              ++ describeme
+mod/ws/wsterm/points.c             ++ describeme
+mod/ws/wsterm/rectangles.c         ++ describeme
+mod/ws/wsterm/strings.c            ++ describeme
+mod/ws/wsterm/windows.c            ++ describeme
+mod/ws/wsterm/wsterm.c             ++ describeme
+ntsc/Makefile                      ++ describeme
+ntsc/README                        ++ describeme
+ntsc                               ** NEW DIRECTORY
+ntsc/generic                       ** NEW DIRECTORY
+ntsc/generic/Makefile              ++ describeme
+ntsc/generic/atropos.c             ++ describeme
+ntsc/generic/console.c             ++ describeme
+ntsc/generic/console.h             ++ describeme
+ntsc/generic/crash.c               ++ describeme
+ntsc/generic/crash.h               ++ describeme
+ntsc/generic/kprintf.c             ++ describeme
+ntsc/generic/readnexus.c           ++ describeme
+ntsc/generic/string.c              ++ describeme
+ntsc/generic/string.h              ++ describeme
+repo/Makefile                      ++ describeme
+sys                                ** NEW DIRECTORY
+sys/domains                        ** NEW DIRECTORY
+sys/domains/Binder.c               ++ describeme
+sys/domains/Domain.if              ++ describeme
+sys/domains/DomainMgr.c            ++ describeme
+sys/domains/DomainMgr.if           ++ describeme
+sys/domains/DomainMgrMod.if        ++ describeme
+sys/domains/DomainMgr_st.h         ++ describeme
+sys/domains/Makefile               ++ describeme
+sys/domains/Plumber.c              ++ describeme
+sys/domains/sched.c                ++ describeme
+sys/domains/security.c             ++ describeme
+sys                                ** NEW DIRECTORY
+sys/interfaces                     ** NEW DIRECTORY
+sys/interfaces/callpriv            ** NEW DIRECTORY
+sys/interfaces/callpriv/CallPriv.if++ describeme
+sys/interfaces/callpriv/IOCallPriv.if ++ describeme
+sys                                ** NEW DIRECTORY
+sys/interfaces                     ** NEW DIRECTORY
+sys/interfaces/central             ** NEW DIRECTORY
+sys/interfaces/central/Activation.if ++ describeme
+sys/interfaces/central/ActivationF.if ++ describeme
+sys/interfaces/central/ActivationMod.if ++ describeme
+sys/interfaces/central/Binder.if   ++ describeme
+sys/interfaces/central/BinderCallback.if ++ describeme
+sys/interfaces/central/BootDomain.if ++ describeme
+sys/interfaces/central/Builder.if  ++ describeme
+sys/interfaces/central/ChainedHandler.if ++ describeme
+sys/interfaces/central/Channel.if  ++ describeme
+sys/interfaces/central/ChannelNotify.if ++ describeme
+sys/interfaces/central/Clock.if    ++ describeme
+sys/interfaces/central/Closure.if  ++ describeme
+sys/interfaces/central/ConsoleWr.if++ describeme
+sys/interfaces/central/Context.if  ++ describeme
+sys/interfaces/central/Directory.if++ describeme
+sys/interfaces/central/Event.if    ++ describeme
+sys/interfaces/central/Events.if   ++ describeme
+sys/interfaces/central/EventsMod.if++ describeme
+sys/interfaces/central/Exception.if++ describeme
+sys/interfaces/central/Exec.if     ++ describeme
+sys/interfaces/central/ExnRegistry.if ++ describeme
+sys/interfaces/central/ExnSetjmp.if++ describeme
+sys/interfaces/central/ExnSupport.if ++ describeme
+sys/interfaces/central/ExnSystem.if++ describeme
+sys/interfaces/central/FIFO.if     ++ describeme
+sys/interfaces/central/FIFOMod.if  ++ describeme
+sys/interfaces/central/File.if     ++ describeme
+sys/interfaces/central/FileIO.if   ++ describeme
+sys/interfaces/central/Heap.if     ++ describeme
+sys/interfaces/central/HeapMod.if  ++ describeme
+sys/interfaces/central/Interrupt.if++ describeme
+sys/interfaces/central/Load.if     ++ describeme
+sys/interfaces/central/LockedHeap.if ++ describeme
+sys/interfaces/central/Pervasives.if ++ describeme
+sys/interfaces/central/Plumber.if  ++ describeme
+sys/interfaces/central/ProtectionDomain.if ++ describeme
+sys/interfaces/central/QoSCtl.if   ++ describeme
+sys/interfaces/central/Rd.if       ++ describeme
+sys/interfaces/central/SRCThread.if++ describeme
+sys/interfaces/central/SRCThreadMod.if ++ describeme
+sys/interfaces/central/Security.if ++ describeme
+sys/interfaces/central/Tasks.if    ++ describeme
+sys/interfaces/central/Thread.if   ++ describeme
+sys/interfaces/central/ThreadF.if  ++ describeme
+sys/interfaces/central/ThreadHooks.if ++ describeme
+sys/interfaces/central/Threads.if  ++ describeme
+sys/interfaces/central/ThreadsPackage.if ++ describeme
+sys/interfaces/central/Time.if     ++ describeme
+sys/interfaces/central/TimeNotify.if ++ describeme
+sys/interfaces/central/VP.if       ++ describeme
+sys/interfaces/central/Wr.if       ++ describeme
+sys                                ** NEW DIRECTORY
+sys/interfaces                     ** NEW DIRECTORY
+sys/interfaces/common_memory       ** NEW DIRECTORY
+sys/interfaces/common_memory/Frames.if ++ describeme
+sys/interfaces/common_memory/FramesF.if ++ describeme
+sys/interfaces/common_memory/FramesMod.if ++ describeme
+sys/interfaces/common_memory/GDB.if++ describeme
+sys/interfaces/common_memory/GDBMod.if ++ describeme
+sys/interfaces/common_memory/MMEntry.if ++ describeme
+sys/interfaces/common_memory/MMEntryMod.if ++ describeme
+sys/interfaces/common_memory/MMNotify.if ++ describeme
+sys/interfaces/common_memory/MMNotifyMod.if ++ describeme
+sys/interfaces/common_memory/MMU.if++ describeme
+sys/interfaces/common_memory/MMUMod.if ++ describeme
+sys/interfaces/common_memory/Mem.if++ describeme
+sys/interfaces/common_memory/RamTab.if ++ describeme
+sys/interfaces/common_memory/Stretch.if ++ describeme
+sys/interfaces/common_memory/StretchAllocator.if ++ describeme
+sys                                ** NEW DIRECTORY
+sys/interfaces                     ** NEW DIRECTORY
+sys/interfaces/entries             ** NEW DIRECTORY
+sys/interfaces/entries/Entry.if    ++ describeme
+sys/interfaces/entries/EntryMod.if ++ describeme
+sys/interfaces/entries/IOEntry.if  ++ describeme
+sys/interfaces/entries/IOEntryMod.if ++ describeme
+sys/interfaces/entries/QoSEntry.if ++ describeme
+sys/interfaces/entries/QoSEntryMod.if ++ describeme
+sys                                ** NEW DIRECTORY
+sys/interfaces                     ** NEW DIRECTORY
+sys/interfaces/idc                 ** NEW DIRECTORY
+sys/interfaces/idc/IDC.if          ++ describeme
+sys/interfaces/idc/IDCBinding.if   ++ describeme
+sys/interfaces/idc/IDCCallback.if  ++ describeme
+sys/interfaces/idc/IDCClientBinding.if ++ describeme
+sys/interfaces/idc/IDCClientStubs.if ++ describeme
+sys/interfaces/idc/IDCMod.if       ++ describeme
+sys/interfaces/idc/IDCOffer.if     ++ describeme
+sys/interfaces/idc/IDCOfferMod.if  ++ describeme
+sys/interfaces/idc/IDCServerBinding.if ++ describeme
+sys/interfaces/idc/IDCServerStubs.if ++ describeme
+sys/interfaces/idc/IDCService.if   ++ describeme
+sys/interfaces/idc/IDCStubs.if     ++ describeme
+sys/interfaces/idc/IDCTransport.if ++ describeme
+sys/interfaces/idc/IORConverter.if ++ describeme
+sys/interfaces/idc/ObjectTbl.if    ++ describeme
+sys/interfaces/idc/ObjectTblMod.if ++ describeme
+sys                                ** NEW DIRECTORY
+sys/interfaces                     ** NEW DIRECTORY
+sys/interfaces/io                  ** NEW DIRECTORY
+sys/interfaces/io/IO.if            ++ describeme
+sys/interfaces/io/IOClosure.if     ++ describeme
+sys/interfaces/io/IOData.if        ++ describeme
+sys/interfaces/io/IOMod.if         ++ describeme
+sys/interfaces/io/IONotify.if      ++ describeme
+sys/interfaces/io/IOOffer.if       ++ describeme
+sys/interfaces/io/IOTransport.if   ++ describeme
+sys                                ** NEW DIRECTORY
+sys/interfaces                     ** NEW DIRECTORY
+sys/interfaces/usd                 ** NEW DIRECTORY
+sys/interfaces/usd/USD.if          ++ describeme
+sys/interfaces/usd/USDCallback.if  ++ describeme
+sys/interfaces/usd/USDCtl.if       ++ describeme
+sys/interfaces/usd/USDDrive.if     ++ describeme
+sys/interfaces/usd/USDMod.if       ++ describeme
+sys                                ** NEW DIRECTORY
+sys/memory                         ** NEW DIRECTORY
+sys/memory/Makefile                ++ describeme
+sys/memory/eb164_mmu_121.c         ++ describeme
+sys/memory/eb164_mmu_gpt.c         ++ describeme
+sys/memory/eb164_mmu_linear.c      ++ describeme
+sys/memory/frames.c                ++ describeme
+sys                                ** NEW DIRECTORY
+sys/memory                         ** NEW DIRECTORY
+sys/memory/ifaces_expt             ** NEW DIRECTORY
+sys/memory/ifaces_expt/SAllocMod.if++ describeme
+sys/memory/ifaces_expt/SDriverMod.if ++ describeme
+sys/memory/ifaces_expt/StretchAllocatorF.if ++ describeme
+sys/memory/ifaces_expt/StretchDriver.if ++ describeme
+sys                                ** NEW DIRECTORY
+sys/memory                         ** NEW DIRECTORY
+sys/memory/ifaces_std              ** NEW DIRECTORY
+sys/memory/ifaces_std/SAllocMod.if ++ describeme
+sys/memory/ifaces_std/StretchAllocatorF.if ++ describeme
+sys/memory/ifaces_std/StretchDriver.if ++ describeme
+sys/memory/mmu.h                   ++ describeme
+sys/memory/salloc_expt.c           ++ describeme
+sys/memory/salloc_std.c            ++ describeme
+sys                                ** NEW DIRECTORY
+sys/nemesis                        ** NEW DIRECTORY
+sys/nemesis/CallPriv.c             ++ describeme
+sys/nemesis/Console.c              ++ describeme
+sys/nemesis/Console.h              ++ describeme
+sys/nemesis/ConsoleControl.if      ++ describeme
+sys/nemesis/IntAlloc.c             ++ describeme
+sys/nemesis/ModData.c              ++ describeme
+sys/nemesis/ModData.if             ++ describeme
+sys/nemesis/NTSC.c                 ++ describeme
+sys/nemesis/NTSC.if                ++ describeme
+sys/nemesis/Nemesis.c              ++ describeme
+sys/nemesis/Trader.c               ++ describeme
+sys/nemesis/klogd.c                ++ describeme
+sys/nemesis/klogd.h                ++ describeme
+sys/nemesis/misc.h                 ++ describeme
+sys/nemesis/schedctl.c             ++ describeme
+sys                                ** NEW DIRECTORY
+sys/primal                         ** NEW DIRECTORY
+sys/primal/Makefile                ++ describeme
+sys/primal/NemesisPrimal.c         ++ describeme
+sys/primal/addr_init.h             ++ describeme
+sys/primal/nexus_util.c            ++ describeme
+sys                                ** NEW DIRECTORY
+sys/typesystem                     ** NEW DIRECTORY
+sys/typesystem/Choice.if           ++ describeme
+sys/typesystem/Enum.if             ++ describeme
+sys/typesystem/Enumeration.c       ++ describeme
+sys/typesystem/IREF.def.c          ++ describeme
+sys/typesystem/Interface.c         ++ describeme
+sys/typesystem/Interface.if        ++ describeme
+sys/typesystem/Operation.c         ++ describeme
+sys/typesystem/Operation.if        ++ describeme
+sys/typesystem/Record.if           ++ describeme
+sys/typesystem/Type.if             ++ describeme
+sys/typesystem/TypeSystem.c        ++ describeme
+sys/typesystem/TypeSystem.if       ++ describeme
+sys/typesystem/TypeSystemF.if      ++ describeme
+sys/typesystem/TypeSystemMod.if    ++ describeme
+

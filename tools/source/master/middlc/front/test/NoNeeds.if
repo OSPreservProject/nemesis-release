@@ -1,0 +1,5 @@
+NoNeeds : INTERFACE =
+-- NEEDS Beer;
+BEGIN
+  P : PROC [ bc : Beer.Choice ] RETURNS [ ];
+END.

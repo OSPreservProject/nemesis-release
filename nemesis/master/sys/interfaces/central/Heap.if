@@ -1,0 +1,112 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Heap.if
+-- 
+-- DESCRIPTION:
+--
+--      Malloc-style heap
+-- 
+-- ID : $Id: Heap.if 1.2 Wed, 02 Jun 1999 13:55:50 +0100 dr10009 $
+-- 
+-- \chapter{Memory}
+-- \section{Heaps}
+-- 
+
+-- The "Heap" interface specifies a traditional "malloc"-style
+-- heap, with a few bells and whistles.
+
+Heap : LOCAL INTERFACE =
+BEGIN
+
+  Size : TYPE = WORD;
+  Ptr  : TYPE = ADDRESS;
+
+  -- Heaps support the standard C-like calls to allocate and free memory:
+
+  Malloc  : PROC [ size: Size ] RETURNS [ p: Ptr ];
+    -- Allocate "size" bytes at "p".
+
+  Free    : PROC [ p: Ptr ] RETURNS [ ];
+    -- Free up the block at address "p", which must have previously
+    -- been returned by "Malloc", "Calloc" or "Realloc".
+
+  Calloc  : PROC [ nmemb: Size, size: Size ] RETURNS [ p: Ptr ];
+    -- Allocate space for "nmemb" objects of size "size" at address "p".
+    -- The space is initialised to zeroes.
+
+  Realloc : PROC [ p: Ptr, size: Size ]  RETURNS [ p1: Ptr ];
+    -- Resize the block at address "p" to be "size" bytes long, at
+    -- "p1".
+
+  -- New features are a "Purge" call to reset the heap (i.e. throw
+  -- everything away) and a "Destroy" method to dispose of it. A call
+  -- to "Purge" is functionally the same as destroying the heap and
+  -- then recreating it, but more efficient and convenient.
+  -- 
+  -- (TODO: should we put a "NewChain" proc in here?  Or leave that to a
+  -- separate interface?)
+
+  Purge : PROC [] RETURNS [ h: IREF Heap ];
+    -- Purge the heap of all allocated blocks.
+
+  Destroy : PROC [] RETURNS [];
+    -- Completely destroy the heap.
+
+  Check : PROC [ checkFreeBlocks : BOOLEAN ] RETURNS [];
+    -- "Check" causes sanity checks to be performed on the heap block
+    -- headers. Additionally, if "checkFreeBlocks" is "True", it will
+    -- scan the free areas in the heap and ensure that they have not
+    -- been overwritten. Either or both of these actions may be no-ops
+    -- if the heap does not record sufficient information to perform
+    -- the check. The action to be taken in the event of a check
+    -- failing is implementation defined.
+
+  -- In addition, all "Heap" implementations must ensure that the
+  -- following C macro returns a closure pointer for the implementation
+  -- when applied to the results of "Malloc", "Calloc" and "Realloc"
+  -- before they are "Free"d:
+  -- 
+  --|  #define HEAP_OF(_node)   ((Heap_clp) *( ((word_t *)(_node)) - 1 ))
+  -- 
+  -- That is, the "WORD" preceding the first word of a heap node must
+  -- contain the closure pointer for the heap.
+
+  -- 
+  -- Exceptions
+  -- 
+
+  -- "Malloc" and friends return "NULL" in the traditional way
+  -- if there is insufficient space available.  Thus heaps can
+  -- be used before exceptions are up.  Heap clients may choose to
+  -- raise the following exception to their own callers.
+ 
+  NoMemory: EXCEPTION [];
+
+  -- Inspect the Heap to figure out things about it.
+
+  Statistic : TYPE = {
+      CurrentSize,
+      MaximumSize,
+      AllocatedData,
+      UsefulData
+  };
+
+  -- Query returns a parameter about the heap, if that kind of
+  -- parameter is appropiate for this heap. Otherwise it sets success
+  -- to False and leaves value undefined. CURRENTSIZE is the current
+  -- size of the heap. MAXIMUMSIZE is the maximum possible size of the
+  -- heap. ALLOCATEDDATA is the total amount of data allocated within
+  -- the heap, including any overheads. USEFULDATA is the total amount
+  -- of useful data of the heap, excluding overhead.
+
+  Query : PROC [ kind : Statistic ] RETURNS [ success : BOOLEAN,
+                                              value : LONG CARDINAL ];
+END.

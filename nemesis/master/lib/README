@@ -1,0 +1,5 @@
+This directory contains files that are linked with other parts of the tree
+
+veneer/		Assorted veneers
+static/		Assorted static libraries
+xopen/		Veneers for X/Open based personalities

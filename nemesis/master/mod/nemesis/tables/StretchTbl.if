@@ -1,0 +1,64 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      StretchTbl.if
+-- 
+-- DESCRIPTION:
+--
+--      Mapping from "Stretch"es to "StretchDrivers".
+-- 
+-- ID : $Id: StretchTbl.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Tables}
+-- \section{StretchTbl}
+
+-- A "StretchTbl" is a partial map from "Stretch"es to page width 
+-- information (for mapping) and "StretchDrivers".
+-- A typical implementation might use a hash table.
+
+StretchTbl : LOCAL INTERFACE =
+  NEEDS Stretch;
+  NEEDS StretchDriver;
+BEGIN
+
+
+  -- There is no internal concurrency control in a "StretchTbl".
+  -- Clients must ensure that conflicting operations are never
+  -- executed concurrently.  "Get" is a reader, while "Put" and 
+  -- "Remove" are writers.
+
+  Get     : PROC    [ str         : IREF Stretch; 
+		      OUT pwidth  : CARDINAL; 
+		      OUT sdriver : IREF StretchDriver ] 
+	    RETURNS [ b: BOOLEAN ];
+    -- If "str" $\in$ "dom(self)" then set "pwidth := pw[str]" and 
+    -- "sdriver := sdriver[str]" and return "True";
+    -- otherwise return "False", leaving OUT params unchanged.
+
+  Put     : PROC    [ str     : IREF Stretch; 
+		      pwidth  : CARDINAL;
+		      sdriver : IREF StretchDriver ] 
+	    RETURNS [ b: BOOLEAN ];
+    -- Return "str" $\in$ "dom(self)" and set "pw[str] := pwidth" and 
+    -- "sdriver[str] := sdriver".
+
+  Remove  : PROC    [ str         : IREF Stretch; 
+		      OUT pwidth  : CARDINAL; 
+		      OUT sdriver : IREF StretchDriver ] 
+	    RETURNS [ b: BOOLEAN ];
+    -- If "str" $\in$ "dom(self)" then set "pwidth := pw[str]", 
+    -- "sdriver := self[str]", remove "str" from "dom(self)" and 
+    -- return "True"; otherwise return "False", leaving OUT params
+    -- unchanged. 
+
+  Dispose : PROC [] RETURNS [];
+    -- Free the current "StretchTbl".
+
+END.

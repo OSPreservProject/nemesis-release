@@ -1,0 +1,83 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      IDC Offer
+-- 
+-- DESCRIPTION:
+--
+--      Operations on an IDC offer (pre-binding)
+-- 
+-- ID : $Id: IDCOffer.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+-- 
+
+-- To offer a service to other domains, an application must create an
+-- "IDCOffer" for the service.  This is the closure whose reference is
+-- posted in a naming context; it encapsulates the state required to
+-- create a binding to the service.
+
+IDCOffer : LOCAL INTERFACE =
+  NEEDS Type;
+  NEEDS Binder;
+  NEEDS ProtectionDomain;
+  NEEDS IDCClientBinding;
+  NEEDS Gatekeeper;
+BEGIN
+
+  -- An "IORInfo" is an opaque lump of transport specific data
+
+  IORInfo : TYPE = SEQUENCE OF OCTET;
+
+  -- An "IOR" identifies a particular transport that can bind to a
+  -- service, along with data that the transport can use to identify a
+  -- route to the service
+
+  IOR : TYPE = RECORD [ transport : STRING, info : IORInfo ];
+
+  -- An "IORList" encapsulates multiple "IOR"s in order of
+  -- preference. It is suitable for passing over an IDC channel as a
+  -- concrete representation of an "IDCOffer"
+
+  IORList : TYPE = SEQUENCE OF IOR;
+
+  UnknownIOR : EXCEPTION [];
+
+  -- The offer has a type.  This interface, however, is generic.  Hence
+  -- a method is provided to query the type of service being offered
+  -- by this interface:
+
+  Type : PROC [] RETURNS [ t : Type.Code ];
+
+  -- The offer refers to a service running in a particular protection
+  -- domain. The "PDom" method returns the identifier of this so that 
+  -- a client can, for example, allocate some shared memory itself 
+  -- before doing a bind.
+
+  PDID : PROC [] RETURNS [ p : ProtectionDomain.ID ]
+                 RAISES UnknownIOR;
+
+  -- "GetIORs" returns a list of IORs for the offer, in order of
+  -- preference. 
+
+  GetIORs : PROC [] RETURNS [ iors : IORList ];
+
+  -- The "Bind" method attempts to create an IDC channel (of some
+  -- implementation) to the service, and returns a client proxy closure
+  -- of the appropriate type as a "Type.Any" which must subsequently be
+  -- narrowed by the client.  It also returns a control interface for
+  -- the binding.
+
+  Bind : PROC    [ IN  gk  : IREF Gatekeeper,
+                   OUT cl  : Type.Any        ]
+         RETURNS [ control : IREF IDCClientBinding ]
+         RAISES Binder.Error, Gatekeeper.Failure, UnknownIOR;
+
+END.

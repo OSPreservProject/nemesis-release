@@ -1,0 +1,58 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      LockedHeap.if
+-- 
+-- DESCRIPTION:
+--
+--      Malloc-style heap, protected with a SRCThread.Mutex
+-- 
+-- ID : $Id: LockedHeap.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Memory}
+-- \section{Heaps}
+-- 
+
+-- The "LockedHeap" interface adds locking (with a "SRCThread.Mutex")
+-- to a "Heap".
+
+LockedHeap : LOCAL INTERFACE =
+  EXTENDS Heap;
+BEGIN
+
+  -- The standard operations inherited from "Heap" each acquire
+  -- and release the heap's lock automatically.  The client can
+  -- do so with the following two procedures:
+
+  Lock   : PROC [] RETURNS [];
+    -- Wait until the heap is unlocked, then lock it.
+
+  Unlock : PROC [] RETURNS [];
+    -- The heap must be locked; unlock it.
+
+  -- The remaining operations are like their counterparts in "Heap",
+  -- except that it is the client's responsibility to lock the heap
+  -- before calling them.  The lock can be acquired once and held for
+  -- several operations, which is faster than acquiring the lock for each
+  -- operation, and also makes the whole group atomic.
+
+  LMalloc  : PROC    [ size: Heap.Size ] RETURNS [ p: Heap.Ptr ];
+
+  LFree    : PROC    [ p: Heap.Ptr ] RETURNS [];
+
+  LCalloc  : PROC    [ nmemb: Heap.Size, size: Heap.Size ]
+             RETURNS [ p: Heap.Ptr ];
+
+  LRealloc : PROC    [ p : Heap.Ptr, size: Heap.Size ]
+             RETURNS [ p1: Heap.Ptr ];
+
+  LPurge   : PROC [] RETURNS [ lh: IREF LockedHeap ];
+
+END.

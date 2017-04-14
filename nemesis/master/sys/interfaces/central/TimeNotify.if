@@ -1,0 +1,46 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      TimeNotify
+-- 
+-- DESCRIPTION:
+--
+--      Hooks for handling timeouts from an activation handler.
+-- 
+-- \chapter{Domains, Events and Activation}
+--
+
+-- An "TimeNotify" interface is called \emph{within the activation
+-- handler} of a VP. 
+-- 
+
+TimeNotify : LOCAL INTERFACE =
+  NEEDS Time;
+BEGIN
+
+  -- All operations in this interface \emph{must} be invoked with
+  -- activations turned off, preferably from within the activation
+  -- handler.  
+
+
+  -- The XXXXX calls "Notify" from its activation handler if it
+  -- determines that "now" is later than "deadline". Both are provided
+  -- so that some idea of the latency is available.
+  -- The "handle" is the value which was passed in when this closure
+  -- was registered with the XXX.
+
+  Notify : PROC    [ now      : Time.T, 
+                     deadline : Time.T, 
+                     handle   : WORD    ]
+           RETURNS [];
+
+    -- Notify an interested party that "now" is >= "deadline".
+
+END.

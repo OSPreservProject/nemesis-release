@@ -1,0 +1,73 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1995, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      IDCServerBinding
+-- 
+-- DESCRIPTION:
+--
+--      Server side of an execution protocol
+-- 
+-- ID : $Id: IDCServerBinding.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+--
+
+-- An "IDCServerBinding" provides the underlying system support for
+-- generated server stub code.  In other words, the generated code
+-- implementing the "IDCServerStubs" interface for a given binding
+-- calls this, generic code to deal with the reception of invocation
+-- requests and the transmission of replies.  This is the server
+-- counterpart of "IDCClientBinding".
+
+IDCServerBinding : LOCAL INTERFACE =
+  NEEDS IDC;
+  NEEDS ProtectionDomain;
+BEGIN
+
+  ReceiveCall : PROC    [] 
+                RETURNS [ todo : BOOLEAN,
+                          b    : IDC.BufferDesc,
+                          opn  : WORD, 
+                          name : STRING         ];
+
+    -- If there is a pending call on this binding, set "todo" to
+    -- "True", set "b" to the corresponding "BufferDesc" and indicate
+    -- the requested operation by setting "op" and/or "name" as
+    -- appropriate.  Otherwise, return "False".  Notice that this proc
+    -- is non-blocking.
+
+  AckReceive : PROC [ b: IDC.BufferDesc ] RETURNS [];
+    -- Notify any interested parties that the contents of "b" have
+    -- been read and can be overwritten.
+ 
+  InitReply : PROC [] RETURNS [ b: IDC.BufferDesc ];
+    -- Return a "BufferDesc" set up for marshalling the normal
+    -- results of a call.
+
+  InitExcept : PROC    [ exc : WORD, name : STRING ] 
+               RETURNS [ b : IDC.BufferDesc ];
+   -- Return a "BufferDesc" set up for marshalling the parameters of
+   -- an "EXCEPTION" identified by "exc", and/or "name".
+
+  SendReply : PROC [ b: IDC.BufferDesc ] RETURNS [];
+    -- Send a reply or exception back to a client.
+
+  Client : PROC [] 
+	   RETURNS [ did  : Domain.ID, 
+	             pdid : ProtectionDomain.ID ];
+
+    -- Return information about the client on the other end of this
+    -- binding.
+
+  Destroy : PROC [] RETURNS [];
+    -- frees "self" and any underlying resources owned by this
+    -- domain (such as transmit buffers and event counts).
+
+END.

@@ -1,0 +1,36 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      IONotify
+-- 
+-- DESCRIPTION:
+--
+--      IO callback closure. 
+-- 
+-- ID : $Id: IONotify.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Input-Output Channels}
+-- 
+
+-- An "IONotify" is a type representing a callback that an
+-- "IOTransport" should call when an IO offer is bound to by a client.
+-- An "IOTransport" takes an "IONotify" as an argument of its "Offer"
+-- method.
+
+IONotify : LOCAL INTERFACE =
+  NEEDS IO;
+BEGIN
+  
+  -- The following method is called by the IO transport when an offer
+  -- is bound to by a client.
+
+  Notify : PROC [ io: IREF IO ] RETURNS [];
+  
+END.

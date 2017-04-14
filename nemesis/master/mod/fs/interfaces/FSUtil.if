@@ -1,0 +1,56 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      FSUtil
+-- 
+-- DESCRIPTION:
+--
+--      Adds functionality to standard FileIO interface
+-- 
+-- ID : $Id: FSUtil.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+-- 
+-- \chapter{File Systems}
+--
+
+-- The basic filesystem interfaces give raw block access to files. This
+-- interface allows `cooked' access to files through readers and writers.
+
+FSUtil : LOCAL INTERFACE =
+  NEEDS FileIO;
+  NEEDS Rd;
+  NEEDS Wr;
+  NEEDS Heap;
+BEGIN
+
+  GetRd : PROC [ file  : IREF FileIO, 
+		 heap  : IREF Heap, 
+		 close : BOOLEAN ]
+	RETURNS [ rd : IREF Rd ];
+    -- Obtain a reader on a file. If "closed" is true then the file will be
+    -- closed when the reader is closed.
+
+  GetWr : PROC [ file  : IREF FileIO, 
+		 heap  : IREF Heap, 
+		 close : BOOLEAN ]
+	RETURNS [ wr : IREF Wr ];
+    -- Obtain a writer on a file. If "closed" is true then the file will be
+    -- closed when the writer is closed.
+
+  GetRdWr : PROC [ file  : IREF FileIO, 
+		   heap  : IREF Heap, 
+		   close : BOOLEAN ]
+	RETURNS [ rd : IREF Rd, 
+		  wr : IREF Wr ];
+    -- Obtain both a reader and a writer on a file. The reader and writer
+    -- share a buffer, so changes made using the writer are visible immediately
+    -- in the reader; there is no wait for the block to be flushed to the
+    -- filesystem.
+
+END.

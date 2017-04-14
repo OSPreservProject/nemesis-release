@@ -1,0 +1,109 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      DirectOppo.if
+--
+-- Description:
+--
+--      Interface to access an OPPO directly, at the lowest possible level
+--
+-- ID : $Id: DirectOppo.if 1.1 Thu, 18 Feb 1999 15:09:21 +0000 dr10009 $
+-- 
+-- \chapter{Networks}
+
+DirectOppo : LOCAL INTERFACE =
+  NEEDS IDCOffer;
+  NEEDS ATM;
+  NEEDS AALPod;
+BEGIN
+
+  -- WARNING: This is a very low-level interface to the OPPO.  You
+  -- will almost certainly need to consult the OPPO documentation in
+  -- conjunction with this interface.  Be warned.
+
+  -- "W13Open" returns an IDC offer for an IO channel bound to the DMA
+  -- engine on the OPPO, and puts the OPPO into "W13" mode.  Once the
+  -- OPPO is in W13 mode, the only access is via this interface.
+  --
+  -- "dir" determines whether the connection is TX or RX.
+  -- "master" indicates who is responsible for allocating the packets
+  -- used in the IO channel. 
+  --
+  -- "slots" determines the number of slots in the IO channel offer
+  -- returned to the user. Setting this to 0 uses a default value
+
+  -- Data is sent in a 13-word layout.  The first word contains the
+  -- ATM header to be put on the start of the cell, the remaining 12
+  -- words are 48 bytes of payload.
+
+  -- The header is laid out as follows:
+  --| struct {
+  --| 	int clp :  1;	/* cell loss priority */
+  --| 	int eop :  1;	/* "The Bit" */
+  --| 	int cng :  1;	/* congestion encountered (if not OAM) */
+  --| 	int oam :  1;	/* OAM cell */
+  --| 	int vc  : 11;	/* VCI */
+  --| 	int vc1 :  1;	/* set to 0 */
+  --| 	int ack : 11;	/* VPI (used by DEC for flow control) */
+  --| 	int ack0:  3;	/* set to 0 */
+  --| 	int vc0 :  2;	/* set to 0 */
+  --| } atm_hdr;
+
+  -- Each "IO$PutPkt()" in the IO channel returned results in a DMA of
+  -- the data to the cell buffers on the OPPO.  Normally the
+  -- application should block together multiple 13 word cells before
+  -- submitting them for DMA with "IO$PutPkt()".
+
+  W13Open : PROC    [ dir : AALPod.Dir;
+		      master : AALPod.Master;
+		      mode : AALPod.Mode;
+		      slots: CARDINAL ]
+         RETURNS [ offer  : IREF IDCOffer ]
+         RAISES ATM.VCIInUse,
+		AALPod.BadMaster, AALPod.BadMode, AALPod.NoResources;
+
+  -- "VCIInUse" indicates that some other domain is using the OPPO.
+
+
+  -- A connection is freed by closing the corresponding "IO".
+
+
+  --
+  -- Cell buffer management
+  --
+
+  -- The OPPO has a number of cell buffers internally, whose tasking
+  -- to TX or RX etc may be changed.  Changing the partitioning of the
+  -- buffers does a soft reset of the OPPO, so it is not to be used
+  -- lightly.
+
+  -- You can find out how many cell buffers your OPPO has by calling:
+
+  GetCellBufs : PROC [] RETURNS [ n : CARDINAL ];
+
+  -- Once you know how many cell buffers you have, you can
+  -- redistribute them:
+
+  PartitionCellBufs: PROC [ TX    : CARDINAL;
+                            NoAck : CARDINAL ]
+ 			RETURNS [];
+
+  -- "TX" is the number of cell buffers to set aside for transmission.
+  -- The number to receive into is automatically calculated from the
+  -- total number of cell buffers minus the TX reservation, minus some
+  -- small number of unusable buffers.  This RX reservation is further
+  -- sub-divided into buffers used to receive cells into, and buffers
+  -- used for "NoAck" cells -- see the OPPO documentation about this.
+  -- The default partition is 1/4 for TX, 1/2 for RX, and 1/4 for
+  -- NoAck cells.  If you specify an impossible partition, undefined
+  -- things may happen: this may range from calls to ntsc\_dbgstop() to
+  -- DMA of random chaff over your hard disc.  Be warned.
+
+END.

@@ -1,0 +1,40 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Record
+-- 
+-- DESCRIPTION:
+--
+--      Extension of Context used to represent elements of RECORD
+--      type class 
+-- 
+-- ID : $Id: Record.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Runtime Type System}
+-- 
+-- 
+
+-- The "TypeSystem" represents \MIDDL\ record types by instances
+-- of the "Record" interface.
+
+Record : LOCAL INTERFACE =
+  EXTENDS Context;
+  NEEDS Type;
+BEGIN
+
+  -- The "Context" part of this interface maps each of the represented 
+  -- record's fields' names to a "Type.Any" for the "Field"
+  -- representing the field.  The list returned by the "List"
+  -- procedure produces the field names in the order in which they are
+  -- declared.
+
+  Field : TYPE = RECORD [ tc : Type.Code, offset : CARDINAL ];
+
+END.

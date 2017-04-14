@@ -1,0 +1,56 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Bouncer
+-- 
+-- DESCRIPTION:
+--
+--      RPC binder interface
+-- 
+-- ID : $Id: Bouncer.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+--
+
+-- A "Bouncer" acts in a similar way to a "Binder" for shared memory
+-- transport --- in the long run there probably ought to be a single
+-- binder-style interface suitable for all transports.
+
+Bouncer : INTERFACE = 
+NEEDS Type;
+BEGIN
+
+  OfferID : TYPE = LONG CARDINAL;
+  ObjectHandle : TYPE = LONG CARDINAL;
+
+  Problem : TYPE = { BadOffer,
+                     ServerRefused,
+                     NoResources,
+                     BadHandle, 
+                     NotOwner, 
+                     GeneralFailure };
+
+  Error : EXCEPTION [ p : Problem ];
+
+  -- "BindTo" requests that the server create a binding for the client
+  -- to the requested service offer.
+
+  BindTo : PROC [ offerID : OfferID,
+                  tc : Type.Code ]
+           RETURNS [ objectHandle : ObjectHandle ]
+           RAISES Error;
+
+  -- "Close" indicates that the client has finished using the service
+
+  Close : PROC [ objectHandle : ObjectHandle ] 
+          RETURNS []
+          RAISES Error;
+
+END.

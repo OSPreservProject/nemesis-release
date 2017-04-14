@@ -1,0 +1,52 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      ChannelNotify
+-- 
+-- DESCRIPTION:
+--
+--      Hooks for handling events on a particular VP channel.
+-- 
+-- \chapter{Domains, Events and Activation}
+--
+
+-- An "ChannelNotify" interface is called \emph{within the activation
+-- handler} of a VP. 
+-- 
+-- Currently channel notifications are used by the "Entry" and "Tasks"
+-- style inter-domain communication, as described in the ANSAware/RT 
+-- Computation and Engineering models; and also by various other things.
+-- 
+
+ChannelNotify : LOCAL INTERFACE =
+  EXTENDS ChainedHandler;
+  NEEDS Channel;
+  NEEDS Event; 
+BEGIN
+
+  -- All operations in this interface \emph{must} be invoked with
+  -- activations turned off, preferably from within the activation
+  -- handler.  
+
+
+  -- The event demultiplexer calls "Notify" in the middle of its
+  -- processing of incoming events when it finds an event channel 
+  -- which is attached. The arguments are part of the end point's state. 
+
+  Notify : PROC    [ chan  : Channel.Endpoint,
+                     type  : Channel.EPType,
+                     val   : Event.Val,
+                     state : Channel.State    ]
+           RETURNS [];
+
+    -- Notify an interested party that notification has been received 
+    -- from the kernel of activity on event channel "chan".
+
+END.

@@ -1,0 +1,40 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Time
+-- 
+-- DESCRIPTION:
+--
+--      Types for talking about time.
+-- 
+-- ID : $Id: Time.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Domains, Events and Activation}
+--
+
+-- Several Nemesis components deal with time.
+
+Time : LOCAL INTERFACE = 
+
+BEGIN
+
+  -- Times and durations are represented by "ns" values, which
+  -- give numbers of nanoseconds since some unspecified epoch.
+
+  ns : TYPE = LONG INTEGER;
+  T  : TYPE = ns;
+
+  -- The "Now" procedure returns the current value of the system
+  -- clock.  The clock resolution is unlikely to be a small number
+  -- of nanoseconds.
+
+  Now : PROC [] RETURNS [ now : ns ];
+
+END.

@@ -1,0 +1,35 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      SCSICallback.if
+-- 
+-- DESCRIPTION:
+--
+--      Callbacks from SCSI controller when a transaction is completed.
+-- 
+-- FILE :	SCSICallback.if
+-- CREATED :	Thu Jan 16 1997
+-- AUTHOR :	Paul Barham (Paul.Barham@cl.cam.ac.uk)
+-- ID : 	$Id: SCSICallback.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+-- 
+-- \chapter{Devices}
+-- \section{SCSI}
+
+-- The "SCSICallback" interface is used by SCSI controller to 
+-- inform the generic SCSI layer of SCSI command completion etc.
+
+SCSICallback : LOCAL INTERFACE =
+	NEEDS SCSI;
+BEGIN
+	
+	Done : ANNOUNCEMENT [ h : SCSI.CommHandle,
+	                      c : SCSI.ResultCode ];
+
+END.

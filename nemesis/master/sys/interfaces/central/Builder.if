@@ -1,0 +1,87 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Builder
+-- 
+-- DESCRIPTION:
+--
+--      Creates domains with more state than the DomainMgr usually
+--      supplies.
+-- 
+-- ID : $Id: Builder.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Domains, Events and Activation}
+-- 
+-- 
+
+
+-- Since a large number of Nemesis domains will generally require the
+-- same state created on the "Pervasives" when they start up, the
+-- "Builder" is provided to automate this process.
+
+Builder : LOCAL INTERFACE =
+  NEEDS Activation;
+  NEEDS Closure;
+  NEEDS Context;
+  NEEDS Stretch;
+  NEEDS StretchAllocator;
+BEGIN
+  
+  -- "NewThreaded" takes a "Closure" "cl" and creates an
+  -- "Activation" vector which can be passed to the "DomainMgr".  The
+  -- domain will start up with a threads package and "SRCThread"
+  -- synchronisation primitives.  All state for the domain is acquired
+  -- from the supplied "env" name space at domain startup, except
+  -- that the pervasive "TypeSystem" is bound during the call to
+  -- "NewThreaded".  The "TypeSystem" is from the supplied "Root".
+  -- 
+  -- The "in_pdom" refers to the protection domain in which the new
+  -- domain's stretches should be mapped.
+  --
+  -- The "env" context closure is copied to the new domain's initial heap.
+  -- "env" is a Context containing parameters for the new domain. Some of
+  -- these parameters are used by the Builder itself; others may be
+  -- used by other parts of the system during initialisation. It is added
+  -- to the new domain's merged root context as "env".
+  --
+  -- The new domain's threads package will allocate its own state from
+  -- the domain's activation heap (that is, a heap created from the 
+  -- passed in activation stretch "actstr").
+  -- 
+  -- Once the new domain's pervasives have been initialised, the main
+  -- thread will call "Closure_Apply(cl)".
+
+  NewThreaded : PROC    [ cl            : IREF Closure,
+                          salloc        : IREF StretchAllocator,
+			  in_pdom	: ProtectionDomain.ID,
+                          actstr        : IREF Stretch, 
+			  env           : IREF Context ]
+                RETURNS [ avec  : IREF Activation       ];
+
+  --
+  -- Conventional parameters used by the Builder are:
+  --
+  -- Root           : IREF Context         -- a standard root context
+  -- ThreadsPackage : IREF ThreadsPackage
+  -- ExnSystem      : IREF ExnSystem
+  -- ContextMod     : IREF ContextMod
+  -- Trader         : IREF IDCOffer [TradedContext]
+  -- defStackWords  : CARDINAL
+  -- pHeapWords     : CARDINAL
+  -- Console        : IREF IDCOffer [Wr]
+  -- stdout         : IREF IDCOffer [Wr]
+  -- stderr         : IREF IDCOffer [Wr]
+  -- stdin          : IREF IDCOffer [Rd]
+  --
+  -- Conventional parameters not currently used by the Builder are:
+  -- login          : Security.Certificate -- login certificate
+  -- iwd            : Security.Certificate -- current working directory
+
+END.

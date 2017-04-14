@@ -1,0 +1,100 @@
+
+Beer : LOCAL INTERFACE = 
+
+BEGIN
+
+Predefined : TYPE = CARDINAL;
+
+A    : TYPE = ADDRESS;
+W    : TYPE = WORD;
+NC   : TYPE = NETWORK CARDINAL;
+
+Word : TYPE = DANGEROUS WORD;
+
+Kind : TYPE = { Abbot, IPA, Best, Broadside };
+Set  : TYPE = SET OF Kind;
+
+Alias  : TYPE = Kind;
+Sector : TYPE = RECORD [ drink : Kind, number : CARDINAL ];
+Order  : TYPE = SEQUENCE OF Sector;
+Array  : TYPE = ARRAY 5 OF Sector;
+Choice : TYPE = CHOICE Kind OF {
+                  Abbot     => Sector,
+                  IPA       => Alias,
+                  Best      => Array,
+                  Broadside => Sector
+                };
+
+Record : TYPE = RECORD [ large: Array, ref: IREF Beer,
+                         danger: DANGEROUS ADDRESS ];
+
+Ref    : TYPE = REF Record;
+AliasRef : TYPE	= Ref;
+
+AliasIref : TYPE = IREF Beer;
+
+
+Option : TYPE = CHOICE BOOLEAN OF {
+      	      	  True => Record
+      	      	};
+
+Bug    : TYPE = SEQUENCE OF RECORD [
+		one : ARRAY 2 OF RECORD [
+			two : SEQUENCE OF RECORD [
+				three: ARRAY 5 OF OCTET,
+				four: SEQUENCE OF STRING ],
+			five: CHOICE BOOLEAN OF {
+				False => STRING,
+				True => SEQUENCE OF STRING } ]];
+
+ByteSeq      : TYPE = SEQUENCE OF OCTET;
+ByteSeqAlias : TYPE = ByteSeq;
+ByteSeqSeq   : TYPE = SEQUENCE OF ByteSeqAlias;
+
+ByteArr      : TYPE = ARRAY 8 OF OCTET;
+ByteArrAlias : TYPE = ByteArr;
+ByteArrSeq   : TYPE = SEQUENCE OF ByteArrAlias;
+ByteArrArr   : TYPE = ARRAY 8  OF ByteArrAlias;
+
+Sextuple : TYPE = ARRAY 8 OF OCTET;
+Septuple : TYPE = SEQUENCE OF Sextuple;
+Octuple : TYPE = SEQUENCE OF Septuple;
+
+SeqRef  : TYPE = SEQUENCE OF REF Record;
+
+TimeCalled : EXCEPTION [ lockin : BOOLEAN ];
+OnlyGot    : EXCEPTION [ beers  : Set ];
+
+-- Only small exception arguments are allowed for now...
+-- 
+-- FunnyI : EXCEPTION [ ch: Choice ];
+-- FunnyM : EXCEPTION [ IN OUT ch: Choice ];
+-- FunnyB : EXCEPTION [ b : RECORD [ one : BOOLEAN, two : BOOLEAN ]];
+-- FunnyB : EXCEPTION [ b : RECORD [ one : Boolean, two : Boolean ]];
+
+BuyRound : PROC    [ round : Order; barman : STRING ]
+           RETURNS [ total : CARDINAL ]
+           RAISES TimeCalled, OnlyGot;
+
+NoArgs  : PROC [] RETURNS [];
+TwoRes  : PROC [] RETURNS [ ch: Choice; ar: Array ];
+Iref    : PROC [ in: IREF Beer ] RETURNS [ out: AliasIref ];
+RefArgs : PROC [ in: REF Bug ] RETURNS [ out: REF Bug ];
+NCArgs  : PROC [ w: W; a: A ] RETURNS [ nc: NC ];
+Ann     : ANNOUNCEMENT [];
+
+Modes   : PROC [
+                 asi: CARDINAL;
+          IN OUT asm: CARDINAL;
+                 ali: Record;
+          IN OUT alm: Record
+        ] RETURNS [
+                  rs: CARDINAL;
+                  rl: Record
+       ];
+
+Fields  : PROC [ a, b: CARDINAL ] RETURNS [ c, d: CARDINAL ];
+
+NeverSayNever : PROC [ ] NEVER RETURNS;
+
+END.

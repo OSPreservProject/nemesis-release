@@ -1,0 +1,56 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1996, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      EtherMod.if
+-- 
+-- DESCRIPTION:
+--
+--      Creates an Ether module
+-- 
+-- ID : $Id: EtherMod.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+-- 
+-- \chapter{Networks}
+-- \section{Protocols}
+--
+
+-- EtherMod is used to create an "IREF Ether", which adds or strips
+-- Ethernet headers to packets going through it.
+
+EtherMod: LOCAL INTERFACE =
+NEEDS Ether;
+NEEDS IO;
+NEEDS Heap;
+NEEDS Net;
+NEEDS IOOffer;
+BEGIN
+       
+  -- "New" is called to create an "Ether" interface which allows the
+  -- transmission and/or reception of Ethernet frames from a network
+  -- device. The "dest" specifies the address which will be sent to,
+  -- while "src" gives the address of the originator and "frameType"
+  -- specifies the type of ethernet frame (e.g. ARP, IP, etc). 
+  -- 
+  -- The "rxio" parameter specifies the IO channel used to receive
+  -- packets from, while the "txio" parameter specifies the IO channel
+  -- used for transmission on to the network.  They should already be
+  -- bound; this is in contrast to earlier versions of this interface
+  -- where these arguments were IOOffers for the channels.
+  --
+
+  New: PROC   [ dest      : Net.EtherAddr,
+                src       : Net.EtherAddr,
+                frameType : SHORT CARDINAL,
+                rxio      : IREF IO,
+                txio      : IREF IO ]
+      RETURNS [ eth       : IREF Ether ];
+      -- Return an "Ether" interface which may be used to receive
+      -- and/or transmit ethernet frames across an IO channel. 
+
+END.

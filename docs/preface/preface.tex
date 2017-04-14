@@ -1,0 +1,84 @@
+\documentclass[a4paper,12pt]{article} 
+%\usepackage{times}
+\usepackage{palatino}
+
+\pagestyle{empty}
+
+\usepackage{a4wide}
+\usepackage{epsfig}
+
+\begin{document}
+
+\title{%
+  \epsfig{file=nemesis.eps, width=5in} \\[1.5in]
+  \Huge Nemesis Document Collection
+}
+
+\maketitle
+\thispagestyle{empty}
+
+\eject
+
+\begin{center}
+
+{\LARGE
+Nemesis Document Collection
+}
+
+\end{center}
+
+\parindent=0pt
+
+\vskip 2 cm
+
+\section*{Preface}
+
+\vskip 1 cm
+
+This collection of documents describes the Nemesis Operating system:
+the ideas behind it, and the current implementation.  It is intended
+to assist people working with Nemesis for the first time, both in
+understanding the main concepts of embodied in Nemesis, but also in
+setting up and using Nemesis on their own hardware.
+
+\vskip 1 cm
+
+We hope you'll enjoy Nemesis, and have as productive a time using it
+as we've had.
+
+\vskip 2 cm
+
+{\it 
+The Editors,
+
+Cambridge, March 1999
+}
+
+\eject
+
+\section*{Table of contents}
+
+\def\paper#1#2{\vskip 1mm #1 \dotfill #2\par}
+
+\paper{Nemesis: A Brief Overview}{1}
+
+\paper{The Middl Manual}{2}
+
+\paper{Nemesis-\textsl{C} Programmer's Manual}{3}
+
+\paper{New Users' Tutorial}{4}
+
+\paper{The Nemesis Build System}{5}
+
+\paper{Interface Manual}{6}
+
+\paper{Supported Hardware}{7}
+
+% add more stuff as required
+
+\cleardoublepage
+% need to have an even number of pages, so we typeset a single space
+
+\ 
+
+\end{document}

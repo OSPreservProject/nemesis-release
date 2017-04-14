@@ -1,0 +1,18 @@
+Some scripts that have accumulate over the years of Nemesis development which
+may be useful.
+
+checkoutandgo.py  copies PRCS packages and source trees in to a directory and
+                  runs code on it.
+
+*.coag  are example scripts for checkoutandgo.py
+
+cln  breaks a link and copies the file instead.
+
+deadlinks  finds links that don't point anywhere useful
+
+nemuse  keeps track of who is using what Nemesis test machine.
+
+ifrefmanualgen.py  generates a .tex file from all the interfaces in the current
+                   directory and down
+
+

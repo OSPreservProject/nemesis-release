@@ -1,0 +1,55 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      CRendPixmap
+-- 
+-- DESCRIPTION:
+--
+--      Generates CRend's that render into a chunk of memory
+-- 
+-- ID : $Id: CRendPixmap.if 1.1 Thu, 18 Feb 1999 14:18:52 +0000 dr10009 $
+--
+-- \chapter{Window System}
+-- \section{Client Rendering}
+
+-- CRendPixmap constructs limited CRend objects that render on to
+-- pixel maps.
+
+CRendPixmap : LOCAL INTERFACE = 
+NEEDS CRend;
+NEEDS Rd;
+BEGIN
+
+	-- Generate a CRend which renders into the memory at the location
+	-- data. 
+
+	-- width, height and stride are all in pixels. stride is the
+	-- increment used for each line. By setting stride to greater
+	-- than width and offsetting the data pointer by an appropiate
+	-- amoumt, it is possible to render into any part of a larger
+	-- bitmap.
+
+	New: PROC [ data: DANGEROUS ADDRESS; 
+		    width, height, stride: CARDINAL ] 
+	     RETURNS [ crend: IREF CRend] 
+	     RAISES CRend.NoResources;
+
+	-- Read a PPM file from a reader and get width and height from
+	-- that file,
+	-- placing the PPM image in to the CRend object
+        --
+        -- Returns NULL when presented with an invalid PPM
+	-- The crend pixmap should be destroyed when it is finished
+	-- with using CRend\$Close
+
+	NewPPM: PROC [ rd : IREF Rd ] RETURNS [ crend : IREF CRend ] 
+        RAISES CRend.NoResources;
+		       
+END.

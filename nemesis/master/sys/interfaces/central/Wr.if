@@ -1,0 +1,172 @@
+-----------------------------------------------------------------------------
+-----------------------------------------------------------------------------
+-- 
+-- INTERFACE:
+-- 
+-- 	Wr
+-- 
+-- DESCRIPTION:
+-- 
+-- 	SRC Writers
+-- 
+-- ID : $Id: Wr.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+--
+-- \chapter{Readers and Writers}
+--
+
+-- The "Wr" interface is a near-wholesale steal of the SRC writers
+-- interface described in chapter~6 of \cite{nel:SPwM3}, which see.
+
+Wr : LOCAL INTERFACE = 
+  NEEDS Thread;
+BEGIN
+
+  -- An "IREF Wr" (or ``writer'') is a character output stream.  The basic
+  -- operation on a writer is "PutC", which extends a writer's
+  -- character sequence by one character. Some writers (called
+  -- ``seekable writers'') also allow overwriting in the middle of the
+  -- sequence.  For example, writers to random access files are
+  -- seekable, but writers to terminals and sequential files are not.
+  -- 
+  -- Writers can be (and usually are) buffered. This means that
+  -- operations on the writer don't immediately affect the underlying
+  -- target of the writer, but are saved up and performed later.  For
+  -- example, a writer to a disk file is not likely to update the disk
+  -- after each character.
+  -- 
+  -- Abstractly, a writer "wr" consists of:
+  --
+  --| len(wr)       `a non-negative integer`
+  --| c(wr)         `a character sequence of length "len(wr)"`
+  --| cur(wr)       `an integer in the range "[0..len(wr)]"`
+  --| target(wr)    `a character sequence`
+  --| seekable(wr)  `a boolean`
+  --| buffered(wr)  `a boolean`
+  --
+  -- These values are generally not directly represented in the data
+  -- fields of a writer object, but in principle they determine the
+  -- state of the writer.
+  -- 
+  -- The sequence "c(wr)" is zero-based: "c(wr)[i]" is valid for "i"
+  -- from 0 through "len(wr)-1".  The value of "cur(wr)" is the index of
+  -- the character in "c(wr)" that will be replaced or appended by the
+  -- next call to "PutChar".  If "wr" is not seekable, then "cur(wr)" is
+  -- always equal to "len(wr)", since in this case all writing happens
+  -- at the end.
+  -- 
+  -- The difference between "c(wr)" and "target(wr)" reflects the
+  -- buffering: if "wr" is not buffered, then "target(wr)" is updated to
+  -- equal "c(wr)" after every operation; if "wr" is buffered, then
+  -- updates to "target(wr)" can be delayed.  For example, in a writer
+  -- to a file, "target(wr)" is the actual sequence of characters on the
+  -- disk; in a writer to a terminal, "target(wr)" is the sequence of
+  -- characters that have actually been transmitted.  (This sequence may
+  -- not exist in any data structure, but it still exists abstractly.)
+  -- 
+  -- If "wr" is buffered, then the assignment "target(wr) := c(wr)" can
+  -- happen asynchronously at any time, although the procedures in this
+  -- interface are atomic with respect to such assignments.
+
+  Failure : EXCEPTION [ why: CARDINAL ];
+
+  -- The interpretation of "why" depends on the class of the writer.
+  -- The value "1" (writer unseekable) is reserved.
+
+  Buffer : TYPE = REF CHAR;
+
+  -- A "Buffer" is an area of memory used to transfer characters to the
+  -- writer. If the writer is being accessed using IDC, custom marshalling
+  -- may be arranged for this type.
+
+  -- The operations in this section are protected by an internal
+  -- monitor, so that concurrent operations will appear atomic wrt.
+  -- each other.  For faster, unmonitored access, see the next section.
+
+  -- It is useful to specify the effect of several of the procedures in
+  -- this interface in terms of the action "PutC(wr, ch)", which outputs
+  -- the character "ch" to the writer "wr":
+  -- 
+  --| Put(wr, ch) =
+  --|   IF cur(wr) = len(wr) THEN
+  --|     `Extend "c(wr)" by one character, incrementing "len(wr)"`
+  --|   END;
+  --|   c(wr)[cur(wr)] := ch;
+  --|   INC(cur(wr));
+  --
+  -- "Put" is used only in specifying the interface; it is not a real
+  -- procedure.	
+
+
+  PutC   : PROC [ ch: CHAR ] RETURNS []
+             RAISES Failure, Thread.Alerted;
+    -- Output "ch".  More precisely, this is equivalent to:
+    -- 
+    --|  Put (ch); IF NOT buffered(self) THEN Flush(self) END
+
+  PutStr : PROC [ s: STRING ] RETURNS []
+             RAISES Failure, Thread.Alerted;
+    -- Output "s".
+
+  PutChars : PROC [ s: Buffer, nb: LONG CARDINAL ]
+               RETURNS [] RAISES Failure, Thread.Alerted;
+    -- Output "s[0..nb-1]".
+
+  Seek   : PROC [ n: LONG CARDINAL ] RETURNS []
+             RAISES Failure, Thread.Alerted;
+
+  -- "Seek" sets the current position of this writer to
+  --|   cur(self) := MIN(n, len(self)),
+  -- unless it is closed or is not seekable, in which case it raises
+  -- the appropriate "Failure".
+
+  Flush  : PROC [] RETURNS [] RAISES Failure, Thread.Alerted;
+    -- Perform all buffered operations, unless the writer is closed.
+
+  Close  : PROC [] RETURNS [] RAISES Failure, Thread.Alerted;
+    -- Flush the writer and release all resources associated with it.
+    -- The closure becomes invalid after this call.
+
+  Length : PROC [] RETURNS [ len: LONG CARDINAL]
+             RAISES Failure, Thread.Alerted;
+    -- Return "len(self)".
+
+  Index  : PROC [] RETURNS [ n: LONG CARDINAL]
+             RAISES Failure;
+    -- Return "cur(self)".
+
+  -- The next two operations respectively return whether the writer
+  -- is seekable or buffered.
+
+  Seekable : PROC [] RETURNS [ b: BOOLEAN ];
+  Buffered : PROC [] RETURNS [ b: BOOLEAN ];
+
+
+  -- 
+  -- Unsafe (unlocked) operations
+  -- 
+
+  Lock   : PROC [] RETURNS [];
+    -- Wait until the writer is unlocked; lock it and make its state valid.
+
+  Unlock : PROC [] RETURNS [];
+    -- The writer must be locked and valid; unlock it and restore 
+    -- the private invariant of the writer implementation.
+
+  -- The remaining operations are like their counterparts above,
+  -- except that it is the client's responsibility to lock the writer
+  -- before calling them.  The lock can be acquired once and held for
+  -- several operations, which is faster than acquiring the lock for each
+  -- operation, and also makes the whole group atomic.
+
+  LPutC     : PROC [ ch: CHAR ] RETURNS []
+                RAISES Failure, Thread.Alerted;
+
+  LPutStr   : PROC [ s: STRING ] RETURNS []
+                RAISES Failure, Thread.Alerted;
+
+  LPutChars : PROC [ s: Buffer, nb: LONG CARDINAL ]
+                RETURNS [] RAISES Failure, Thread.Alerted;
+
+  LFlush    : PROC [] RETURNS [] RAISES Failure, Thread.Alerted;
+
+END.

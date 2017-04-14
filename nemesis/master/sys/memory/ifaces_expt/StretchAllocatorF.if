@@ -1,0 +1,82 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      StretchAllocatorF
+-- 
+-- DESCRIPTION:
+--
+--      Allocates Stretches.  This extended interface also allows the
+--	creation of new stretch allocators.
+-- 
+-- ID : $Id: StretchAllocatorF.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Memory}
+-- \section{Virtual Memory}
+-- 
+-- A "StretchAllocatorF" is an extention of the "StretchAllocator"
+-- interface. In addition to all the normal operations, it allows the
+-- creation of new "StretchAllocator"s. This may be in order to 
+-- service a \emph{client}; i.e. a particular domain and protection
+-- domain; or it may be for other special purposes. 
+--
+
+StretchAllocatorF : LOCAL INTERFACE = 
+  EXTENDS StretchAllocator;
+  NEEDS Frames; 
+  NEEDS Mem;
+  NEEDS ProtectionDomain;
+  NEEDS Stretch;
+  NEEDS VP;
+BEGIN
+
+  NewClient : PROC    [ child    : ProtectionDomain.ID,
+                        vp       : IREF VP,
+	                parent   : ProtectionDomain.ID   ]
+              RETURNS [ clientsa : IREF StretchAllocator ]
+              RAISES  Heap.NoMemory;
+    -- Returns a new "StretchAllocator" for a client domain.
+
+  NewNailed : PROC     [ frames : IREF Frames, 
+                         heap   : IREF Heap             ] 
+	      RETURNS  [ nalloc : IREF StretchAllocator ]
+              RAISES  Heap.NoMemory;
+    -- NewNailed creates a new stretch allocator which will produce 
+    -- stretches nailed by physical memory. 
+    -- The physical memory will be allocated via the given "frames" 
+    -- interface. The heap will be used for internal state. 
+
+  -- To create a stretch of a particular size at a particular address,
+  -- which might already be allocated, use "NewOver". 
+  -- Since this might break the stretch model if used poorly, it is 
+  -- restricted to this interface. 
+  NewOver : PROC    [ size   : Stretch.Size,
+		      gaxs   : Stretch.Rights, 
+		      start  : ADDRESS,
+		      attr   : Mem.Attrs,
+		      pwidth : CARDINAL, 
+		      pmem   : Mem.PMem     ]
+          RETURNS   [ s : IREF Stretch ]
+          RAISES Mem.Failure;
+
+    -- The value "start" describes the requested (page aligned) 
+    -- starting virtual address of the stretch, unless it has
+    -- the value ANY\_ADDRESS, in which case an arbitrary base
+    -- may be chosen contigent on its satisfying the various VM 
+    -- attributes (see Mem.if) held in "attr" and the page 
+    -- width given by "pwidth". 
+    -- In the case where the region is already allocated, "attr"
+    -- and "pwidth" describe that region. 
+    -- 
+    -- If "pmem" is not NULL, it holds the physical memory into which 
+    -- the Stretch is mapped; in the case where the Stretch is to be
+    -- pinned down, this \emph{must} hold enough frames.
+
+
+END.

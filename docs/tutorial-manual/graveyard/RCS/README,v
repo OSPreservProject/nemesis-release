@@ -1,0 +1,27 @@
+head	1.1;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.1
+date	99.03.30.11.41.32;	author tlh20;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@This directory contains files which were part of the original
+Nemesis_Intro document but which do not really fit into a general
+tutorial.  They are:
+
+06hardware.tex -- Supported hardware moved to separate hardware guide@

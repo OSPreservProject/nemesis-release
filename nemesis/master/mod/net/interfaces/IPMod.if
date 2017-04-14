@@ -1,0 +1,100 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1996, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      IPMod.if
+-- 
+-- DESCRIPTION:
+--
+--      Creates an IP module
+-- 
+-- ID : $Id: IPMod.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+-- 
+-- \chapter{Networks}
+-- \section{Protocols}
+--
+
+-- IPMod is used to create an IP protocol module, which adds or strips
+-- IP headers to the packets going through it.
+
+IPMod: LOCAL INTERFACE =
+NEEDS Heap;
+NEEDS Net;
+NEEDS IP;
+NEEDS FlowMan;
+NEEDS Netif;
+BEGIN
+	-- "Mode" describes how the IO channels are set up.  In
+	-- "Split" mode, there are separate data areas for receive and
+	-- transmit sides of the network stack.  In "Dx" mode, there
+	-- is only one data area (and correspondingly only one heap).
+	-- "Split" mode should be used by default, since it provides
+	-- tighter checking.
+	Mode : TYPE = {Split, Dx};
+
+	-- "New" method is for users who wish to send raw IP
+	-- datagrams. It talks to the Flow Manager to route the
+	-- connection, and build a stack underneath right to the
+	-- appropriate network interface.
+
+	-- The "fman" parameter specifies the IP host this flow is to
+	-- be set up in.  "dest" sets the destination IP address,
+	-- while "src" sets the source address.  If "dest" is not all
+	-- zeros, then it is used to find the interface to be used,
+	-- otherwise "src" is used to determine the interface.  "src"
+	-- is modified to reflect the IP address of the interface
+	-- chosen.  If "src" was initially all zeros, then all
+	-- interfaces should be used, however currently only the first
+	-- one is picked.
+
+	-- The "txqos" parameter specifies the desirted level of 
+        -- quality of service on this flow.
+
+	New: PROC [ fman      : IREF FlowMan,
+		    dest      : Net.IPHostAddr,
+		    IN OUT src: Net.IPHostAddr,
+		    txqos     : Netif.TXQoS,
+		    mode      : Mode,
+		    proto     : OCTET,  -- protocol number to use in headers
+		    defttl    : OCTET   -- default time to live, 0 = pick sane
+		 ]
+		RETURNS [ ip  : IREF IP,
+			  rx  : IREF Heap,
+			  tx  : IREF Heap ]
+		RAISES FlowMan.NoRoute;
+          -- "New" creates an "IP" interface which may be used to send
+          -- and/or receive IP datagrams over a protocol stack. 
+          -- It also returns a pair of heaps which should be used for 
+          -- the allocation of receive and transmit buffers
+          -- respectively. 
+          -- \textbf{Note}: these should not be heaps, but rather
+          -- 'slabs' or something like that. AND will fix this. 
+
+	-- "Piggyback" is for masochists who want to roll their own
+	-- custom stacks. You build the network stack under IP the way
+	-- you like it, then call Piggyback to plug an IP layer on
+	-- top. If you want to send IP datagrams with some bogus "src"
+	-- address, be warned that the packet filter will thow them
+	-- out.  The "flow" argument is the flow that will be returned
+	-- by "IP.GetFlow()".  The "txheap" argument is a heap to be
+	-- used to allocate packet headers when transmitting fragments.
+        -- 
+	Piggyback: PROC [ base   : IREF Protocol,  -- what to run IP over
+			  dest   : Net.IPHostAddr,
+			  src    : Net.IPHostAddr, -- what goes in the header
+			  proto  : OCTET,
+			  defttl : OCTET,
+			  flow   : FlowMan.Flow,
+			  txheap : IREF Heap
+			]
+		RETURNS [ ip  : IREF IP ];
+           -- "Piggyback" (what a dreadful name!) creates an "IP"
+           -- interface for the sending/receiving of datagrams over
+           -- the protocol "base". 
+END.

@@ -1,0 +1,14 @@
+
+HWCur : INTERFACE = 
+BEGIN
+
+	ShowCursor : PROC [
+		show: BOOLEAN
+	] RETURNS [];
+
+	MoveCursor : PROC [
+		x : INTEGER,
+		y : INTEGER
+	] RETURNS [];
+
+END.

@@ -1,0 +1,110 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      FSTypes.if
+-- 
+-- DESCRIPTION:
+--
+--      Basic filesystem types
+-- 
+-- FILE :	FSTypes.if
+-- CREATED :	Tue Apr 22 1997
+-- AUTHORS :	Paul Barham (Paul.Barham@cl.cam.ac.uk)
+--              Stephen Early (Stephen.Early@cl.cam.ac.uk)
+-- ID : 	$Id: FSTypes.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+-- 
+-- \chapter{File Systems}
+-- \section{Native Datatypes}
+--
+
+-- The "FSTypes" interface contains types used throughout the other
+-- filesystem interfaces.
+
+FSTypes : LOCAL INTERFACE =
+  NEEDS Time;
+BEGIN
+  --
+  -- Native file types.
+  --
+
+  InodeType : TYPE = { File, Dir, Link, Special };
+    -- "Special" is a type of inode that has no meaning under Nemesis (for
+    -- example, device inodes or named pipes in Unix filesystems).
+
+  Name : TYPE = STRING;
+    -- This is a name which must be resolved in the context of a FSDir
+
+  Dirent : TYPE = RECORD [ ino  : LONG CARDINAL, 
+			   name : Name ];
+    -- The "ino" field is present to let Posix people get at the inode number
+    -- if they really want to. They can't do anything with it once they
+    -- have it, however.
+
+  DirentSeq : TYPE = SEQUENCE OF Dirent;
+
+  NLinks : TYPE = CARDINAL;
+    -- Reference count on a file.
+
+  Time   : TYPE = LONG CARDINAL;
+    -- File system time is not necessarily the same as scheduler time
+    -- ("Time.T") or wall-clock time. We'd better decide sometime... XXX
+
+  Mode : TYPE = { Read, Write };
+    -- Different ways of opening a file; read-only, or read/write.
+
+  Option  : TYPE = { Excl, Sync };
+  Options : TYPE = SET OF Option;
+    -- Modifiers that may be used when opening a file.
+
+  RC : TYPE = { OK, DENIED, FAILURE };
+    -- Return codes used by file system operations.
+
+  --
+  -- Sessions
+  --
+
+  QoS      : TYPE = RECORD [ p : Time.ns,
+                             s : Time.ns,
+                             x : BOOLEAN,
+                             l : Time.ns ];
+    -- "QoS" is specified as a guaranteed slice "s" per period
+    -- "p". These values are used to influence the scheduling of the  
+    -- various requests pending at any particular point. The "x" flag
+    -- specifies whether a particular stream should be allowed to carry
+    -- out additional transactions if no other work is pending. The "l" 
+    -- value specifies the tolerance granted to clients with poor 
+    -- blocking behaviour. 
+
+  --
+  -- Useful information
+  --
+
+  Info : TYPE = RECORD [
+	label    : STRING,
+	id       : STRING,
+	used     : LONG CARDINAL,
+	free     : LONG CARDINAL,
+	iused    : LONG CARDINAL,
+	ifree    : LONG CARDINAL,
+	overhead : CARDINAL ];
+
+    -- Information about a filesystem. "label" is a user- or
+    -- administrator-assigned name for the volume, which may not be
+    -- present.  "id" is a system-assigned identity; this may be a
+    -- UUID for ext2fs, or a hostname:mountpoint pair for NFS, etc.
+    -- "used" and "free" are the amounts of space used and remaining
+    -- in the filesystem, expressed in bytes. It is unspecified
+    -- whether these values include filesystem metadata, and they
+    -- should be treated as approximations. "iused" and "ifree" are
+    -- numbers of used and free inodes; if the values are unavailable
+    -- or meaningless then they should both be zero. "overhead" is an
+    -- approximation of the amount of metadata space used per file.
+
+END.

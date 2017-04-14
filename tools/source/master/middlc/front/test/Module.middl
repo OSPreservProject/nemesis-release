@@ -1,0 +1,17 @@
+MothysField : MODULE = 
+	IMPORTS h : Heap ;
+	EXPORTS f : Field ;
+BEGIN
+	-- Define an exception 
+	MemFail : EXCEPTION [ w : INTEGER ];
+
+	-- Define a type used only in this module spec.
+	Name : TYPE = STRING;
+
+	-- An additional parameter used to create objects.
+        MUTABLE nname : Name;
+	
+	-- What can go wrong with the creation.
+	RAISES MemFail;
+
+END.

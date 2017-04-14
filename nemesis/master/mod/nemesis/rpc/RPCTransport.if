@@ -1,0 +1,78 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      RPCTransport
+-- 
+-- DESCRIPTION:
+--
+--      Provides RPC connections between domains on different machines
+-- 
+-- ID : $Id: RPCTransport.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+--
+
+-- "RPCTransport" provides remote RPC connections and also extends 
+-- "IDCTransport" to provide support for bootstrap traders to create
+-- offers and pre-specified bindings
+
+
+RPCTransport : LOCAL INTERFACE = 
+EXTENDS IDCTransport;
+NEEDS Net;
+NEEDS IDCOffer;
+NEEDS Heap;
+NEEDS Type;
+NEEDS FlowMan;
+NEEDS IDCClientBinding;
+NEEDS IDCServerBinding;
+BEGIN
+
+  -- A "Handle" is an opaque representation of a binding or offer
+
+  Handle : TYPE  = LONG CARDINAL;
+
+  -- "ForgeOffer" creates an offer which will allow a client to bind
+  -- to an "RPCTransport" listening on "sap", to connect to the offer
+  -- "offerID", with typecode "tc". "IDCOffer.UnknownIOR" will be
+  -- raised if the remote "sap" is not contactable using this
+  -- "RPCTransport".
+                         
+  ForgeOffer : PROC    [ sap     : FlowMan.SAP,
+                         offerID : Handle,
+                         tc      : Type.Code]
+               RETURNS [ offer   : IREF IDCOffer ]
+               RAISES Heap.NoMemory, IDCOffer.UnknownIOR;
+
+  -- "MakeServerBinding" installs a binding for the specified
+  -- "service", usable from the specified "sap", and returns the
+  -- "objectHandle" that the remote client should use to access the
+  -- service.
+
+
+  MakeServerBinding : PROC    [ sap          : FlowMan.SAP,
+                                service      : Type.Any ]
+                      RETURNS [ objectHandle : Handle,
+                                binding      : IREF IDCServerBinding ]
+                      RAISES Heap.NoMemory, IDCOffer.UnknownIOR;
+
+  -- "MakeClientBinding" takes a remote "sap" and a handle and
+  -- installs a client binding for that service, returning a surrogate
+  -- closure to be used for invocations.
+
+  MakeClientBinding : PROC    [ sap          : FlowMan.SAP,
+                                objectHandle : Handle,
+                                tc           : Type.Code,  
+                                OUT cl       : Type.Any ]
+                      RETURNS [ control      : IREF IDCClientBinding ]
+                      RAISES Heap.NoMemory, IDCOffer.UnknownIOR;
+                             
+                             
+END.

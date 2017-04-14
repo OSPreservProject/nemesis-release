@@ -1,0 +1,85 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      FSClient.if
+-- 
+-- DESCRIPTION:
+--
+--      Per-Client control-path interface to a file system.
+-- 
+-- FILE :       FSClient.if
+-- CREATED :    Fri Dec 12 1997
+-- AUTHOR :     Stephen Early <Stephen.Early@cl.cam.ac.uk>
+-- ID :         $Id: FSClient.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+-- 
+-- \chapter{File Systems}
+-- \section{API}
+--
+
+-- The "FSClient" interface is used to access a filesystem once it has been
+-- mounted. This interface is exported by all filesystems. 
+
+-- Data path operations are performed directly to the storage
+-- device(s) in question using a "Session" with a guaranteed Quality
+-- of Service. 
+
+FSClient : LOCAL INTERFACE =
+  NEEDS FSTypes;
+  NEEDS Type;
+BEGIN
+
+  --
+  -- This session
+  --                    
+
+  CurrentQoS : PROC [ ] 
+	RETURNS [ qos : FSTypes.QoS ];
+    -- Return the current QoS parameters of this session.
+
+  AdjustQoS : PROC [ IN OUT qos : FSTypes.QoS ]
+	RETURNS [ ok : BOOLEAN ];
+    -- Specify the desired QoS for this session.  Returns "True" if 
+    -- successful, otherwise returns the (probably lower) "QoS" which
+    -- has been allocated.
+
+  --
+  -- Obtaining access to directories
+  --
+
+  GetDir : PROC [ certificate : STRING, 
+		  root        : BOOLEAN ]
+	RETURNS [ rc  : FSTypes.RC, 
+		  dir : Type.Any ];
+    -- Requests access to the filesystem using the supplied certificate.
+    -- The "dir" returned will be compatible with IREF FSDir. Different types
+    -- of FSDir are used depending on the access control scheme employed
+    -- by the filesystem, and will contain different types and operations
+    -- for accessing file metadata.
+    -- XXX the type of the certificate will change.
+  
+  --
+  -- Filesystem information
+  --
+
+  Stat : PROC [ ] RETURNS [ info : FSTypes.Info ];
+    -- Returns information about the filesystem.
+
+  --
+  -- Clean up
+  --
+
+    Unmount : PROC [ force : BOOLEAN ]
+	RETURNS [ rc : FSTypes.RC ];
+      -- The Unmount call is used to unmount the \emph{whole} filesystem.
+      -- "force" determines whether currently-open files will be kept open
+      -- until they are closed, or closed forcibly.
+
+
+END.

@@ -1,0 +1,64 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright %y, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Clanger.if
+-- 
+-- DESCRIPTION:
+--
+--      Evaluates 
+-- 
+-- FILE :	ClangerMod.if
+-- 
+--
+
+Clanger : LOCAL INTERFACE =
+NEEDS Rd;
+NEEDS Wr;
+NEEDS Context;
+BEGIN
+  
+  -- Raised for general internal error; usually an interpreter
+  -- inconsistency
+ 
+  InternalError : EXCEPTION [];
+
+  -- Raised if break input received
+
+  Break: EXCEPTION [];
+
+  -- Type Raised for type checking errors
+  
+  Type: EXCEPTION [];
+  
+  --- Failure Raised when a clanger command fails
+ 
+  Failure: EXCEPTION [];
+
+  -- Execute str as clanger commands, exectue it and send the output
+  -- to Wr
+
+  ExecuteString : PROC [ str : STRING, wr: IREF Wr ] RETURNS [] RAISES
+InternalError, Type, Failure, Break;
+  
+  -- Take input from Rd until EOF, executing it, and sending the
+  -- output to Wr
+
+  ExecuteRd  : PROC [ rd : IREF Rd, wr: IREF Wr ] RETURNS [] RAISES
+InternalError, Type, Failure, Break;
+
+  -- Obtain the root context used by this clanger
+
+  GetRoot : PROC [] RETURNS [ root: IREF Context ];
+
+  -- Free up all the state associated with this clanger
+  
+  Destroy : PROC [] RETURNS [];
+
+END.

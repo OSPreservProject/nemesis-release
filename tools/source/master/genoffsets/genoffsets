@@ -1,0 +1,76 @@
+#!/usr/bin/env python
+
+# genoffsets
+# Copyright (c) 1996 University of Cambridge Computer Laboratory
+# Author: Dickon Reed
+
+import regex,string,sys
+
+
+startpattern = '/\*<---\\*/'
+mainpattern = '/\*--->[a-zA-Z_]*\*/'
+
+if not len(sys.argv)==2:
+	sys.stderr.write('genoffsets\n\nSyntax: genoffsets filename\n\nFile filename is scanned for tagged structure fields and C source is generated\nand written to stdout. Upon execution, this C source will write to stdout a\nheader file defining a macro for each tagged field, giving the byte offset of\nthat field within the structure.\n\nA field is tagged by placing a comment matching:\n'+startpattern+'\nimmediatly after its white space delimited structure name and a comment\nmatching:\n'+mainpattern+'\nimmediatly after the white space delimited field name. The macro symbol finally\ngenerated will be the identifier inside the comment.\n')
+	sys.exit(1)
+
+# read the whole input file in one foul swoop
+
+headerfilename = sys.argv[1]
+hfile = open(headerfilename,'r')
+header = hfile.readlines()
+hfile.close()
+
+
+# now, header is a list of all the lines in the header file
+
+# currentstruct will be the current structure we are are searching for fields
+currentstruct = ''
+# list of structures that need to be instatiated
+structlist = []
+# list of target fields, as (structure name, field name, macro symbol name)
+targetlist = []
+
+for line in header:
+	startmatch = regex.search(startpattern,line)
+	if startmatch > -1:
+		# remainder will be a list of WS delimited symbols up to and
+		# excluding the matching symbol
+		remainder = string.split(line[:startmatch])
+		# currentstruct is taken to be the last of these symbols
+		currentstruct = remainder[-1]
+		structlist.append(currentstruct)
+	mainmatch = regex.search(mainpattern,line)
+	if mainmatch > -1:
+		# hack out the symbol from the middle
+		str = line[mainmatch:]
+		realstr = str[6:regex.match(mainpattern,str)-2]
+		# now hack out the identifier before the match */
+	 	remainder = string.split(line[:mainmatch])
+		identifier = remainder[-1]
+		# if we have got a current structure, add symbol to list
+		if not currentstruct == '':
+			targetlist.append( (currentstruct, identifier, realstr) )
+			
+
+# generate the C
+print '/* This file has been generated automatically by genoffsets */'
+print '/* Do not edit it unless you enjoy wasting your time */'
+print
+print '/* ' + `structlist` + ' */'
+print '/* ' + `targetlist` + ' */'
+print '#include <stdio.h>'
+print '#include "'+headerfilename+'"'
+print
+print '/* the structure table */'
+for struct in structlist:
+	print 'struct '+struct+' '+struct+'_instance;'
+print
+print '/* the main function */'
+print 'int main(int argc, char *argv[]){'
+for (struct,id,symb) in targetlist:
+	print '  printf("#define '+symb+' 0x%x\\n",((char *) (&'+struct+'_instance.'+id+'))- ((char *) (&'+struct+'_instance)));'
+print ' return 0;'
+print '}'
+
+sys.exit(0)

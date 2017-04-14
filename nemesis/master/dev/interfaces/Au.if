@@ -1,0 +1,78 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+---- INTERFACE:
+--
+--	Au.if
+--
+-- DESCRIPTION:
+--
+--	Describes the contents of an Au_Rec, the data structure
+--      used to stored information about an aubuf
+--
+--
+-- \chapter{Devices}
+-- \section{Audio}
+--
+
+
+Au : LOCAL INTERFACE =
+NEEDS Time;
+BEGIN
+
+  FormatDescription : TYPE = RECORD [
+     target_rate : CARDINAL,
+     channels : CARDINAL,
+     little_endianness : BOOLEAN,
+     bits_per_channel : CARDINAL, 
+     channel_stride : CARDINAL,
+     sample_stride : CARDINAL
+  ];     
+  
+  Rec : TYPE  = RECORD [
+     base : ADDRESS,
+     length : CARDINAL,
+     playback : BOOLEAN,
+     master_location : CARDINAL,
+     master_timestamp : Time.ns,
+     master_sample_period : Time.ns,
+     master_granularity : CARDINAL,
+     safe_zone : CARDINAL,
+     format : FormatDescription
+  ];
+
+
+  -- This record describes a buffer, starting at base and going on for
+  -- length samples. Each sample has channels number of channels, each
+  -- one of which contains bits\_per\_channel bits padded out to
+  -- channel\_stride bits. Sample stride is the number of bits between
+  -- each sample. The samples are stored little endian if
+  -- little_endianess is set to true.
+
+  -- The master of the channel was last observed operating at master
+  -- location number of samples in to the buffer, at system time 
+  -- master\_timestamp. The master plays a sample every
+  -- master\_sample\_period. It may take up to master\_granularity
+  -- samples in advance.
+
+  -- Clients may operate up to safe\_zone samples ahead of the current
+  -- master position, in playback mode is playback is set to true
+  -- otherwise in recording mode.
+
+  -- For example, a Sound Blaster 16 driver playing back would export
+  -- an Au\_Rec where playback = true, safe_zone would be nearly as
+  -- large as length, channels=2, target\_rate=44100,
+  -- little\_endianess=true, channel\_stride=16, bits\_per\_channel=16,
+  -- sample\_stride=32, reader\_granularity=1, master\_sample\_period is
+  -- approximately 1/44100.
+
+  Volume : TYPE =  INTEGER;
+
+  -- Au.Volume quantities are fixed point numbers with the low 16 bits
+  -- fractional. Negative values inverts the phase of the digital signal.
+
+END.

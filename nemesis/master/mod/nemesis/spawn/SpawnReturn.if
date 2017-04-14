@@ -1,0 +1,35 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      SpawnReturn
+-- 
+-- DESCRIPTION:
+--
+--      Internal interface for the Spawn module
+-- 
+-- ID : $Id: SpawnReturn.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Domains, Events and Activation}
+--
+
+-- Once a new domain has been spawned it will invoke the appropriate operation.
+-- The result of the operation needs to be returned to the caller; the child
+-- domain will bind to its parent and use the method in this interface to
+-- return the result.
+--
+-- This is an internal interface of the Spawn module.
+
+SpawnReturn : LOCAL INTERFACE =
+  NEEDS IDC;
+BEGIN
+
+  Return : PROC [ buffer : ADDRESS, length : CARDINAL ] RETURNS [];
+
+END.

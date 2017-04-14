@@ -1,0 +1,42 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1996, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Initialise the PCI bus data structures.
+-- 
+-- DESCRIPTION:
+--
+--      Builds internal datastructures describing the devices
+--	on the PCI bus(es) and returns an interface for 
+--	manipulating them.
+--      Also adds the various memory ranges decoded by the 
+--      devices on the PCI bus(es) to the frames allocator. 
+-- 
+-- FILE :	PCIBiosMod.if
+-- CREATED :	Tue Sep 17 1996
+-- AUTHOR :	Paul Barham (Paul.Barham@cl.cam.ac.uk)
+-- ID : 	$Id: PCIBiosMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Devices}
+-- \section{PCI bus}
+--
+
+-- <Introductory description>
+
+PCIBiosMod : LOCAL INTERFACE =
+  NEEDS PCIBios;
+  NEEDS FramesF;
+  NEEDS Heap;
+BEGIN
+
+  New : PROC    [ heap    : IREF Heap, 
+                  framesF : IREF FramesF ] 
+	RETURNS [ pci     : IREF PCIBios ];
+
+END.

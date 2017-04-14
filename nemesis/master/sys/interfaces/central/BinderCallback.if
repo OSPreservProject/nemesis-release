@@ -1,0 +1,77 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--	BinderCallback.if
+--
+-- DESCRIPTION:
+--
+--	Server domain's interface to the same-machine IDC binder.
+--
+-- ID : $Id: BinderCallback.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+-- 
+-- 
+
+-- A domain offering services accepts connection requests from the
+-- binder over an IDC channel established with "Binder.RegisterDomain".
+-- 
+-- The binder makes a connection request on behalf of a client domain
+-- by calling the procedure "BinderCallback.Request" on this callback
+-- channel to the server domain.  This will typically be implemented
+-- by the domain's "ObjectTbl".
+
+BinderCallback : LOCAL INTERFACE = 
+  NEEDS Domain;
+  NEEDS ProtectionDomain;
+  NEEDS Binder;
+  NEEDS Channel;
+  NEEDS Event;
+BEGIN
+
+  -- The binder supplies the client's identity and protection domain,
+  -- the SAP (port) to connect to, and the cookies supplied by the
+  -- client. 
+
+  Request : PROC    [ client  : Domain.ID,
+                      pdid    : ProtectionDomain.ID,
+                      port    : Binder.Port,
+                      clt_cks : Binder.Cookies,
+                  OUT chans   : Channel.Pairs,
+                  OUT svr_cks : Binder.Cookies         ]
+            RETURNS []
+            RAISES Binder.Error, Channel.NoSlots;
+
+  -- If the server domain does not wish to accept the request, it
+  -- should raise the appropriate "Binder.Error".  Otherwise,
+  -- having gobbled the client's cookies, it should return a list of 
+  -- channel end-points and a further list of cookies.  The cookies
+  -- will be returned to the original client; the end-points will be
+  -- connected to the those supplied by the original client.  If the
+  -- wrong number of end-points are returned, the client will see a
+  -- "Binder.Error". 
+
+
+  -- "SimpleRequest" is to "Request" as the "Binder"'s "SimpleConnect"
+  -- is to its "ConnectTo".
+
+  SimpleRequest : PROC    [ client  : Domain.ID,
+                            pdid    : ProtectionDomain.ID,
+                            port    : Binder.Port,
+                            clt_ck  : Binder.Cookie,
+                        OUT svr_eps : Channel.Pair,
+                        OUT svr_ck  : Binder.Cookie          ]
+                  RETURNS []
+                  RAISES Binder.Error, Channel.NoSlots;
+
+END.
+
+
+

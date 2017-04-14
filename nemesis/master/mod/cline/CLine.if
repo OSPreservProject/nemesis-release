@@ -1,0 +1,37 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      CLine.if
+-- 
+-- DESCRIPTION:
+--
+--      Provided with a "raw" Reader and Writer, return "cooked" versions.
+-- 
+-- FILE :       CLine.if
+-- CREATED :    Wed Jan 29 1997
+-- AUTHOR :     Paul Barham (Paul.Barham@cl.cam.ac.uk)
+-- ID :         $Id: CLine.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Miscellaneous Interfaces}
+--
+
+-- The "CLine" interface is used to add command line editing facilities
+-- to existing readers and writers.
+
+CLine : LOCAL INTERFACE =
+  NEEDS Rd;
+  NEEDS Wr;
+  NEEDS CLineCtl;
+BEGIN
+        New : PROC [ rawrd : IREF Rd, rawwr : IREF Wr ]
+              RETURNS [ rd : IREF Rd,
+                        wr : IREF Wr,
+                       ctl : IREF CLineCtl ];
+END.

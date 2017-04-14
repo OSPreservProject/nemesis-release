@@ -1,0 +1,55 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      ExnSetJmp
+-- 
+-- DESCRIPTION:
+--
+--      Extension of ExnSupport interface for an implementation based
+--      on setjmp.
+-- 
+-- ID : $Id: ExnSetjmp.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Exceptions}
+-- 
+-- 
+
+-- As an interim measure, exceptions are currently implemented with
+-- some macros defined in "exceptions.h".  These macros use "setjmp" to
+-- save state when establishing a handler block, and "longjmp"
+-- to restore it when entering a handler.
+
+ExnSetjmp : LOCAL INTERFACE =
+  EXTENDS ExnSupport;
+  NEEDS Heap;
+BEGIN
+
+  -- A handler block is established by calling "PushContext"
+  -- with the address of a handler context in the current
+  -- stack frame.  When control leaves the block, the handler
+  -- is removed with "PopContext".
+
+  Context : TYPE = ADDRESS;
+
+  PushContext : PROC [ ctx: Context ] RETURNS [];
+
+  PopContext  : PROC [ ctx: Context;
+		       filename: STRING;
+		       lineno: CARDINAL;
+		       funcname: STRING ] RETURNS [];
+
+  -- Space for exception arguments is allocated on a heap known
+  -- to the implementation with "AllocArgs".  It is freed during
+  -- processing of "Raise" and "PopContext" calls.
+
+  AllocArgs   : PROC    [ size : Heap.Size ]
+                RETURNS [ args : Heap.Ptr  ];
+
+END.

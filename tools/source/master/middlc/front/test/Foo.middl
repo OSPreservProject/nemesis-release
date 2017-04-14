@@ -1,0 +1,13 @@
+
+Foo : INTERFACE = 
+
+BEGIN
+
+Kind : TYPE = { Abbot, IPA };
+
+Choice : TYPE = CHOICE Kind OF {
+                  Abbot     => CARDINAL,
+                  IPA       => CARDINAL
+                };
+
+END.

@@ -1,0 +1,61 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      WordTbl.if
+-- 
+-- DESCRIPTION:
+--
+--      Hash table mapping WORDs to ADDRESS
+-- 
+-- ID : $Id: WordTbl.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Tables}
+-- \section{Word}
+
+-- A "WordTbl" is a partial map from "WORD"s to
+-- "ADDRESS"es. A typical implementation will use a hash
+-- table. Due to the inherent type-danger of this approach, use of
+-- such tables will generally be hidden within other modules (for
+-- example, the "ObjectTbl").
+
+WordTbl : LOCAL INTERFACE =
+  NEEDS WordTblIter;
+BEGIN
+
+  -- There is no internal concurrency control in a "WordTbl".
+  -- Clients must ensure that conflicting operations are never
+  -- executed concurrently.  "Get", "Size" and "Iterate" are readers,
+  -- while "Put" and "Delete" are writers.
+
+  Key : TYPE = WORD;
+  Val : TYPE = ADDRESS;
+
+  Get     : PROC [ k: Key, OUT v: Val ] RETURNS [ b: BOOLEAN ];
+    -- If "k" $\in$ "dom(self)" then set "v := self[k]" and return "True";
+    -- otherwise return "False", leaving "v" unchanged.
+
+  Put     : PROC [ k: Key, v: Val ] RETURNS [ b: BOOLEAN ];
+    -- Return "k" $\in$ "dom(self)" and set "self[k] := v".
+
+  Delete  : PROC [ k: Key, OUT v: Val ] RETURNS [ b: BOOLEAN ];
+    -- If "k" $\in$ "dom(self)" then set "v := self[k]", remove "k" from
+    -- "dom(self)" and return "True"; otherwise return "False", leaving
+    -- "v" unchanged.
+
+  Size    : PROC [] RETURNS [ sz: CARDINAL ];
+    -- Return the number of entries in "self" (ie. "|dom(self)|").
+
+  Iterate : PROC [] RETURNS [ it: IREF WordTblIter ];
+    -- Return an iterator for "self".
+
+  Destroy : PROC [] RETURNS [];
+    -- Free the current "WordTbl".
+
+END.

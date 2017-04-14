@@ -1,0 +1,19 @@
+-- Test MUTABLE/IMMUTABLE/SMALL/LARGE args and results
+
+Mutable : INTERFACE =
+BEGIN
+
+  Rec : TYPE = RECORD [ a: CARDINAL, b: INTEGER ];
+
+  Op : PROC [
+                 asi: CARDINAL;
+         MUTABLE asm: CARDINAL;
+                 ali: Rec;
+         MUTABLE alm: Rec
+       ] RETURNS [
+         IMMUTABLE rsi: CARDINAL;
+                   rsm: CARDINAL;
+         IMMUTABLE rli: Rec;
+                   rlm: Rec
+       ];
+END .

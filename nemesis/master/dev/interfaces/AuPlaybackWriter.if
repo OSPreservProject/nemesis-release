@@ -1,0 +1,52 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+---- INTERFACE:
+--
+--	AuPlaybackWriter
+--
+-- DESCRIPTION:
+--
+--	Library for programs that write to a playback audio.
+--
+-- \chapter{Devices}
+-- \section{Audio}
+--
+
+
+AuPlaybackWriter : LOCAL INTERFACE =
+NEEDS Au;
+BEGIN
+
+  Put : PROC [ 
+    samples : ADDRESS, length : CARDINAL, block : BOOLEAN,
+    volume : Au.Volume
+  ] RETURNS [
+    played : CARDINAL
+  ];
+  
+  -- Play sound data at "samples", length "length". If they cannot all
+  -- be played at this time, and block is set, wait till they can be
+  -- played. If block is clear, play as many as can be played at this
+  -- point. Returns the number of samples that have been played. (Ie, if
+  -- block is set, this will be the same as length, otherwise it will
+  -- frequently be smaller). The samples are scaled by volume, as
+  -- described in the Au interface.
+
+  Destroy : PROC [] RETURNS [];
+
+  -- Destroy this closure, freeing up all its resources. Any samples
+  -- still to play will still continue to play. This must only be
+  -- called when a Put operation is not in progress, however.
+   
+  QueryQueueLength : PROC [] RETURNS [ length : INTEGER ];
+
+  -- Query how long the queue of data is to the sound card, in
+  -- samples. (A negative value indicates that the writer is behind).
+  
+  
+END.

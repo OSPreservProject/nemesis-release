@@ -1,0 +1,39 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--	Domain.if
+--
+-- DESCRIPTION:
+--
+--    	Types for talking about Nemesis domains.
+--
+-- ID : $Id: Domain.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+--
+-- \chapter{Domains, Events and Activation}
+-- 
+
+-- Nemesis has a single virtual address space shared by all system
+-- components.  A Nemesis system consists of a number of distinct
+-- entities called \emph{domains}.  A domain comprises
+-- a set of access rights to portions of the single address space
+-- (a \emph{protection domain}) and some number of threads.  Threads
+-- are multiplexed by a user-level thread scheduler over the domain's
+-- \emph{virtual processor}, the kernel-schedulable entity associated
+-- with the domain.
+
+Domain : LOCAL INTERFACE = 
+BEGIN
+
+  -- A domain is identified by an "ID".  The domain id "0" is reserved
+  -- to mean a non-existant or invalid domain id.
+
+  ID : TYPE = LONG CARDINAL;
+
+END.

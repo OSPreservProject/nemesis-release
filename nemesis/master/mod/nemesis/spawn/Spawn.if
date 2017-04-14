@@ -1,0 +1,47 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Spawn
+-- 
+-- DESCRIPTION:
+--
+--      Allows control of 'spawn' stubs
+-- 
+-- ID : $Id: Spawn.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Domains, Events and Activation}
+--
+
+-- A "Spawn" interface is a handle on a stub that allows domains to be
+-- created with any method as an entry point.
+
+Spawn : LOCAL INTERFACE =
+  NEEDS Type;
+  NEEDS Context;
+  NEEDS ProtectionDomain;
+BEGIN
+
+  GetStub : PROC [ ] RETURNS [ stub : Type.Any ];
+  -- Returns the interface stub associated with this "Spawn".
+
+  SetEnv : PROC [ env : IREF Context ] RETURNS [ ];
+  -- Sets the environment ("priv_root") that will be passed to the
+  -- newly-created domain.
+
+  SetPDID : PROC [ pdid : ProtectionDomain.ID ] RETURNS [ ];
+  -- Sets the protection domain that will be used for the new domain.
+
+  SetName : PROC [ name : STRING ] RETURNS [ ];
+  -- Sets the name that the new domain will be given.
+
+  Destroy : PROC [ ] RETURNS [ ];
+  -- Destroys this "Spawn".
+
+END.

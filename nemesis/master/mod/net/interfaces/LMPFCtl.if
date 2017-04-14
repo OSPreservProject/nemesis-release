@@ -1,0 +1,76 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      LMPFCtl.if
+-- 
+-- DESCRIPTION:
+--
+--      Lean, Mean Packet Filter control interface
+-- 
+-- ID : $Id: LMPFCtl.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+-- 
+-- \chapter{Networks}
+--
+
+-- "LMPFCtl" is the Lean, Mean packet filter control interface.  It
+-- is used to configure an LMPF created by a call to "LMPFMod$New()".
+
+LMPFCtl : LOCAL INTERFACE =
+  NEEDS PF;
+BEGIN
+
+  -- default packet filter, we want all packets!!
+  SetDefault : PROC [ def: PF.Handle ] RETURNS [ ok: BOOLEAN ];	
+
+  -- ARP packets are to be demultiplexed to the "arp" handle.
+  SetARP: PROC [ arp: PF.Handle ] RETURNS [ ok: BOOLEAN ];
+
+  -- ICMP packets for IP host "myip" are to be demultiplexed to the
+  -- "icmp" handle.
+  SetICMP: PROC [ icmp: PF.Handle, myip: CARDINAL ] RETURNS [ ok: BOOLEAN ];
+
+  -- MSNL packets are to be demultiplexed to the "msnl" handle.
+  SetMSNL: PROC [ msnl: PF.Handle ] RETURNS [ ok: BOOLEAN ];
+
+  -- "AddUDP" is used to insert a receive filter for one of the three forms
+  -- of UDP packets; for each param a "0" means `don't care'. 
+  -- Note that the names of the params are as defn'd in terms of the rxed
+  -- packet, and hence "src_addr" means the IP address of the sender. Clear?
+  -- All ports and addresses are in host endian. XXX This should change!!!
+  AddUDP: PROC [ dest_port : SHORT CARDINAL,
+                 src_port  : SHORT CARDINAL,
+                 src_addr  : CARDINAL,
+                 hdl       : PF.Handle ]
+	  RETURNS [ ok : BOOLEAN ];
+
+  DelUDP: PROC [ dest_port : SHORT CARDINAL,
+                 src_port  : SHORT CARDINAL,
+                 src_addr  : CARDINAL,
+                 hdl       : PF.Handle ]
+	  RETURNS [ ok : BOOLEAN ];
+
+  -- The same, but for TCP.
+  AddTCP: PROC [ dest_port : SHORT CARDINAL,
+                 src_port  : SHORT CARDINAL,
+                 src_addr  : CARDINAL,
+                 hdl       : PF.Handle ]
+	  RETURNS [ ok : BOOLEAN ];
+
+  DelTCP: PROC [ dest_port : SHORT CARDINAL,
+                 src_port  : SHORT CARDINAL,
+                 src_addr  : CARDINAL,
+                 hdl       : PF.Handle ]
+	  RETURNS [ ok : BOOLEAN ];
+
+
+  -- Calling "PF$Dispose" on the packet filter itself will also
+  -- dispose of this interface.
+
+END.

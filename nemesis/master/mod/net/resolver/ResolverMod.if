@@ -1,0 +1,32 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Glasgow Department of Computing Science   -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- FILE:
+--
+--	ResolverMod.if
+--
+-- FUNCTIONAL DESCRIPTION:
+--
+--	creates Resolver module      
+--
+-- ID : $Id: ResolverMod.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+--
+-- \Chapter{Networks}
+--
+
+-- The ResolverMod module creates a resolver module allowing you to
+-- query the particular nameserver which you passed in as input
+
+ResolverMod : LOCAL INTERFACE = 
+NEEDS Resolver;
+BEGIN
+
+  -- The "New" method creates a new instance of an "IREF Resolver",
+  -- which sends it's DNS queries to "server".
+  New: PROC [IN server : Net.IPHostAddr] RETURNS [ resolver : IREF Resolver ];
+END.

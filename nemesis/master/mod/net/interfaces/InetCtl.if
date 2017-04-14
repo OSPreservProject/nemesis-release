@@ -1,0 +1,65 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, Swedish Intitute of Computer Science                    -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      InetCtl.if
+-- 
+-- DESCRIPTION:
+--
+--      Out-of-band IP protocol exceptions
+-- 
+-- ID : $Id: InetCtl.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+-- 
+-- \chapter{Networks}
+--
+
+-- 
+
+InetCtl : LOCAL INTERFACE =
+BEGIN
+
+  -- called when a host, net etc. cannot be reached or is not known or the
+  -- DF flag is set but fragmentation required .
+  -- the callee gets information about dest address and port to figure
+  -- out which flow it was that caused the problem. If the application
+  -- is interested in the cause of the failure it may inspect the
+  -- code parameter
+
+  Unreachable : PROC [ dst_ip : CARDINAL,
+		       port : SHORT CARDINAL,
+		       code: OCTET ]
+		RETURNS [ ];
+
+  -- called to ask application to slow down transmission
+  SourceQuench : PROC [ dst_ip : CARDINAL,
+			port : SHORT CARDINAL ]
+		RETURNS [ ];
+
+  -- tell application that some parameter in the header is wrong
+  HeaderParam : PROC [ dst_ip : CARDINAL,
+		       port : SHORT CARDINAL,
+		       code : OCTET ]
+		RETURNS [ ];
+
+
+  -- time exceeded during transmission or reassembly time-to-live expired
+  TimeExceeded : PROC [ dst_ip : CARDINAL,
+			port : SHORT CARDINAL,
+			code : OCTET ]
+		RETURNS [ ];
+
+  -- Called when "flow" has been lost by the client; eg because the
+  -- interface it was to has been taken down.  "flow" is really a
+  -- "FlowMan.Flow", but that would introduce a cyclic dependency
+  -- between FlowMan.if and this interface.
+  LostFlow : PROC [ flow : DANGEROUS ADDRESS ]
+		RETURNS [ ];
+
+
+END.

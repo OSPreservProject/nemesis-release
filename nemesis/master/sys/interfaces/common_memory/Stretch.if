@@ -1,0 +1,100 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Stretch 
+-- 
+-- DESCRIPTION:
+--
+--      Segments of virtual memory
+-- 
+-- ID : $Id: Stretch.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Memory}
+-- \section{Virtual Memory}
+-- 
+
+-- A \emph{stretch} is a contiguous area of the virtual address space,
+-- with the same accessibility throughout the range.
+-- 
+-- Stretches are always a whole number of clicks in size; in other words
+-- they correspond to a set of contiguous pages. They are disjoint:
+-- they cannot overlap. One consequence is that stretches cannot be
+-- \emph{refined}: if you have a stretch it doesn't make sense to talk to
+-- the VM system about a subset of the stretch.
+-- 
+-- A stretch is represented by an instance of the "Stretch" interface.
+
+Stretch : LOCAL INTERFACE = 
+  NEEDS ProtectionDomain;
+BEGIN
+
+  -- A stretch with address "a" and size "s" contains addresses in the
+  -- range:
+  -- 
+  --|      [ a, a + s )
+
+  Size : TYPE = WORD;
+
+  Range : PROC [] RETURNS [ a : ADDRESS, s : Size ];
+    -- Return the range of addresses occupied by the stretch.
+    -- XXX Do some other stuff too.... (maybe add mapping?)
+    -- XXX SMH: need to consider interaction between
+    -- StretchDriver$Bind and Stretch$Range. 
+    -- Do we require *both* before we can access a stretch? 
+    -- If so, why?
+    
+  Info  : PROC [] RETURNS [ a : ADDRESS, s : Size ];
+    -- Return the range of addresses occupied by the stretch.
+
+  -- 
+  -- Access Control
+  -- 
+
+  -- Access rights are a combination of "Read", "Write" and "Execute"
+  -- and "Meta" permissions, modified by the "Global" right. The 
+  -- protection model looks like an ACL for each stretch, with the 
+  -- addition of global access permissions which override any ACL entries.
+
+  -- When a stretch is allocated by default its global access rights
+  -- are null, the only ACL entry is "Read" / "Write" / "Meta" for the
+  -- protection domain which created it.
+
+
+  Right  : TYPE = { Read, Write, Execute, Meta, Global };
+  Rights : TYPE = SET OF Right;
+
+  Denied : EXCEPTION [];
+    -- Client does not have permission to manipulate the stretch.
+
+  -- The below suite of methods are used mainly to manipulate
+  -- properties of Stretches. 
+
+  SetProt : PROC    [ pdid    : ProtectionDomain.ID,
+		      access  : Rights ]
+            RETURNS [ ]
+            RAISES Denied;
+    -- Add a protection domain to the ACL with the specified access
+    -- rights. 
+
+  RemProt : PROC    [ pdid    : ProtectionDomain.ID ]
+            RETURNS [ ] 
+            RAISES Denied;
+    -- Remove a protection domain from the ACL.
+
+  SetGlobal : PROC    [	access : Rights ] 
+	      RETURNS [ ]
+              RAISES  Denied;
+    -- Set the global access rights.
+
+  Query : PROC    [ pdid   : ProtectionDomain.ID ]
+          RETURNS [ access : Rights              ];
+    -- Find out what the permissions are on a stretch.
+
+END.

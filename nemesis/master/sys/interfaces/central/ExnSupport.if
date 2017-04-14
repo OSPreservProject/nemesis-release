@@ -1,0 +1,55 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      ExnSupport
+-- 
+-- DESCRIPTION:
+--
+--      User-level view of exception handling mechanism; used by
+--      exception macros.
+-- 
+-- ID : $Id: ExnSupport.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Exceptions}
+-- 
+-- 
+
+-- The stylised form of C used in Nemesis includes facilities
+-- for exception handling \cite{eve:exceptions}.  These facilities
+-- follow the style of Modula-3 \cite{nel:SPwM3}. The "ExnSupport"
+-- interface declares the basic types and operation needed to raise
+-- an exception.
+
+ExnSupport : LOCAL INTERFACE =
+
+BEGIN
+
+  -- An exception "E" declared in the \MIDDL\ interface "I" is identified
+  -- by the string "I_E".  An "Id" encodes this string in some
+  -- unspecified fashion.
+
+  Id    : TYPE = ADDRESS;
+
+  -- When an exception is raised, it may be accompanied by some
+  -- arguments stored in an argument record whose address is
+  -- given by an "Args".
+
+  Args  : TYPE = ADDRESS;
+
+  -- Language-level "RAISE" statements translate into calls of "Raise".
+
+  Raise : PROC [ id: Id;
+		 args: Args;
+		 filename: STRING;
+		 lineno: CARDINAL;
+		 funcname: STRING ]
+	NEVER RETURNS;
+
+END.

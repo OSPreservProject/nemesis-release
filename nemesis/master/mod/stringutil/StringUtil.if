@@ -1,0 +1,47 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      StringUtil.if
+--
+-- DESCRIPTION:
+--
+--      Operations on strings (so one can do stuff in clanger).
+--
+-- ID : $Id: StringUtil.if 1.2 Thu, 08 Apr 1999 15:43:05 +0100 dr10009 $
+--
+-- \chapter{Miscellaneous Interfaces}
+--
+
+-- This is for use in clanger so that it can do useful stuff with strings.
+-- 
+
+StringUtil : LOCAL INTERFACE =
+  NEEDS Heap;
+BEGIN
+  Cat : PROC  [ heap      : IREF Heap,
+             	beginning : STRING,
+             	end       : STRING ]
+  RETURNS [ outstring : STRING ];
+    -- Concatenates "beginning" and "end" and places them in a new string
+    -- allocated on the "heap".
+
+  Len : PROC [ str : STRING ]
+  RETURNS [ length : CARDINAL ];
+    -- Returns the length of the string.
+
+  LongCardToIP : PROC [ heap : IREF Heap,
+                        addr : LONG CARDINAL ]
+  RETURNS [ outstring : STRING ];
+    -- Returns addr as a "."-separated IPv4 Address.
+
+  StringToCardinal : PROC [ str : STRING ]
+  RETURNS [ num : CARDINAL ];
+
+END.

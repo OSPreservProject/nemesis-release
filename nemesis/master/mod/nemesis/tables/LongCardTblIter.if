@@ -1,0 +1,43 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1995, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+-- 
+-- INTERFACE:
+-- 
+--      LongCardTblIter.if
+-- 
+-- DESCRIPTION:
+-- 
+--      LongCard table iterator
+-- 
+-- ID : $Id: LongCardTblIter.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Tables}
+-- \section{LongCard}
+
+-- A "LongCardTblIter" successively returns the "(key, value)" pairs
+-- stored in a "LongCardTbl".
+
+LongCardTblIter : LOCAL INTERFACE =
+BEGIN
+
+  -- If "i" is the result of the call "tbl.Iterate()", then the call
+  -- "i.Next(k, v)" selects an entry from "tbl" that has not already
+  -- been returned by "i", sets "k" and "v" to its key and value, and
+  -- returns "True".  If no entries remain, the call returns "False"
+  -- without setting "k" or "v".  It is an unchecked error to call
+  -- "next" after it has returned "False".  The client must ensure that
+  -- while an iterator is in use, the parent table is not modified.
+
+  Next : PROC    [ OUT key  : LONG CARDINAL,
+                   OUT val  : ADDRESS ]
+         RETURNS [     more : BOOLEAN ];
+
+  Dispose : PROC [] RETURNS [];
+    -- Free the current iterator.
+
+END.

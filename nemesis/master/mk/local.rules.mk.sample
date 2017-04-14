@@ -1,0 +1,82 @@
+#########################################################################
+#                                                                       #
+#  Copyright 1997, University of Cambridge Computer Laboratory  	#
+#                                                                       #
+#  All Rights Reserved.						        #
+#                                                                       #
+#########################################################################
+#
+# FILE:
+#
+#	local.rules.mk
+# 
+# DESCRIPTION:
+#
+#	This file contains local make rules for different sites' use
+#	of the Nemesis tree.  Every Makefile that's potentially
+#	affected by one of these local rules defines ROOT relative to
+#	itself, then:
+#	- defines its local values
+#	- includes the generic rules file as $(ROOT)/mk/rules.mk
+#	- includes this file as $(ROOT)/mk/local.rules.mk
+#
+#	It is possible that rules defined herein will need to be
+#	redefined at other sites
+#	
+# 
+# ID : $Id: local.rules.mk.sample 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+# 
+
+MAKEFILE_DEPS += $(ROOT)/mk/local.rules.mk
+
+#
+# TeX-related rules; the Cambridge defaults here relate to web2C 6.1,
+# without application of the kpathsea patch.  The rules as expressed
+# say "prefix the TeX and BibTeX input paths by the directory
+# $(ROOT)/doc/inputs"
+
+# A site using a (very old) Unix TeX, that doesn't use kpathsea at
+# all, is "on its own".  A site that has installed the kpathsea patch,
+# or that uses teTeX (e.g. from the Live TeX CD) may well need to set
+# a variable TEXINPUTS.latex (or something of the sort) instead of
+# plain TEXINPUTS
+
+export TEXINPUTS = $(ROOT)/doc/inputs:
+export BIBINPUTS = $(ROOT)/doc/inputs:
+
+# This is needed for bibtex on linux, I know not why.
+export BSTINPUTS = $(ROOT)/doc/inputs:
+
+
+# Local network environment configuration
+
+DEFINES_app/timidity += -DTIMDIR=\"/usr/groups/pegasus/misc/demos/timidity-data\"
+
+
+# 
+# Generic sunrpc over udp timeouts; the 'UDPRPC_' defines are used if a client 
+# (not NFS, see below) makes use of rpc on udp and fails to specify timeout values. 
+# Default values are set in lib/static/sunrpc/clnt_generic.c.
+#
+# The 'FAIL_TIMEOUT' is the amount of time after which a RPC operation is deemed 
+# to have failed, while the 'RETRY_TIMEOUT' is the inital retry value (it ramps 
+# up exponentially). 
+# 
+# DEFINES_lib/static/sunrpc += -DUDPRPC_RETRY_TIMEOUT_MS=500 \
+# 	-DUDPRPC_FAIL_TIMEOUT_MS=12000
+# 
+
+#
+# NFS timeout related definitions; defaults are in mod/fs/nfs/nfs.c 
+# but may be overridden here. 
+#
+# The 'NFSCTRL_' defines refer to nfs control operations - mount, list,
+# readlink, etc. The 'NFSDATA_' defines refer to nfs data ops such 
+# as bread/writeback. 
+#
+# The 'FAIL_TIMEOUT' and 'RETRY_TIMEOUT' have meanings as per above. 
+#
+#DEFINES_mod/fs/nfs += -DNFSCTRL_RETRY_TIMEOUT_MS=aaa \ 
+#	-DNFSCTRL_FAIL_TIMEOUT_MS=bbb -DNFSDATA_RETRY_TIMEOUT_MS=ccc \
+#	-DNFSDATA_FAIL_TIMEOUT_MS=ddd
+

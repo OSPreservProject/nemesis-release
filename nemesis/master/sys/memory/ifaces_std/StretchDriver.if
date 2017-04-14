@@ -1,0 +1,27 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      StretchDriver.
+-- 
+-- DESCRIPTION:
+--
+--      This is a 'NULL' StretchDriver interface for use by older memory
+--      systems.
+-- 
+-- \chapter{Memory}
+-- \section{Paging and Fault Handling}
+-- 
+
+StretchDriver : LOCAL INTERFACE =
+BEGIN
+
+	-- Nothing here
+
+END.

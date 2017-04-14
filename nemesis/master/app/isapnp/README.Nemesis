@@ -1,0 +1,54 @@
+ISAPNP Nemesis port
+-------------------
+
+by   Michael Dales (michael@dcs.gla.ac.uk) and
+     Rolf Neugebauer (neugebar@dcs.gla.c.uk) 
+
+-------------------
+
+Description:
+
+This is a port of the Linux isapnp tool to Nemesis. The purpose of this tool
+is to beat the PnP hardware into shape on systems where the BIOS won't do
+it for you. It reads a configuration file (generated using the linux 
+program pnpdump) and then applies the settings described to the hardware. 
+
+-------------------
+
+Usage: isapnp <config_file>
+
+This needs to be run in priv mode.
+
+-------------------
+
+Notes for Nemesis:
+
+The output of pnpdump under Linux is more than we want for Nemesis - it tries
+to configure too much, and as a result isapnp won't configure your cards
+properly. The fix to this is to uncomment a line at the start of your
+config file. And example might look like:
+
+...
+# (DEBUG)
+(READPORT 0x0203)
+(ISOLATE PRESERVE)
+(IDENTIFY *)
+...
+
+You want to comment out the line with the readport 0x0203. Thus ending up
+with:
+
+...
+# (DEBUG)
+#(READPORT 0x0203)
+(ISOLATE PRESERVE)
+(IDENTIFY *)
+...
+
+------------------
+
+Platform Notes:
+
+This program has only been tested under x86. There are bits in the code that 
+are Alpha specific (under #define EB164), but we've not tested them.
+

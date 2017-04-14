@@ -1,0 +1,42 @@
+Middlc1 v2.0 by Timothy Roscoe of Wed Jan 26 14:49:38 GMT 1994 
+./SymbolTable.middl
+Wed Jan 26 15:24:25 1994
+tr
+argos.cl.cam.ac.uk
+SymbolTable
+INTERFACE
+INTERFACES:
+1
+NEEDS SymbolTypes
+TYPES:
+2
+_temp16 BYTEARRAY Octet 0
+Data RECORD 3
+loc LongCardinal
+val Integer
+bytes _temp16
+EXCEPTIONS:
+1
+0 Duplicate
+0
+OPERATIONS:
+3
+0 SymbolTable Enter PROC
+2
+s IMMUTABLE SMALL SymbolTypes T
+val IMMUTABLE LARGE SymbolTable Data
+0
+1
+0 SymbolTable Duplicate
+1 SymbolTable Lookup PROC
+1
+s IMMUTABLE SMALL SymbolTypes T
+2
+val IMMUTABLE LARGE SymbolTable Data
+found IMMUTABLE SMALL MIDDL Boolean
+0
+2 SymbolTable Remove PROC
+1
+s IMMUTABLE SMALL SymbolTypes T
+0
+0

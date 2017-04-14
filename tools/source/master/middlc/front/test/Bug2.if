@@ -1,0 +1,13 @@
+Bug2 : LOCAL INTERFACE =
+  EXTENDS Grim;
+BEGIN
+
+  Bogus : TYPE = RECORD [
+    ohDear: CARDINAL			 -- no comma
+    oops  : CARDINAL
+  ];
+
+  Op : PROC [ b: REF Bogus ] RETURNS [ ];
+  Op2: PROC [] RETURNS [ gr: Grim.Reaper ];
+
+END.

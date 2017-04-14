@@ -1,0 +1,8 @@
+-- Creator interface for an implementation of the Beer interface
+--
+
+BeerImpl : LOCAL INTERFACE =
+  NEEDS Beer;
+BEGIN
+  New : PROC [ ] RETURNS [ b: IREF Beer];
+END.

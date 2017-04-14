@@ -1,0 +1,143 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1996, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--	Netif.if
+--
+-- DESCRIPTION:
+--
+--	Control interface for network interfaces
+--
+-- ID : $Id: Netif.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+--
+-- \chapter{Devices}
+-- \section{Network}
+--
+
+-- "Netif" is the interface presented by Ethernet device drivers and
+-- used by the Flow Manager\footnote{see "FlowMan.if"} to plumb
+-- connections between Ethernet device drivers and protocol stacks in
+-- user domains.
+
+-- "Netif" separates transmit and receive channels -- each can be
+-- specified independently.
+
+-- "Netif" also allows the Flow Manager to control
+-- other global interface state, such as whether it is connected to
+-- the network.
+
+-- Only the Flow Manager should have access to this interface:
+-- misuse can compromise the security of this and other systems on the
+-- network.
+
+Netif : LOCAL INTERFACE =
+  NEEDS PF;
+  NEEDS IOOffer;
+  NEEDS Time;
+  NEEDS QoSEntry;
+BEGIN
+
+
+  -- Clients adding transmitters need to specify a level of QoS.
+  -- This is done in a manner similar to the CPU scheduler: by
+  -- period, slice and an eXtra time (best effort) flag.
+  -- Most connections will probably want to specify just extra time.
+  TXQoS : TYPE = RECORD [ p: Time.ns,  s: Time.ns,  x: BOOLEAN ];
+
+  -- The interface also supports transmitters of two different sorts; 
+  -- "native" and "socket"; in the former case, an "IO" channel set up
+  -- for transmission will pre-negotiate a data area for buffers which
+  -- are to be sent. To support old-style BSD sockets, however, we
+  -- also allow a "socket" type "IO" channel in which only headers
+  -- must be in a prenegotiated data area; the actual user data is
+  -- validated per transaction.
+  TXSort : TYPE = { Native, Socket }; 
+
+--
+-- Control methods
+--
+
+  Up : PROC [ ]
+       RETURNS [ ok : BOOLEAN ];
+    -- Initialises a network interface prior to using it. Returns "True" for
+    -- success.
+
+  Down : PROC [ ]
+	 RETURNS [ ok : BOOLEAN ];
+    -- Disables a network interface. Returns "True" for a successful shutdown.
+
+
+--
+-- Adding and removing clients
+--
+
+  AddReceiver : PROC    [ ] 
+  	        RETURNS [ rx : IREF IOOffer, handle : PF.Handle ];
+    -- Request an IOOffer for an IREF IO to be used for receiving packets.
+
+
+  RemoveReceiver : PROC    [ handle : PF.Handle ]
+	           RETURNS [ ok : BOOLEAN ];
+
+
+  AddTransmitter : PROC    [ qos: TXQoS, sort : TXSort ]
+		   RETURNS [ tx : IREF IOOffer, handle : PF.Handle ]
+		   RAISES  QoSEntry.OverAllocation;
+    -- Request an IOOffer for an IREF IO to be used to transmit
+    -- packets to the network. 
+
+
+  RemoveTransmitter : PROC    [ handle : PF.Handle ]
+	              RETURNS [ ok : BOOLEAN ];
+
+
+--
+-- Filters : there is only one filter (per Netif) on rx, which demuxes
+-- things to "handles". However, each transmitting IO has an
+-- individual filter which gives a yay or nay on each packets.
+-- 
+
+  SetRxFilter :  PROC    [ pf : IREF PF ] 
+                 RETURNS [ ok : BOOLEAN ];
+    -- Make "pf" be the filter for this "Netif". There can be only one.
+
+
+  SetTxFilter :  PROC    [ handle : PF.Handle, pf : IREF PF ] 
+                 RETURNS [ ok : BOOLEAN ];
+    -- Associate "pf" with the tx stream identified by "handle".
+
+--
+-- Injection: 
+-- 
+   
+   Inject : PROC    [ handle : PF.Handle, 
+		      packet : REF IO.Rec, 
+		      nrecs  : CARDINAL, 
+                      value  : WORD   ]
+	    RETURNS [ ok     : BOOLEAN    ];  
+
+     -- arrange for an IO to be punted into a particular clients
+     -- stream as described by "handle"; useful for out of band
+     -- protocol exceptions and so forth, not for general (ab)use.
+
+
+--
+-- QoS manipulation:
+--
+
+   SetQoS: PROC [ handle : PF.Handle,
+                  qos    : TXQoS ]
+	   RETURNS [ ok : BOOLEAN ]
+	   RAISES QoSEntry.OverAllocation;
+   -- Set the QoS associated with the TX handle "handle" to be "qos".
+   -- If "handle" is unknown, random things will happen.  Returns
+   -- False if the client hasn't yet bound to the IO represented by
+   -- the handle.
+
+END.

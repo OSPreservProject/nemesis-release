@@ -1,0 +1,136 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1996, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      UDPMod.if
+-- 
+-- DESCRIPTION:
+--
+--      Creates a UDP protocol module
+-- 
+-- ID : $Id: UDPMod.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+-- 
+-- \chapter{Networks}
+-- \section{Protocols}
+--
+
+-- UDPMod is used to create a UDP protocol module, which adds or strips
+-- UDP headers to the packets going through it.  It can also be used
+-- to build an entire network stack.
+
+UDPMod: LOCAL INTERFACE =
+NEEDS Heap;
+NEEDS Net;
+NEEDS UDP;
+NEEDS IP;
+NEEDS Protocol;
+NEEDS FlowMan;
+NEEDS Netif;
+BEGIN
+
+	-- Raised when "lsap"'s port is already in use.
+	PortInUse : EXCEPTION [];
+
+	-- "Mode" describes how the IO channels are set up.  In
+	-- "Split" mode, there are separate data areas for receive and
+	-- transmit sides of the network stack.  In "Dx" mode, there
+	-- is only one data area (and correspondingly only one heap).
+	-- "Split" mode should be used by default, since it provides
+	-- tighter checking.
+	Mode : TYPE = {Split, Dx};
+
+	-- The "New" method is the standard way of creating a UDP
+	-- connection to a remote host.  It talks to the Flow Manager
+	-- to route the connection, and build a stack underneath right
+	-- to the appropriate network interface.
+
+	-- The "fman" argument specifies which IP host to build this
+	-- stack in.  ">svc>net>iphost-default" might contain an offer
+	-- for a plausible default.
+
+	-- "lsap" should be a "FlowMan.SAP" describing the IP address
+	-- and local port to be bound.  As usual, the port may be 0 to
+	-- ask for any free port.  If the address is 0.0.0.0, all
+	-- local interfaces in this IP host should be bound to (but
+	-- currently only the first interface is used).  The "lsap" is
+	-- modified to reflect the port that was allocated, and the IP
+	-- address of the first interface used.
+
+	-- "rsap" specifies the destination UDP packets will be sent
+	-- to.  It may be 0.0.0.0 port 0 to specify an initially
+	-- listening UDP receiver.  
+
+	-- "txqos" sets the level of QoS associated with this flow.
+
+	-- "New" returns "udp", the Protocol object for this stack,
+	-- and "heap", a heap suitable for allocating packet buffers
+	-- from. "QoSEntry.OverAllocation" means that "txqos" was too
+	-- ambitious.  "FlowMan.NoRoute" means that either "lsap"'s
+	-- address is not a valid address for this IP host, or that
+	-- there is no routing table entry to reach the net "rsap"'s
+	-- address is on.  "PortInUse" is raised when "lsap"'s port is
+	-- already bound, or no free port can be found.
+
+	New: PROC [ fman	: IREF FlowMan,
+	      	    IN OUT lsap : FlowMan.SAP,
+		    rsap	: FlowMan.SAP,
+		    txqos	: Netif.TXQoS,
+		    mode	: Mode
+		 ]
+		RETURNS [ udp : IREF UDP,
+			  rx  : IREF Heap,
+			  tx  : IREF Heap ]
+		RAISES  QoSEntry.OverAllocation,
+			FlowMan.NoRoute,
+			PortInUse;
+          -- "New" creates a "UDP" interface which may be used to send
+          -- and/or receive UDP datagrams over a protocol stack. 
+          -- It also returns a pair of heaps which should be used for 
+          -- the allocation of receive and transmit buffers
+          -- respectively. 
+          -- \textbf{Note}: these should not be heaps, but rather
+          -- 'slabs' or something like that. AND will fix this. 
+
+	-- "NewCustom" is the same as "New", other than explicitly
+	-- specifying an IP protocol layer and associated buffer
+	-- memory to run over.  This allows easy use of custom IP layers.
+
+	NewCustomIP: PROC [ fman	: IREF FlowMan,
+			    IN OUT lsap	: FlowMan.SAP,
+			    rsap	: FlowMan.SAP,
+			    txqos	: Netif.TXQoS,
+			    ip	        : IREF IP	-- layer to run over
+			]
+		RETURNS [   udp         : IREF UDP ]
+		RAISES  QoSEntry.OverAllocation,
+			FlowMan.NoRoute,
+			PortInUse;
+  
+
+
+	-- "Piggyback" is for masochists who want to roll their own
+	-- custom stacks from the ground up. You build the network
+	-- stack under UDP the way you like it, then call Piggyback to
+	-- plug a UDP layer on top. If you specify a "srcport" that is
+	-- already in use, that's fine, but you'll never receive any
+	-- replies. A "srcport" of 0 here means that the remote end
+	-- should not attempt to reply to this UDP packet.  "cid" is
+	-- the connection ID that was allocated for this data stream,
+	-- and will be returned by "UDP.GetConnID()".  Use of this
+	-- function makes "UDP.GetLastPeer()" no longer possible,
+	-- since "base" may not be IP.
+
+	Piggyback: PROC [ base     : IREF Protocol,  -- what to run UDP over
+			  destport : SHORT CARDINAL,
+			  srcport  : SHORT CARDINAL, -- no checks made
+			  cid	   : FlowMan.ConnID
+			]
+		RETURNS [ udp  : IREF UDP ];
+
+END.

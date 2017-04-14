@@ -1,0 +1,138 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1995, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      IOEntry
+-- 
+-- DESCRIPTION:
+--
+--      Provides support for ANSAware/RT-style entrys.
+-- 
+-- ID : $Id: IOEntry.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+-- 
+
+-- An "IOEntry" is an object which encapsulates \emph{a} scheduling policy
+-- for "IO" channels with pending packets.  It does for "IO" channels
+-- what the "Entry" interface does for IDC channels.
+--
+-- An "IOEntry" is usally used when a domain wants to service a number
+-- of "IO" channels with a (smaller) number of threads.  The "IOEntry"
+-- provides roughly similar functionality to the \textsc{Unix} "select"
+-- call - only not as ugly.  
+
+IOEntry : LOCAL INTERFACE =
+  NEEDS Channel;
+  NEEDS Time;
+  NEEDS IO;
+BEGIN
+
+  -- As far as the "IOEntry" is concerned, each binding it has
+  -- responsibility for is in one of a number of states.
+
+  State : TYPE = {
+    Idle,            -- open, but with nothing pending.
+    Pending,         -- open, and has activity pending.
+    Active,		       -- open, and being serviced by a thread. 
+    CloseRequested,  -- to be closed down (any thread can do this work).
+    Closing          -- being closed down by a thread.
+   };
+
+  -- The following exceptions can be raised:
+
+  TooManyChannels : EXCEPTION [];
+    -- Attempt to bind too many "Channel.EndPoint"s to this
+    -- "IOEntry". 
+
+  Inconsistent : EXCEPTION [ ];
+    -- The "IOEntry" detected an internal problem, due either to a bug
+    -- or some other entity affecting binding states. 
+
+  -- To use an entry to deal with packets on a binding, the binding
+  -- must be registered with the entry.  The "Bind" operation will
+  -- ensure that when event notification occurs on an endpoint, the
+  -- associated "IO" closure will become eligible to be returned to
+  -- a worker thread. 
+  --
+  -- An "IO" channel is associated with \emph{two} "Channel.RX"
+  -- endpoints, designated "rdy" and "ack" in the below signature.
+  --  Normally, the channel should be scheduled for service
+  -- on the basis of events from its "rdy" endpoint: these indicate the
+  -- arrival or return of packets from the far end. 
+  -- 
+  -- If, however, multiple outstanding packets are to be processed by
+  -- the worker thread, and if livelock prevention is an issue, one
+  -- may wish to pass in a valid "ack" endpoint --- events on this
+  -- channel represent the consumption of packets at the far side, and
+  -- hence the freeing up of space in the "IO".
+ 
+  Bind : PROC   [ rdy : Channel.Endpoint, 
+		  ack : Channel.Endpoint, 
+		  io  : IREF IO ]
+        RETURNS [ ]
+        RAISES Channel.Invalid, Channel.BadState, TooManyChannels;
+
+  -- The binding of an event channel end-point to an entry can be
+  -- removed by calling "Unbind". This takes care of deregistering the
+  -- entry with the "Tasks" scheduler.
+
+  Unbind : PROC   [ chan: Channel.Endpoint ] RETURNS []
+           RAISES Channel.Invalid;
+    -- Further event notifications on channel "chan" will not cause
+    -- the entry "Notify" method to be called. Will raise
+    -- "Channel.Invalid" if the channel is not bound to this entry.
+
+
+  -- When an ANSA task (i.e., a Nemesis "Thread") wishes to service an
+  -- "IO" channel with pending packets, it calls "Rendezvous" with a
+  -- timeout "to".  If there is a suitable "IO" before time "to",
+  -- it is returned.  Otherwise, "Rendezvous" returns "NULL".
+
+  Rendezvous : PROC [ to: Time.ns ] RETURNS [ io: IREF IO ];
+
+  -- Calling "Rendezvous" can be thought of as \emph{blocking} the
+  -- current thread on \emph{all} of the "IO" channels in the
+  -- "IOEntry".  Threads servicing the "IO" channels should \emph{not}
+  -- therefore be using the blocking versions of the "IO" methods.
+  --
+  -- It is possible that "io" has pending events because it has been
+  -- shut down by the peer; thus, the caller must be prepared to
+  -- handle exceptions from "IO" operations in this case.
+  --
+  -- Note also that once an "io" has been returned from "Rendezvous",
+  -- it will not subsequently be returned until further events are
+  -- received on the "chan" to which it is bound.  In particular, it
+  -- will not be returned a second time merely because some of the
+  -- packets available when it was first returned have not yet been
+  -- read by higher levels.  This behaviour may not be what we want.
+  -- In the future, perhaps each call of "Rendezvous" should return
+  -- the results of a single "GetPkt" on some "io" which is also
+  -- returned.  This would give the "IOEntry" the opportunity to
+  -- schedule servicing of multiple "IO" channels at the granularity of
+  -- packets.
+
+  -- Sometimes "Rendezvous" may return an "IO" which it believes
+  -- requires servicing, but which the service does not wish to 
+  -- or cannot currently handle. In this case one may invoke 
+  -- "Suspend", which causes the "IO" to be blocked in the entry. 
+  -- 
+  -- XXX SMH; this is a horrible hack to sort out things a bit for
+  -- SNAP5. It needs to be fixed properly after that has been taken.
+  Suspend : PROC [ io : IREF IO ] RETURNS [];
+  
+ 
+  -- "Close" shuts down the entry. All endpoints must be detached
+  -- before this function is called.
+
+  Close : PROC [] RETURNS [] RAISES TooManyChannels;
+    -- Raises "TooManyChannels" if there are still end-points bound to
+    -- the entry.
+
+END.

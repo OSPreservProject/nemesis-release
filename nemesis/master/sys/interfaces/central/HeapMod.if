@@ -1,0 +1,97 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+-- 
+--      HeapMod.if
+--
+-- DESCRIPTION:
+--
+--      Malloc-style heap -- four classes
+--  
+-- ID : $Id: HeapMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Memory}
+-- \section{Heaps}
+-- 
+
+-- The "HeapMod" module provides four classes of "Heap".  Three are
+-- currently single-threaded; no locking is provided at all.  Locking
+-- can be added with a fourth class.
+-- 
+-- A "Heap" can be created in an addressable region of memory, within 
+-- an existing "Heap", or completely filling a "Stretch". The size for
+-- a stretch-based "Heap" is determined by  the size of the "Stretch".
+-- A locked heap can be created from an existing "Heap".
+
+HeapMod : LOCAL INTERFACE =
+  NEEDS Heap;
+  NEEDS Stretch;
+  NEEDS LockedHeap;
+  NEEDS SRCThread;
+BEGIN
+
+  -- "New" creates a heap to run within a "Stretch". The heap completely
+  -- takes over the stretch:
+  New :       PROC    [ s : IREF Stretch ]
+              RETURNS [ h : IREF Heap    ]
+              RAISES Heap.NoMemory;
+
+
+  -- "NewGrowable" creates a heap to run within the given "Stretch". 
+  -- The heap completely takes over the stretch and may grow up to 
+  -- "nseg" times larger by the allocation of new stretches of the 
+  -- same size. 
+  NewGrowable :       PROC    [ str  : IREF Stretch, 
+				nseg : CARDINAL      ]
+                      RETURNS [ heap : IREF Heap     ]
+                      RAISES Heap.NoMemory;
+
+  -- At start-of-day, it may be convenient to create a heap which runs
+  -- directly in a provided addressable region. "NewRaw" creates such
+  -- a heap. The caller must ensure at least "size" bytes are
+  -- available, starting at "where".
+  NewRaw :    PROC    [ where : ADDRESS,
+                        size  : Heap.Size ]
+              RETURNS [ h     : IREF Heap ]
+              RAISES Heap.NoMemory;
+
+
+   -- "Where" returns the start address and size of the given heap. It
+   -- is particularly useful for raw heaps which we hope to upgrade 
+   -- to 'real' heaps via Realize.
+  Where :     PROC    [ h : IREF Heap              ]
+	      RETURNS [ a : ADDRESS, s : Heap.Size ];
+
+
+   -- A raw or physical heap can be promoted to a 'real' one if we have
+   -- managed to get hold of a stretch which maps onto its start
+   -- address and length. Caveat Emptor.
+  Realize :   PROC    [ h     : IREF Heap,
+			s     : IREF Stretch ]
+              RETURNS [ realh : IREF Heap    ];
+
+
+  -- A heap can be created within a fixed-size chunk of another heap:
+  NewNested : PROC    [ parent    : IREF Heap,
+                        sizeBytes : Heap.Size ]
+              RETURNS [ h         : IREF Heap ]
+              RAISES Heap.NoMemory;
+
+
+  -- "NewLocked" returns a "LockedHeap" which protects its "parent" against
+  -- concurrent access by acquiring and releasing a "SRCThread.Mutex".
+  NewLocked : PROC    [ parent    : IREF Heap,
+                        srcthds   : IREF SRCThread  ]
+              RETURNS [ lh        : IREF LockedHeap ]
+              RAISES Heap.NoMemory;
+
+  -- All calls raise "Heap.NoMemory" if there is insufficient memory
+  -- to create the heap.
+
+END.

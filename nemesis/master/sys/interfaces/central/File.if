@@ -1,0 +1,85 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1995, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      File.if
+--
+-- DESCRIPTION:
+--
+--      Files.
+--
+-- ID : $Id: File.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+--
+-- \chapter{Files}
+--
+
+-- A "File" is an extensible byte sequence, possibly backed by persistent
+-- storage.  Access to the bytes is via readers and writers obtained 
+-- using the operations described below.
+-- 
+
+File : LOCAL INTERFACE =
+  NEEDS Rd;
+  NEEDS Wr;
+  NEEDS Heap;
+BEGIN
+  --
+  -- UNIX-like file types.
+  --
+
+  Type : TYPE = { Non, Reg, Dir, Block, Char, 
+	          Link, Sock, BAD, FIFO };
+
+  -- Some filesystems have files of different types.
+
+  Size : TYPE = LONG CARDINAL;
+  -- Size in bytes.
+
+  Time : TYPE = LONG CARDINAL;
+  -- File system time is not the same as scheduler time ("Time.T") or
+  -- wall-clock time.
+
+  Mode : TYPE = CARDINAL;
+  -- "Mode" is used to encode access permissions.  
+
+  UID  : TYPE = CARDINAL;
+  -- User ID of the owner of the file.
+
+  GID  : TYPE = CARDINAL;
+  -- Group ID of the owner of the file.
+
+  Attributes : TYPE = RECORD [ 
+	    type   : Type,
+	    mode   : Mode,
+	    nlinks : CARDINAL,
+    	    uid    : UID,
+	    gid    : GID,
+	    size   : Size,
+	    atime  : Time,
+	    mtime  : Time,
+	    ctime  : Time
+	];
+
+  -- The "Attributes" structure provides a "UNIX"-like description
+  -- of a file.  The "Directory" interface provides a way of 
+  -- looking up the attributes of a file.
+
+  OpenRd  : PROC [ ] RETURNS [ rd: IREF Rd ]
+              RAISES Heap.NoMemory;
+  OpenWr  : PROC [ ] RETURNS [ wr: IREF Wr ]
+              RAISES Heap.NoMemory;
+  -- "OpenRd" and "OpenWr" are used to obtain a reader or writer on
+  -- the file.  
+
+  Dispose : PROC [] RETURNS [];
+
+  -- Dispose frees up resources held by the "File".  The "File" is no
+  -- longer valid.
+
+END.

@@ -1,0 +1,50 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      WSF
+-- 
+-- DESCRIPTION:
+--
+--	Extended WS interface provided to window manager
+-- 
+-- ID : $Id: WSF.if 1.1 Thu, 18 Feb 1999 14:18:52 +0000 dr10009 $
+-- 
+-- \chapter{Window System}
+-- 
+
+-- "WSF" is an extension to the "WS" interface allowing a window
+-- manager to have more control over the Window Server than is allowed
+-- to normal clients. The Window Server will create a "WSF" for each
+-- client which is given to the window manager. In addition to giving
+-- the window manager control over the client's connection, it allows
+-- operations to be performed atomically, and lets the window manager
+-- redirect events to clients other than the owner of the window
+-- associated with the event.
+
+WSF : LOCAL INTERFACE =
+EXTENDS WS;
+BEGIN
+
+  DeliverEvent : PROC [ ev : WS.Event ] RETURNS [];
+
+  -- "DeliverEvent" causes the event "ev" to be delivered to the
+  -- client associated with this "WSF".
+
+  LockUpdates : PROC [] RETURNS [];
+
+  UnlockUpdates : PROC [] RETURNS [];
+
+  -- "LockUpdates" and "UnlockUpdates" allow the window manager to
+  -- prevent the window server from updating the display/sending
+  -- expose events, thus enabling the window manager to merge multiple
+  -- operations into a single atomic action with respect to the
+  -- display. Calls to "LockUpdates" and "UnlockUpdates" can be nested.
+
+END.

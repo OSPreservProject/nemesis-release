@@ -1,0 +1,42 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      MMNotifyMod
+-- 
+-- DESCRIPTION:
+--
+--      Creator interface for "MMNotify"
+-- 
+-- \chapter{Memory}
+-- \section{Paging and Fault Handling}
+-- 
+
+MMNotifyMod : LOCAL INTERFACE =
+  NEEDS Heap;
+  NEEDS MMNotify;
+  NEEDS StretchTbl;
+  NEEDS VP;
+BEGIN
+
+  -- "New" creates a new memory management notify handler for the 
+  -- application running over the virtual processor "vp".
+
+  New : PROC    [ vp    : IREF VP,
+                  heap  : IREF Heap, 
+                  stab  : IREF StretchTbl ]
+        RETURNS [ mmnfy : IREF MMNotify   ]
+        RAISES  Heap.NoMemory;
+
+    -- "New" causes the creation of new "MMNotify" whose state 
+    -- is allocated from "heap". The created "mmnfy" will,  
+    -- when its "Notify" method is called, dispatch to stretch 
+    -- drivers as determined by "stab". 
+
+END.

@@ -1,0 +1,169 @@
+%
+% nemesis introductory text
+%
+\documentclass{book}
+\usepackage{a4wide}%   from ctan macros/latex/contrib/other/misc/a4wide.sty
+\usepackage{makeidx}%  part of latex distribution
+
+\usepackage{xspace}%   part of latex standard tools
+\usepackage{epsfig}%   part of latex graphics packge
+\usepackage{url}%      from ctan macros/latex/contrib/other/misc/url.sty
+
+\usepackage{calc}%     part of latex standard tools since 1997/12/01
+
+% see ftp://ftp.tex.ac.uk/tex-archive/CTAN.sites for ctan sources
+
+%
+% process checkin information; this stupid performance allows us to
+% define a macro whose argument specification allows it gobble rcs
+% information, without actually being hacked by rcs itself
+%
+\def\dollarcharacter{$}
+\edef\defrcsid{%
+  \def\noexpand\rcsid\dollarcharacter Id: ##1 ##2 ##3/##4/##5 ##6 ##7 ##8${%
+    \gdef\noexpand\checkindate{##3/##4/##5}%
+    \gdef\noexpand\checkinauthor{##7}%
+    \gdef\noexpand\checkinversion{##2}%
+  }
+}
+\defrcsid
+
+% this is the line that gets hacked by rcs
+
+\rcsid $Id: tutorial-manual.tex 1.1 Tue, 13 Apr 1999 17:01:06 +0100 dr10009 $
+
+%% 2nd July 1998 contributions
+%% Colin McEwan, Andy King
+
+%\title{Nemesis\\
+%  Introduction and Tutorial}
+%\author{Richard Black, Dave Stewart, Dickon Reed\\
+%  \small (Updated for Snap 5 and the new build system by Robin Fairbairns)}
+%\date{Last updated \today\thanks{Last checkin \checkinversion,
+%  \checkindate\ by \checkinauthor}}
+
+% allow large graphs to float around as they wish
+\renewcommand{\topfraction}{1}
+\renewcommand{\bottomfraction}{1}
+\renewcommand{\textfraction}{.01}
+\renewcommand{\floatpagefraction}{1}
+
+% Flag things which are need to be worked on
+\newcommand\bogosity[1]{{\it #1}}
+
+% Change this line to reflect the root of your nemesis directory tree
+
+\newcommand{\nempath}[1]{\url{$NEM/#1}}%$
+%                             ^  ^
+%                             |  |
+% Change this bit only ----------
+
+%
+% distinguish between various uses of url package commands, etc.
+%
+\newcommand{\cmd}[1]{\texttt{#1}}
+\newcommand{\file}  {\begingroup \urlstyle{tt}\Url}
+\newcommand{\dir}   {\begingroup \urlstyle{tt}\Url}
+\newcommand{\script}{\begingroup \urlstyle{tt}\Url}
+
+\newcommand{\camsymbol}{$\mathcal{C}$}
+\newcommand{\cam}{\marginpar{{\Large \camsymbol}}}
+\newcommand{\ttnempath}[1]{\texttt{\nempath{#1}}}
+\newcommand{\shellcom}[2][\begin{quote}]{#1 {\footnotesize \$ #2 }
+    \futurelet\temp\nextcom}
+\newcommand{\shellrpl}[2][\begin{quote}]{#1 {\footnotesize \texttt{#2} }
+    \futurelet\temp\nextcom}
+\newcommand{\nashcom}[2][\begin{quote}]{#1 {\footnotesize nash\$ #2 }
+    \futurelet\temp\nextcom}
+\let\nashrpl\shellrpl
+%
+\makeatletter
+% close the quote environment unless the next command's one of the
+% above, in which case carry on in the present environment
+\newcommand{\nextcom}{%
+  \ifx\temp\shellcom
+    \let\temp\gobblereplace%
+  \else
+    \ifx\temp\shellrpl
+      \let\temp\gobblereplace%
+    \else
+      \ifx\temp\nashcom
+        \let\temp\gobblereplace%
+      \else
+        \ifx\temp\@sptoken
+          \let\temp\gobblespacenextcom%
+        \else
+          \def\temp{\end{quote}}%
+        \fi
+      \fi
+    \fi
+  \fi
+  \temp}
+\newcommand{\gobblereplace}[1]{\\#1[]}
+{%
+  \def\:{\gobblespacenextcom}%
+  \expandafter\gdef\: {\futurelet\temp\nextcom}%
+}
+%==================
+% sigh...
+\def\gnumake{\@ifnextchar[%]
+  \@gnumake@arg
+  \@gnumake@noarg
+}
+\def\@gnumake@arg[#1]{\texttt{gnumake #1}}
+\def\@gnumake@noarg{\texttt{gnumake}\xspace}
+\makeatother
+%==================
+
+% a glasgow addition, retained pro tem
+\newcommand{\SNIP}[1]{}
+
+%
+% Environment for enumerating identifiers: see LaTeX companion page 63.
+%
+\newenvironment{identifiers}[1]%
+{\begin{list}{}{\renewcommand{\makelabel}[1]{\texttt{##1}\hfil}%
+    \settowidth{\labelwidth}{\texttt{#1}}%
+    \setlength{\leftmargin}{\labelwidth+\labelsep}}}
+{\end{list}}
+
+\makeindex
+
+\begin{document}
+
+
+\title{
+  \includegraphics[width=5in]{eps/nemesis.eps} \\[1.5in]
+  \Huge New Users' Tutorial
+}
+
+\author{Editors: Richard Black, Dave Stewart, Dickon Reed, Robin Fairbairns\\[0.5cm]
+   Copyright (c) 1999, University of Cambridge Computer
+   Laboratory}
+
+\thispagestyle{empty}
+\maketitle
+\clearpage
+
+{ \parskip 0pt plus 1pt
+\tableofcontents
+\bogosity{Note that this document was hacked together quickly by tlh20
+from the existing Nemesis\_Intro files.  It actually describes tlh20s
+build of the final version of the old-style live tree.  Hopefully this
+is quite similar (at run time) to the release.}
+
+}
+
+\clearpage
+\pagenumbering{roman}
+\pagenumbering{arabic}
+
+\include{00intro}
+\include{01sample_applications}
+\include{02hello_world}
+\include{03building} 
+\include{04docs}
+\include{05compilation}
+\include{06notes}
+
+\end{document}

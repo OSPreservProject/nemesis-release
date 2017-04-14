@@ -1,0 +1,66 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Timer module
+-- 
+-- DESCRIPTION:
+--
+--      Provides (nominally) nanosecond timer for Nemesis scheduling.
+-- 
+-- ID : $Id: Timer.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Low-Level Interfaces}
+-- 
+
+-- Every Nemesis implementation must provide a "Timer" interface
+-- for use as an interval timer by the domain scheduler within the
+-- NTSC. In theory the timer counts down from some value, but also
+-- maintains a notion of absolute time. All times are specified to the
+-- "Timer" in absolute nanoseconds, i.e. time since the start of the
+-- epoch. Since the time value is at least 64 bits long, there should
+-- never be any need to reset the epoch. The actual timer resolution
+-- is unlikely to be in nanoseconds, but it provides a useful common
+-- baseline.
+
+Timer : LOCAL INTERFACE = 
+  NEEDS Time;
+BEGIN
+
+  Val : PROC [] RETURNS [ v : Time.ns ];
+    -- Read the current tick count.
+
+  Set : PROC [ time : Time.ns ] RETURNS [];
+    -- Set the timer for some time in the future .
+
+  -- An atomic operation is provided to squash the timer, disable any
+  -- interrupts, and return both the current absolute time and the
+  -- value left in the interval timer. "itime" is the only parameter
+  -- in the "Timer" interface which is relative (in this case to the
+  -- last call to "Set").
+
+  Clear : PROC [] RETURNS [ time, itime : Time.ns ];
+
+  -- The action taken when the timer goes off is target-dependent.
+
+  -- On Alphas, initialising the timer entails enabling a particular software
+  -- interrupt to be posted when the timer goes off. The handler for
+  -- this SWI will probably be the scheduler. It is currently
+  -- identified by a "CARDINAL", though there is clearly scope for a
+  -- better abstraction here. 
+
+  Enable : PROC [ sirq : CARDINAL ] RETURNS [];
+
+  -- On MIPS, the kernel scheduler is entered directly.  No registration
+  -- is required.
+
+  -- Arranging for the initialisation of this code is likely to be
+  -- platform-specific.
+
+END.

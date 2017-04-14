@@ -1,0 +1,64 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--	PF.if
+--
+-- DESCRIPTION:
+--
+--	Native packet filter interface
+--
+-- \chapter{Networks}
+--
+
+-- A native packet filter interface; deals with all things in one
+-- lump, so we only need one. 
+
+PF : LOCAL INTERFACE =
+NEEDS IO;
+BEGIN
+
+  Handle : TYPE = DANGEROUS WORD;  -- opaque
+
+  Apply : PROC    [ packet : REF IO.Rec, 
+		    nrecs  : CARDINAL   ]
+	  RETURNS [ handle : Handle,
+		    frag  : BOOLEAN,
+		    hdrsz : CARDINAL ];
+
+   -- run the packet filter to determine the greatest match.
+   -- Returns the handle, or 0 to mean reject, -1 for a request to
+   -- delay.  In addition, if the packet was a fragment, "frag" is set
+   -- to "True", otherwise it is set to "False".  The "hdrsz" value is
+   -- a hint of how much data is header data, and how much is payload.
+
+  Snaplen : PROC [ ] RETURNS [ slen : CARDINAL ];
+   -- return the number of bytes of a 'packet' which this instance of
+   -- a "PF" requires in order to filter. 
+
+
+  Dispose : PROC [] RETURNS [];
+   -- free any resources associated with this "PF"; after this method
+   -- has been called, any further invocations are undefined.
+
+
+  CopyApply : PROC    [ packet : REF IO.Rec, 
+                        nrecs  : CARDINAL,
+                        dest   : ADDRESS ]
+	  RETURNS [ handle : Handle,
+		    frag  : BOOLEAN,
+		    hdrsz : CARDINAL ];
+
+   -- Same as "Apply", but the contents of the first fragment of the
+   -- packet ("packet[0]") are copied to the memory pointed to by
+   -- "dest".
+
+
+END.
+

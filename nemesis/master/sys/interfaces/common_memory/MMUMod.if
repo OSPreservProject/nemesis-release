@@ -1,0 +1,56 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      MMUMod
+-- 
+-- DESCRIPTION:
+--
+--      A "MMUMod" is what one uses to create a "MMU". 
+-- 
+-- \chapter{Memory}
+-- \section{Translation and Protection}
+-- 
+
+MMUMod : LOCAL INTERFACE =
+  NEEDS Frames;
+  NEEDS Heap;
+  NEEDS Mem;
+  NEEDS MMU;
+  NEEDS RamTab; 
+  NEEDS StretchAllocatorF;
+BEGIN
+
+
+    New:  PROC    [ pmem : Mem.PMem,
+		    init : Mem.Map,
+		    size : WORD         ]
+          RETURNS [ mmu  : IREF MMU, 
+		    rtab : IREF RamTab,
+		    free : ADDRESS      ]
+          RAISES  Mem.Failure;
+    -- Creates the initial "MMU". The "pmem" parameter describes the 
+    -- physical address space of the machine, while the "init"
+    -- parameter specifies all extant virt-to-phys mappings. 
+    -- These may be modified. 
+    -- An allocation of "size" addressable bytes is requested. 
+    -- If successful, a "MMU" is returned along with the a handle on a
+    -- "RamTab" (for use by the "Frames" allocator) and an address 
+    -- where "size" addressable bytes have been allocated. 
+
+
+    Done    : PROC    [ mmu      : IREF MMU, 
+			frames   : IREF Frames, 
+			heap     : IREF Heap,
+                        sysalloc : IREF StretchAllocator ] 
+              RETURNS [];
+     -- Finish the initialisation of the MMU.
+          
+
+END.

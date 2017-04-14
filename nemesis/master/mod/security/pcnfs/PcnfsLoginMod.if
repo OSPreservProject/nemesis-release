@@ -1,0 +1,37 @@
+-----------------------------------------------------------------------------
+-- (C) 1998                                                                --
+-- Rolf Neugebauer                                                         --
+-- Department of Computing Science - University of Glasgow                 --
+-----------------------------------------------------------------------------
+--
+--        File: Pcmfs.if
+--      Author: Rolf Neugebauer
+--     Changes: 
+--
+--        Date: 1998
+--
+-- Environment: Security
+-- Description: 
+--
+-----------------------------------------------------------------------------
+-- $Id: PcnfsLoginMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-----------------------------------------------------------------------------
+--
+-- \chapter{Security}
+-- \section{Login}
+
+
+-- This provides a pcnfs based login scheme. You have to tell it your
+-- pcnfsd server and i will return a Login interface as an IDC offer.
+-- This might be usefull for sites who use YP and/or shadow passwords.
+-- Note, that pcnfs doesn't provide all information tradtionally
+-- stored in /etc/passwd. For example it doesn't return the full
+-- username.
+
+PcnfsLoginMod : LOCAL INTERFACE =
+  NEEDS IDCOffer;
+  NEEDS Net;
+BEGIN
+  New : PROC [ server : STRING ]
+        RETURNS [ login : IREF IDCOffer ];
+END.

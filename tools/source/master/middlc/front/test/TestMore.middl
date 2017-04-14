@@ -1,0 +1,7 @@
+TestMore : INTERFACE =
+  EXTENDS Test;
+BEGIN
+
+  TurboCharge : PROC [ t: IREF Test; speed : CARDINAL ] RETURNS [] ;
+  Blast       : ANNOUNCEMENT [ arg: STRING ];
+END .

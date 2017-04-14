@@ -1,0 +1,43 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      ActivationMod.if
+-- 
+-- DESCRIPTION:
+--
+--      Used to create an ActivationF interface to run over a particular VP.
+-- 
+-- FILE :	ActivationMod.if
+-- CREATED :	Fri Apr 25 1997 or so
+-- AUTHOR :	Steven Hand (Steven.Hand@cl.cam.ac.uk)
+-- ID : 	$Id: ActivationMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Domains, Events and Activation}
+--
+
+-- The "ActivationMod" interface is used to create an instance of an
+-- "ActivationF.if" to run over a particular VP.
+
+ActivationMod : LOCAL INTERFACE =
+  NEEDS ActivationF;
+  NEEDS Time;
+  NEEDS VP;
+BEGIN
+
+  New : PROC    [ vpp  : IREF VP,
+		  time : IREF Time,
+                  heap : IREF Heap,
+		  nts  : CARDINAL          ]
+	RETURNS [ actf : IREF ActivationF, 
+		  ah   : IREF Activation   ];
+
+    -- Create a new "ActivationF" to run over the VP "vpp" and which
+    -- can deal with up to "nts" pending timeouts.
+END.

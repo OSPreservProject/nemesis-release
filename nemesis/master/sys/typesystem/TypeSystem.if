@@ -1,0 +1,155 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1993, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      TypeSystem
+-- 
+-- DESCRIPTION:
+--
+--      Maintains all information about the structure of abstract and
+--      concrete types in the system,
+-- 
+-- ID : $Id: TypeSystem.if 1.2 Tue, 27 Apr 1999 15:22:18 +0100 dr10009 $
+-- 
+-- \chapter{Runtime Type System}
+-- 
+-- 
+
+-- A Nemesis system typically contains a single instance of the
+-- "TypeSystem" interface.  This is a "Context" in which every type in
+-- the system is registered.  The context maps type names to
+-- "Type.Code"s.
+
+TypeSystem : LOCAL INTERFACE =
+  EXTENDS Context;
+  NEEDS Type;
+  NEEDS Enum;
+  NEEDS Interface;
+  NEEDS Record;
+  NEEDS Choice;
+BEGIN
+
+  -- The arc-names registered in the "TypeSystem" context are of the
+  -- form
+  -- 
+  --|    "Foo"       `(for interface types), or`
+  --|    "Foo.Bar"   `(for concrete types defined in the `"Foo"` interface).`
+  -- 
+  -- The "TypeSystem"'s "Get" method maps these type names to "Type.Any"s
+  -- for the corresponding "Type.Code"s.
+
+  -- 
+  -- Representing type structures
+  -- 
+
+  -- Given a type code, the "Info" procedure below can be used to
+  -- obtain a "Type.Any" whose value represents the structure of the
+  -- given type.  \MIDDL's types are represented with values of the
+  -- following types.  Enumerations, "IREF" types, records and choices are
+  -- all represented by instances of corresponding "Context" subtypes.
+  -- These are described elsewhere.
+
+  Alias      : TYPE = Type.Code;         -- Base type
+  Predefined : TYPE = { Boolean,
+                        ShortCardinal, Cardinal, LongCardinal, 
+                        ShortInteger, Integer, LongInteger,
+                        Real, LongReal,
+                        String,
+                        Octet, Char,
+                        Address, Word };
+  Enum       : TYPE = IREF Enum; 
+  ArrayIndex : TYPE = CARDINAL;
+  Array      : TYPE = RECORD [ n : ArrayIndex, tc : Type.Code ];
+  BitSet     : TYPE = CARDINAL;          -- Size of bit set
+  Set        : TYPE = Type.Code;         -- Base type
+  Ref        : TYPE = Type.Code;         -- Referent type
+  Iref       : TYPE = IREF Interface;    
+  Sequence   : TYPE = Type.Code;         -- Base type
+  Record     : TYPE = IREF Record;
+  Choice     : TYPE = IREF Choice;
+
+  -- 
+  -- Querying the type system
+  -- 
+
+  BadCode      : EXCEPTION [ tc : Type.Code ];
+    -- "tc" is not a valid type code in this context.
+
+  Incompatible : EXCEPTION [];
+    -- Raised when a "Narrow" fails.
+
+  -- The "Info" procedure maps a type code "tc" to information
+  -- about the corresponding type.
+
+  Info   : PROC    [ tc      : Type.Code,
+                     OUT rep : Type.Any       ]
+           RETURNS [ scope   : IREF Interface ]
+           RAISES BadCode;
+
+  -- The "scope" result
+  -- is a "Context" which represents the interface in which the type
+  -- is defined; for "IREF" types, this is a distinguished interface
+  -- actually called "IREF" which notionally defines all interfaces,
+  -- including itself.  Finally, the "rep" result represents the type
+  -- as described above.
+
+  -- "Size" returns how may bytes an instance of the type occupies in
+  -- memory. This is not as straightforward as it sounds, for instance
+  -- the "Size" of a "STRING" is one word, and the "Size" of a
+  -- "SEQUENCE" is the (fixed) size of the sequence data structure
+  -- excluding its elements. It is provided for things like
+  -- marshalling code and \textsc{Clanger}. 
+
+  Size : PROC [ tc: Type.Code ] RETURNS [ s: Heap.Size ]
+           RAISES BadCode;
+
+  -- "Name" returns the name of the type.
+  Name : PROC [ tc : Type.Code ] RETURNS [ name : Type.Name ]
+           RAISES BadCode;
+
+  -- "IsLarge" returns "False" iff the type obtained from "tc" by undoing any
+  -- aliases is predefined, an enumeration, a "SET", a "REF" or an "IREF". 
+
+  IsLarge : PROC [ tc: Type.Code ] RETURNS [ large: BOOLEAN ]
+              RAISES BadCode;
+
+
+  -- The "IsType" procedure tells whether one type is compatible
+  -- with another.  Types are compatible if they have the same type
+  -- code (note that aliases are \emph{not} compatible), or "sub" is
+  -- an interface type which directly or indirectly "EXTENDS"
+  -- the interface type "super". "BadCode" is raised if one or other
+  -- of the type codes does not exist.
+
+  IsType : PROC    [ sub : Type.Code, super : Type.Code ]
+           RETURNS [ b : BOOLEAN ]
+           RAISES BadCode;
+
+  -- "Narrow" performs a runtime type check.
+
+  Narrow : PROC    [ a : Type.Any, tc : Type.Code ]
+           RETURNS [ v : Type.Val ]
+           RAISES Incompatible;
+
+    -- If "IsType(a.type, tc)", then return "a.val"; otherwise raise
+    -- "Incompatible".
+
+  -- It may sometimes be convenient (in \Clanger{} for example) to
+  -- know the type of which a given type is an alias. The "UnAlias"
+  -- operation can be thought of as repeatedly reading the base type
+  -- of a given alias, until the base type itself is not an
+  -- alias. Given a "Type.Code", therefore, "UnAlias" will always return
+  -- a "Type.Code" of a type which is not an alias. 
+
+  UnAlias : PROC [ a: Type.Code ] RETURNS [ u: Type.Code ]
+              RAISES BadCode;
+    -- Return the ultimate base type of "a". If "a" refers to a type
+    -- which is not an alias, "u := a".
+
+END.

@@ -1,0 +1,39 @@
+------------------------------------------------------------------------------
+--
+-- File:
+-- 
+--	IOMod.if
+--
+-- Description:
+--
+--	Stream IDC channels over shared memory and FIFOs
+--
+-- Revision History:
+--
+--	$Id: IOMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Input-Output Channels}
+-- 
+
+-- "IOMod" implements the "IO" interface for inter-domain IOs.
+
+IOMod : LOCAL INTERFACE =
+  NEEDS FIFO;
+  NEEDS Heap;
+  NEEDS IO;
+  NEEDS IOData;
+BEGIN
+
+  New : PROC    [ heap   : IREF Heap,
+		  kind   : IO.Kind, 
+                  mode   : IO.Mode, 
+                  rxfifo : IREF FIFO, 
+                  txfifo : IREF FIFO, 
+		  handle : DANGEROUS WORD,
+                  shm    : IOData.Shm     ]
+      	RETURNS [ io     : IREF IO        ]
+      	RAISES  Heap.NoMemory;
+
+  -- The "New" procedure constructs a "IO" given its components.
+
+END.

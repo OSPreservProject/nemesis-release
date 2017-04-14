@@ -1,0 +1,189 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--  Based on header files from MIT X server                                 -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Region
+-- 
+-- DESCRIPTION:
+--
+--	Provides means of manipulating and passing geometrical regions,
+--	useful for dealing with clipping and exposure regions in
+--	windows
+--
+-- 
+-- ID : $Id: Region.if 1.1 Thu, 18 Feb 1999 14:18:52 +0000 dr10009 $
+-- 
+-- \chapter{Window System}
+-- 
+-- 
+
+--	A "Region.T" is a pointer to a record describing a geometrical
+--	region. The record contains an extents rectangle and a pointer
+--	to rectangle data. 
+--
+--	If the "data" field is "NULL", the region consists of a
+--	single rectangle, described by the "extents" field. If the
+--	"data" field is non-"NULL", it points to an area of memory
+--	starting with a "Data" record and followed immediately by an
+--	array of length "data->size" of "Box" records, of which the first
+--	"data->numRects" describe the region.
+--
+--      An implementation may use any method for dividing a given
+--      region up into disjoint rectangles, and clients should not
+--      rely on any particular ordering of rectangles.
+--
+--	Reading the contents of a region may be done using the macros
+--	defined in "<regionstr.h>". A region should only be modified
+--	by the domain which created it, using the methods provided by
+--	this interface. 
+--
+--	All memory allocations are performed using the pervasive heap.
+--	Passing a "Region.T" created by one Region implementation as a
+--	parameter to a method of a different implementation will have
+--	unpredictable effects, unless the "MakeValid" method of the
+--	new implementation is called to convert the region before
+--	using it with any other methods.
+--
+--	All parameters passed as "Region.T"s or "REF Region.Rec"s in
+--	the methods below must be initialised regions, with the
+--	exception of the parameter to "InitRec".
+
+
+Region : LOCAL INTERFACE =
+
+BEGIN
+
+        Box : TYPE = RECORD [ x1 : SHORT INTEGER,
+                              y1 : SHORT INTEGER,
+                              x2 : SHORT INTEGER,
+                              y2 : SHORT INTEGER ];
+
+	BoxPtr : TYPE = REF Box;
+
+	BoxSeq : TYPE = SEQUENCE OF Box;
+
+	Data : TYPE = RECORD [ size : CARDINAL,
+			       numRects : CARDINAL ];
+
+	DataPtr : TYPE = REF Data;
+
+	Rec : TYPE = RECORD [ extents : Box,
+		              data   : DataPtr ];
+
+	T : TYPE = REF Rec;
+
+	Overlap : TYPE = { In, Out, Partial };
+
+	-- "New" allocates and returns an empty region on the heap.
+
+	New : PROC [ bptr : BoxPtr ] RETURNS [ region : T ];
+
+	-- "Free" destroys a region and its data.
+
+	Free : PROC [ region : T ] RETURNS [];
+
+	-- "InitRec" initialises a static "Rec" object to an empty
+	-- region. 
+
+	InitRec : PROC [ regionRecPtr : REF Rec; bptr : BoxPtr ]
+		RETURNS [];
+
+	-- "DoneRec" releases the memory allocated for the rectangles
+	-- of a static "Rec" object.
+
+	DoneRec : PROC [ regionRecPtr : REF Rec ] RETURNS [];
+
+	-- "Equal" returns "True" if "reg1" and "reg2" describe the
+	-- same geometrical region.
+
+	Equal : PROC [ reg1, reg2 : T ] RETURNS [ equal : BOOLEAN ];
+
+	-- "SetBox" resets "region" to contain the single rectangle
+	-- pointed to by "bptr".
+
+	SetBox : PROC [ region : T; bptr : BoxPtr ] RETURNS [];
+
+	-- "SetXY" resets "region" to contain the single rectangle
+	-- bounded by the four passed coordinates.
+
+	SetXY : PROC [ region : T; x1, y1, x2, y2 : INTEGER ] RETURNS [];
+
+	-- "Print" may be implemented to perform some debugging output
+	-- of "region".
+
+	Print : PROC [ region : T ] RETURNS [];
+
+	-- "Copy" sets "dest" to contain the same region as "src".
+
+	Copy : PROC [ dest, src : T] RETURNS [];
+
+	-- "Intersect" sets "dest" to be the geometrical intersection
+	-- of "src1" and "src2".
+
+	Intersect : PROC [ dest, src1, src2 : T ] RETURNS [];
+
+	-- "Union" sets "dest" to be the geometrical union of "src1"
+	-- and "src2".
+
+	Union : PROC [ dest, src1, src2 : T ] RETURNS [];
+
+	-- "Append" adds the rectangles in "src" on the the end of
+	-- "dest". The result in "dest" is not a valid region until
+	-- "MakeValid" is called on "dest".
+
+	Append : PROC [ dest, src : T ] RETURNS [];
+
+	-- "MakeValid" takes a "src" region whose rectangles do not
+	-- necessarily fit with the division/ordering scheme used by
+	-- this implementation, and sets "dest" to describe the same
+	-- region, but using this implementation's division/ordering
+	-- scheme.
+ 
+	MakeValid : PROC [ rgn : T; OUT overlap : BOOLEAN ] RETURNS [];
+
+	-- "Subtract" sets "dest" to be any parts of "minuend" which
+	-- are not also in "subtrahend".
+
+	Subtract : PROC [ dest, minuend, subtrahend : T ] RETURNS [];
+
+	-- "Inverse" sets "dest" to be any parts of "rect" which are
+	-- not in "src".
+
+	Inverse : PROC [ dest, src : T; rect : BoxPtr ] RETURNS [];
+
+	-- "TestRect" determines if the box pointed to by "boxp" is
+	-- entirely outside, entirely within or partially overlapping
+	-- "region". 
+
+	TestRect : PROC [ region : T; boxp : BoxPtr ] 
+		RETURNS [ overlap : Overlap ];
+
+	-- "TestPoint" determines whether a given point is within
+	-- "region".
+
+	TestPoint : PROC [ region : T; x, y : INTEGER ]
+		RETURNS [ in : BOOLEAN ];
+	
+	-- "Translate" translates "region" by the displacement $("x", "y")$
+
+	Translate : PROC [ region : T; x, y : INTEGER ] RETURNS [];
+
+	-- "IsEmpty" determines whether "region" is empty.
+
+	IsEmpty : PROC [ region : T ] RETURNS [ empty : BOOLEAN ];
+
+	-- "MakeEmpty" sets "region" to be the empty region.
+
+	MakeEmpty : PROC [ region : T ] RETURNS [];
+
+	-- "Extents" returns a pointer to "region"'s extents.
+
+	Extents : PROC [ region : T ] RETURNS [ bptr : BoxPtr ];
+
+END.

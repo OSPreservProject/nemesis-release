@@ -1,0 +1,145 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      IPConf.if
+-- 
+-- DESCRIPTION:
+--
+--      Configure the IP subsystem
+-- 
+-- ID : $Id: IPConf.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+-- 
+-- \chapter{Networks}
+--
+
+-- the "IPConf" interface can be used to create new IP host, add
+-- interfaces to them, etc
+
+IPConf : LOCAL INTERFACE =
+  NEEDS IDCOffer;
+BEGIN
+
+  InUse : EXCEPTION [];    -- Some resource is already in use
+
+
+--
+-- IP Hosts
+--
+
+  -- An opaque identifier for IP hosts.
+  IPHost : TYPE = DANGEROUS ADDRESS;
+
+  -- "NewIPHost" creates a new IP host with no interfaces.  The "name"
+  -- parameter specifies its name in the $>$svc$>$net context.  It returns
+  -- "iphost" (an identifier by which the host can be described), and
+  -- exports an IDCOffer for a "FlowMan" interface to $>$svc$>$net$>$"name".
+  NewIPHost : PROC [ name : STRING ]
+	     RETURNS [ iphost : IPHost ];
+
+  -- Deletes the state associated with an IP host.  All connections to
+  -- and from this host are forced to terminate.
+  FreeIPHost : PROC [ iphost : IPHost ]
+	       RETURNS [ ok: BOOLEAN ];
+
+
+--
+-- Cards and Interfaces
+--
+
+  -- A "Card" is the actual hardware - there can be only one.
+  Card : TYPE = DANGEROUS ADDRESS;
+
+  -- "OpenCard" introduces the network hardware "name" as a new card
+  -- "card".  The "InUse" exception is raised if another entity has
+  -- that card open already.
+  OpenCard : PROC [ name : STRING ]
+	     RETURNS [ card : Card ]
+	     RAISES InUse;
+
+  -- Stops using "card", allowing some other entity to use it.
+  CloseCard : PROC [ card : Card ]
+	      RETURNS [ ];
+
+
+  -- An "Interface" is the binding of an IP address to a card.
+  -- Clearly, there may be more than one interface per card.
+  -- Interfaces are added to IP hosts.
+  Interface : TYPE = DANGEROUS ADDRESS;
+
+  -- Bind an IP address and subnet mask to a "card", and return the
+  -- resulting "Interface".  The "ipaddr" and "netmask" should be IP
+  -- addresses specified in dotted-quad.  They are "STRING"s rather
+  -- than "Net.IPHostAddr"s in order to work around problems in
+  -- Clanger.  It is not an error to bind the same IP address to
+  -- multiple cards (load balancing, etc).
+  NewInterface : PROC [ card    : Card,
+			name	: STRING,
+                        ipaddr  : STRING,
+                        netmask : STRING ]
+	         RETURNS [ intf : Interface ];
+
+  -- Remove an IP address to card mapping, and remove it from the IP
+  -- host it may have been added to. "if" is no longer a valid interface.
+  FreeInterface : PROC [ intf : Interface ]
+	          RETURNS [ ok: BOOLEAN ];
+
+  -- Add the interface "if" to the IP Host "iphost".  The "InUse"
+  -- exception is raised if the interface has already been added to an
+  -- IP host.
+  AddInterface : PROC [ iphost : IPHost,
+                        intf   : Interface ]
+	         RETURNS [ ok: BOOLEAN ]
+	         RAISES InUse;
+
+  -- The interface "if" is removed from "iphost", and any routes which
+  -- pass through it are purged.
+  RemoveInterface : PROC [ iphost : IPHost,
+                           intf   : Interface ]
+	            RETURNS [ ok: BOOLEAN ];
+
+
+--
+-- Routing table management
+--
+
+  -- Add a route to the net described by "destnet/destmask", via
+  -- "if".  If "gateway" is not the empty string, then it is used as
+  -- a gateway out of the subnet.  If "destnet" and "destmask" are
+  -- empty strings, then "gateway" specifies the default route out of
+  -- the subnet.
+  AddRoute : PROC [ iphost   : IPHost, -- which IP host's table
+                    destnet  : STRING, -- dotted quad for net number
+                    destmask : STRING, -- dotted quad for net mask
+                    intf     : Interface,
+                    gateway  : STRING ]
+	     RETURNS [ ok : BOOLEAN ];
+
+  -- Deletes the specified route.
+  DelRoute : PROC [ iphost  : IPHost,
+                     destnet  : STRING, -- dotted quad for net number
+                     destmask : STRING, -- dotted quad for net mask
+                     intf     : Interface,
+                     gateway  : STRING ]
+	      RETURNS [ ok : BOOLEAN ];
+
+--
+-- Start of day
+--
+
+  -- Perform a bootp on "cardname", timing out after "timeout"
+  -- seconds.  
+  bootp : PROC [ card : Card,
+                 timeout  : CARDINAL ]
+	  RETURNS [ timedout : BOOLEAN,   -- "True" if we got no reply
+                    ipaddr   : STRING,
+                    netmask  : STRING,    -- may be empty string, if no cookie
+                    gateway  : STRING ];  -- may be empty string, if no cookie
+
+END.

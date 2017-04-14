@@ -1,0 +1,55 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Net.if
+-- 
+-- DESCRIPTION:
+--
+--      Network types
+-- 
+-- ID : $Id: Net.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+-- 
+-- \chapter{Networks}
+-- 
+
+-- The "Net" interface defines useful types for networking.
+
+Net : LOCAL INTERFACE =
+
+BEGIN
+
+  AF : TYPE = { IP, MSNL, ATM };
+
+  BadAF : EXCEPTION [ af: AF ]; 
+
+  IPHostAddr    : TYPE = RECORD [ a : CARDINAL ]; -- XXX 4 octets, network order
+  MSNLHostAddr  : TYPE = RECORD [ a : CARDINAL ]; -- XXX 4 octets, network order
+  ATMAddr       : TYPE = RECORD [ a : CARDINAL ]; -- VCI followed by VPI
+
+  -- the below three are pointer types for convenient use in contexts 
+  IPHostAddrP   : TYPE = REF IPHostAddr; 
+  MSNLHostAddrP : TYPE = REF MSNLHostAddr;
+  ATMAddrP      : TYPE = REF ATMAddr;
+  -- and a sequence for lists of IP addresses used in bootp:
+  IPHostAddrSeq : TYPE = SEQUENCE OF IPHostAddr;
+  IPHostAddrSeqP: TYPE = REF IPHostAddrSeq;
+
+  HostAddr : TYPE = CHOICE AF OF {
+    IP   => IPHostAddr,
+    MSNL => MSNLHostAddr,
+    ATM  => ATMAddr
+  };
+
+  -- Hardware addresses:
+  EtherAddr    : TYPE = RECORD [ a : ARRAY 6 OF OCTET ];
+
+  EtherAddrP   : TYPE = REF EtherAddr;
+
+END.

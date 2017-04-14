@@ -1,0 +1,42 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      RPCMod
+-- 
+-- DESCRIPTION:
+--
+--      Creates RPCTransport closures
+-- 
+-- ID : $Id: RPCMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+--
+
+RPCMod : LOCAL INTERFACE = 
+NEEDS RPCTransport;
+NEEDS FlowMan;
+BEGIN
+
+   -- "Problem" is used to hint as to why an operation failed.
+
+   Problem : TYPE = { BadSAP, NoResources, Error };
+
+   -- "Failure" is raised to indicate operation failure.
+
+   Failure : EXCEPTION [ why : Problem ];
+
+   -- "New" creates an "RPCTransport" listening on the specifed
+   -- SAP. It raises "Failure" in the event of an error.
+
+   New : PROC [ IN OUT sap : FlowMan.SAP ] 
+         RETURNS [ trans : IREF RPCTransport ]
+         RAISES Failure;
+
+END.

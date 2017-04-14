@@ -1,0 +1,89 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1996, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Interrupt registration
+-- 
+-- DESCRIPTION:
+--
+--      Provides functions to register stubs to handle interrupts
+-- 
+-- ID : $Id: Interrupt.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Low-Level Interfaces}
+-- 
+
+-- Interrupts are dealt with by running a tiny stub. The stub's job is to
+-- clear the interrupt condition, doing as little as possible to
+-- achive this. Typical stubs will want to send an event to the
+-- corresponding driver domain to inform the domain of the arrival of
+-- an interrupt. In order to do this, each stub is passed a state
+-- pointer.
+
+Interrupt : LOCAL INTERFACE = 
+BEGIN
+
+  AllocCode : TYPE = {Ok, AlreadyClaimed, InvalidIRQ};
+
+  -- Return type for the "Allocate" procedure:
+  --   "Ok" means the interrupt was successfully allocated.
+  --   "AlreadyClaimed" means some other domain has allocated this
+  --      interrupt.
+  --   "InvalidIRQ" means thats the irq number passed was out of range.
+
+
+  FreeCode : TYPE = {Ok, NotOwner, NoStub, InvalidIRQ};
+
+  -- Return type for the "Free" procedure:
+  --   "Ok" means the interrupt stub was successfully removed.
+  --   "NotOwner" means some other domain's stub is registered.
+  --   "NoStub" means there is no stub currently installed.
+  --   "InvalidIRQ" means thats the irq number passed was out of range.
+
+
+  IrqDesc: TYPE = CARDINAL;
+
+  -- Interrupts are identified by "IrqDesc"s, typically small numbers
+  -- from 0 upwards.
+
+
+  StateT : TYPE = ADDRESS; -- a pointer to state used by the stub
+
+
+  -- StubFn : TYPE = REF PROC [state: StateT] RETURNS [];
+  --   except that MIDDL can't cope so:
+  StubFn : TYPE = ADDRESS;
+
+  -- A "StubFn" is the type a stub function should be. When a stub is
+  -- called, it is passed a pointer to its state.
+
+
+  Allocate : PROC [irq: IrqDesc, stub: StubFn, state: StateT]
+		RETURNS [ ret: AllocCode ];
+
+  -- Requests that interrupt number "irq" be allocated to this domain.
+  -- The interrupt is to cause "stub" to be run, with "state" as its
+  -- state argument.
+
+  -- Return "Ok" if the registration succeeded, or "AlreadyClaimed"
+  -- if a stub has already been registered.
+
+
+  Free: PROC [irq: IrqDesc] RETURNS [ ret: FreeCode ];
+
+  -- Requests that interrupt number "irq" have its stub handler
+  -- removed. Returns "Ok" if the stub was successfully
+  -- removed. "NotOwner" means the stub is owned by another
+  -- domain. "NoStub" means no stub is currently installed to be
+  -- removed.
+
+  -- Once an irq has been "Free"ed it is available for allocation
+  -- once more.
+
+END.

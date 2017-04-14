@@ -1,0 +1,11 @@
+#!/bin/sh
+
+LOCATION=`dirname $0`/../python
+
+export PYTHONPATH
+
+PYTHONPATH=${LOCATION}${PYTHONPATH:+:${PYTHONPATH}}
+
+echo $PYTHONPATH
+
+exec $LOCATION/astgen.py ${1+"$@"}

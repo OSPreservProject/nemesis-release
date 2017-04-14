@@ -1,0 +1,5 @@
+BadRecurse : INTERFACE =
+  NEEDS BadRecurse2;
+BEGIN
+  Foo : TYPE = CARDINAL;
+END.

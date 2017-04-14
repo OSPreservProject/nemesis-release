@@ -1,0 +1,50 @@
+/* CLUless
+ *
+ * statement.tab; use with gentables.py to generate statement tables
+ *
+ * Dickon Reed, 1996
+ * Richard Mortier, 1997
+ *
+ * $Id: statement.tab 1.1 Thu, 18 Feb 1999 14:20:06 +0000 dr10009 $
+ *
+ * $Log: statement.tab,v $
+ * Revision 1.1  1997/06/25 17:07:48  dr10009
+ * Initial revision
+ *
+ * Revision 2.2  1997/04/07 20:47:18  rmm1002
+ * Changed statement_loop_loop to statement_loop_code (clearer, IMHO)
+ *
+ * Revision 2.1  1997/04/04 15:35:46  rmm1002
+ * Mass check-in; now have vaguely working compiler, makes on P5 & Alpha
+ *
+ * Revision 1.12  1997/04/04 15:25:19  rmm1002
+ * Added empty statement (';')
+ *
+ * Revision 1.11  1997/03/07 16:29:53  rmm1002
+ * Added statement type for "c_block" and "c_block_code"
+ *
+ * Revision 1.10  1997/02/04 16:49:01  rmm1002
+ * Finished first look and layout fixup
+ *
+ * Revision 1.1  1997/02/03 16:39:47  rmm1002
+ * Initial revision
+ *
+ */
+
+#BEGIN#
+statement,3
+wibble,wibble
+empty,empty
+expr,expr,n_expr,expr
+block,block,n_list,code
+c_block,c_block,n_cptr,code
+raise,raise,n_sco,exception
+tryexcept,try except,n_statement,code,n_list,handlers
+tryfinally,try finally,n_statement,code,n_statement,handle
+loop,loop,n_statement,code
+exit,exit
+return,return
+while,while,n_expr,test,n_statement,code
+repeat,repeat,n_expr,test,n_statement,code
+if_matched,if,n_expr,test,n_statement,truecode,n_statement,falsecode
+if_unmatched,if,n_expr,test,n_statement,truecode

@@ -1,0 +1,91 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Ordered Merged Context. 
+-- 
+-- DESCRIPTION:
+--
+--      An ordered set of contexts, each of which is searched in order
+--      for a name.
+-- 
+-- ID : $Id: MergedContext.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+--
+-- \chapter{Naming Contexts}
+-- 
+-- 
+
+-- An ordered sequence of "Context"s can be combined into a single
+-- "MergedContext".  The "MergedContext" resolves arc-names by
+-- attempting to resolve them in each of the component "Context"s
+-- in turn.  "MergedContext"s can be used in local name spaces
+-- to replace search paths (as in Plan 9 \cite{pik:plan9}).
+
+MergedContext : LOCAL INTERFACE =
+  EXTENDS Context;
+BEGIN
+
+  ContextList : TYPE = SEQUENCE OF IREF Context;
+
+  -- Let "cx_seq" be the ordered sequence of "Context"s associated
+  -- with the current "MergedContext"; "cx_seq" is initially empty.
+  -- 
+  -- The semantics of the operations inherited from "Context" are
+  -- complicated for the case of a "MergedContext" by the requirement
+  -- that names may be compound pathnames:
+  -- 
+  -- The "Get" and "Remove" operations are invoked on each
+  -- context in turn in "cx_seq" which contains a binding of the first
+  -- component of the path name supplied with the invocation. If a
+  -- sub-invocation raises "Context.NotFound", this is trapped and the
+  -- next context is searched, provided the "prune_after" flag was not
+  -- set for this context. If a sub-invocation raises any other
+  -- exception it is propagated.
+  -- 
+  -- The "Add" operation is invoked on each context in turn in "cx_seq"
+  -- which contains a binding of the first component of the path name
+  -- supplied with the invocation, unless the name is a simple
+  -- arc-name, in which case it is bound in the first element of
+  -- "cx_seq". Exceptions are handled as for "Get" and "Remove".
+
+  -- "Context"s are added to and removed from "cx_seq" with the
+  -- following procedures:
+
+  Position : TYPE = { Before, After };
+
+  AddContext : PROC    [ c   : IREF Context,
+                         pos : Position,
+                         mask_after : BOOLEAN,
+                         c1  : IREF Context  ]
+               RETURNS []
+               RAISES Context.Exists, Context.NotContext;
+
+  -- If "c" is not in "cx_seq" and "c1" is, insert "c" in "cx_seq" before
+  -- or after "c1", according to "pos".  If "c1" is "NULL", insert
+  -- "c" before the head or after the tail of "cx_seq", according to
+  -- "pos".
+  -- 
+  -- If "c" is already in "cx_seq", raise the exception "Context.Exists".
+  -- If "c1 != NULL" is not in "cx_seq", raise the exception
+  -- "Context.NotContext".  If "mask_after" is True, then any
+  -- first-level subcontexts bound in this context mask first-level
+  -- subcontexts with the same name bound in contexts later in
+  -- "cx_seq", rather than selectively overriding bindings in later
+  -- contexts.
+
+  DeleteContext : PROC [ c: IREF Context ] RETURNS []
+                    RAISES Context.NotContext;
+    -- If "c" is in "cx_seq", remove it; otherwise raise "Context.NotContext".
+
+  ListContexts : PROC [ ] RETURNS [ l : ContextList ];
+    -- Return a list of the contexts underlying this context, in order
+    -- front to back.
+
+END.
+

@@ -1,0 +1,32 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      ATM.if
+--
+-- Description:
+--
+--      Datatypes for ATM connection setup
+--
+-- ID : $Id: ATM.if 1.1 Thu, 18 Feb 1999 15:09:21 +0000 dr10009 $
+-- 
+-- \chapter{Networks}
+
+ATM : LOCAL INTERFACE =
+BEGIN
+
+  VCI : TYPE = SHORT CARDINAL;		 -- 16 bits
+
+  VPI : TYPE = SHORT CARDINAL;
+
+  BadVCI   : EXCEPTION [ vpi: VPI; vci: VCI ];
+  VCIInUse : EXCEPTION [ vpi: VPI; vci: VCI ];
+
+
+END.

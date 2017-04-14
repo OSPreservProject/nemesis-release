@@ -1,0 +1,35 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      HashMod
+-- 
+-- DESCRIPTION:
+--
+--      Returns instances of hash functions
+-- 
+-- ID : $Id: HashMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Hash functions}
+--
+
+-- One-way hash functions are useful in a number of situations.
+-- This interface allows instances of the Hash interface to be
+-- created.
+
+HashMod : LOCAL INTERFACE =
+NEEDS Hash;
+BEGIN
+
+  New : PROC [ ] RETURNS [ hash : IREF Hash ];
+
+  GetLength : PROC [ ] RETURNS [ length : CARDINAL ];
+   -- find out how long a hash produced by this function will be
+
+END.

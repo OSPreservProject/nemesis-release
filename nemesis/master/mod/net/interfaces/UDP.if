@@ -1,0 +1,59 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1996, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      UDP.if
+-- 
+-- DESCRIPTION:
+--
+--      Encapsulates packets in UDP datagrams
+-- 
+-- ID : $Id: UDP.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+-- 
+-- \chapter{Networks}
+-- \section{Protocols}
+--
+
+UDP: LOCAL INTERFACE =
+EXTENDS Protocol;
+NEEDS FlowMan;
+BEGIN
+	-- All the standard "GetPkt"/"PutPkt" etc methods from
+	-- "Protocol.if", plus the following:
+
+	-- Set the UDP port packets are sent to. "port" is in network
+	-- byte order.
+	SetTXPort: PROC [port: SHORT CARDINAL] RETURNS [];
+
+	-- Set the destination of all future transmitted packets
+	-- (including the IP address, not just the port number).
+	Retarget: PROC [ rsap : FlowMan.SAP ] RETURNS []
+		RAISES FlowMan.NoRoute;
+
+	-- Returns where the last packet received came from.  This is
+	-- IP address 0.0.0.0 port 0 if no packets have been received
+	-- yet.  This function only returns a valid IP address if it
+	-- is running over an IP protocol, in which case "IPvalid"
+	-- will be "True".
+	GetLastPeer: PROC [ OUT rsap : FlowMan.SAP ]
+		RETURNS [ IPvalid : BOOLEAN ];
+
+	-- Returns the flow id associated with this stack, allowing
+	-- direct access to the binding to the device driver.  This
+	-- might include changing the QoS associated with the flow by
+	-- calling "FlowMan.AdjustQoS()".
+	GetFlow: PROC [ ] RETURNS [ flow: FlowMan.Flow ];
+
+	-- Get the connection id for this data stream.  This allows
+	-- the packet filters to be reconfigured dynamically, e.g. to
+	-- restrict received packets to be from a single peer by
+	-- calling "FlowMan.ReAttach()".
+	GetConnID: PROC [ ] RETURNS [ cid : FlowMan.ConnID ];
+
+END.

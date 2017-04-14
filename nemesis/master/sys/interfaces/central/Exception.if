@@ -1,0 +1,52 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Exception
+-- 
+-- DESCRIPTION:
+--
+--      Representation of a Middl exception
+-- 
+-- ID : $Id: Exception.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Runtime Type System}
+-- 
+-- 
+
+-- The "TypeSystem" represents each exception declared within a
+-- \MIDDL\ interface type by an instance of the "Exception" interface.
+
+Exception : LOCAL INTERFACE =
+  EXTENDS Context;
+  NEEDS Heap;
+  NEEDS Interface;
+  NEEDS Type;
+BEGIN
+  
+  -- The procedures inherited from "Context" map the names of each of
+  -- the exception parameters to a "Type.Any" for the type code of the
+  -- parameter. The sequence returned by the "List" method contains
+  -- the parameters in the order in which they were declared.
+
+  -- An operation is provided to return other information about an
+  -- exception - the name, interface, and number of parameters: 
+
+  Info : PROC    []
+         RETURNS [ name : STRING,
+                   i    : IREF Interface,
+                   n    : CARDINAL        ];
+
+
+  -- Finally, a data type is defined for the list of exceptions
+  -- returned by other interfaces.
+
+  List : TYPE = SEQUENCE OF IREF Exception;  
+
+END.

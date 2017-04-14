@@ -1,0 +1,1 @@
+../../../../tools/source/master/mk/hp700_hpux_A.09.05.mk

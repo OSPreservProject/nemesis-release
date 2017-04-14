@@ -1,0 +1,95 @@
+/*
+ * FILE		:	viper.poly
+ * AUTHOR	:	Ralph Becket
+ * DATE		:	Sun Apr 25 18:05:18 BST 1993
+
+ * Definition of the viper spacecraft polyhedron.
+ */
+
+
+
+#ifndef __viper_poly__
+#define __cobre_poly__
+
+
+
+#define S	10
+#define T	40
+#define U	60
+#define V	180
+#define W	200
+
+
+
+const
+vertex		viper_v[] = {
+			      { 0, 0,-W},	/* Main body */
+			      {-V, 0, W},
+			      { 0,-U, W},
+			      { V, 0, W},
+			      { 0, U, W},
+			      {-V+T,  -S,   W}, /* Engine 1 */
+			      {-V+T,   S,   W},
+			      {  -S, U-T,   W},
+			      {  -S,-U+T,   W},
+			      { V-T,   S,   W}, /* Engine 2 */
+			      { V-T,  -S,   W},
+			      {   S,-U+T,   W},
+			      {   S, U-T,   W},
+			      {-V, 0, W},	/* Weapon 1 */
+			      {-V, 0, 0},
+			      { V, 0, W},	/* Weapon 2 */
+			      { V, 0, 0},
+			    };
+
+const
+vset		viper_vs = {17, viper_v};
+
+const
+unsigned	viper_f_p0[] = { 4, 1, 0 };	/* Main body */
+const
+unsigned	viper_f_p1[] = { 3, 4, 0 };
+const
+unsigned	viper_f_p2[] = { 1, 2, 0 };
+const
+unsigned	viper_f_p3[] = { 2, 3, 0 };
+const
+unsigned	viper_f_p4[] = { 4, 3, 2, 1 };
+const
+unsigned	viper_f_p5[] = { 5, 6, 7, 8 };	/* Engine 1 */
+const
+unsigned	viper_f_p6[] = { 9,10,11,12 };	/* Engine 2 */
+const
+unsigned	viper_f_p7[] = {13,14 };	/* Weapon 1 */
+const
+unsigned	viper_f_p8[] = {15,16 };	/* Weapon 2 */
+
+const
+face		viper_f[] = {
+			      { 3, viper_f_p0 },
+			      { 3, viper_f_p1 },
+			      { 3, viper_f_p2 },
+			      { 3, viper_f_p3 },
+			      { 4, viper_f_p4 },
+			      { 4, viper_f_p5 },
+			      { 4, viper_f_p6 },
+			      { 2, viper_f_p7 },
+			      { 2, viper_f_p8 }
+			    };
+
+const
+fset		viper_fs = { 9, viper_f };
+
+const
+polyhedron	viper_poly = { &viper_vs, &viper_fs };
+
+
+
+#undef T
+#undef U
+#undef V
+#undef W
+
+
+
+#endif

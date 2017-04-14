@@ -1,0 +1,23 @@
+
+This floppy should contain a file called "nemesis", which should be a
+zimage or bzimage file from boot/images/intel in the bootloader build
+tree.
+
+The image takes three kernel command line options:
+
+rootd=
+  specify the disk on which Nemesis is installed, eg. hda or hdb
+
+rootp=
+  specify the partition on which Nemesis is installed. Allowable values
+  are 0--3, corresponding to the four primary partitions.
+
+dir=
+  specify the directory in which Nemesis is installed
+
+Example:
+
+nemesis rootd=hda rootp=2 dir=boot/nemesis
+
+...indicates that Nemesis is installed in /boot/nemesis on /dev/hda3
+

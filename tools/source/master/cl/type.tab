@@ -1,0 +1,66 @@
+/* CLUless compiler front end
+ ***********************************************************************
+ * Copyright 1997 University of Cambridge Computer Laboratory          *
+ * All Rights Reserved                                                 *
+ * Authors: Dickon Reed (Dickon.Reed@cl.cam.ac.uk)                     *
+ *          Richard Mortier (rmm1002@cam.ac.uk)                        *
+ ***********************************************************************/ 
+/* CLUless
+ *
+ * type.tab; use with "gentables.py" to generate type tables
+ *
+ * Dickon Reed, 1996
+ * note that there are two implicit orderings here
+ *   1. all types from start to long_real are in the promotion order
+ *   2. all types up to method are considered small
+ * Richard Mortier, 1997
+ *
+ * $Id: type.tab 1.1 Thu, 18 Feb 1999 14:20:06 +0000 dr10009 $
+ *
+ * $Log: type.tab,v $
+ * Revision 1.1  1997/06/25 17:07:48  dr10009
+ * Initial revision
+ *
+ * Revision 2.2  1997/04/12 13:17:10  rmm1002
+ * Removed illegal types ADDRESS and WORD (only allowed to be DANGEROUS)
+ *
+ * Revision 2.1  1997/04/04 15:36:03  rmm1002
+ * Mass check-in; now have vaguely working compiler, makes on P5 & Alpha
+ *
+ * Revision 1.11  1997/02/10 19:43:24  rmm1002
+ * *** empty log message ***
+ *
+ * Revision 1.10  1997/02/04 16:49:06  rmm1002
+ * Finished first look and layout fixup
+ *
+ * Revision 1.1  1997/02/03 16:39:49  rmm1002
+ * Initial revision
+ */
+
+#BEGIN#
+type,3
+boolean,b
+short_cardinal,sc
+cardinal,c
+long_cardinal,lc
+short_integer,si
+integer,i
+long_integer,li
+real,r
+long_real,lr
+string,s
+octet,o
+char,ch
+dangerous_word,dw
+dangerous_address,da
+enum,e,n_list,list
+ref,r,n_type,type
+iref,ir,n_id,id
+set,set,n_type,type
+method,m,n_list,args,n_list,rets,n_cptr,intf
+array,ar,n_type,type,n_expr,size
+bitarray,bar,n_expr,size
+sequence,seq,n_type,type
+record,rec,n_list,list
+choice,ch,n_type,type,n_list,list
+tuple,tup,n_list,list

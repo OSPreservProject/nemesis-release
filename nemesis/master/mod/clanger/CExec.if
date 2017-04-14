@@ -1,0 +1,53 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      CExec.if
+--
+-- DESCRIPTION:
+--
+--	Clanger Execute wrapper
+--
+-- ID : $Id: CExec.if 1.2 Fri, 21 May 1999 18:19:54 +0100 dr10009 $
+-- 
+-- \chapter{Loader}
+-- 
+-- 
+
+CExec : LOCAL INTERFACE = 
+NEEDS Context;
+NEEDS Rd;
+BEGIN
+
+  -- Make an attempt to load a module named "name"
+
+  Load : PROC   [ name : STRING ] RETURNS [];
+
+  -- Make an attempt to run a program named "name" with root context
+  -- "context"
+
+  Run : PROC [ name : STRING, context: IREF Context ] RETURNS [];
+
+  -- Open a reader on file named "name" 
+
+  Open : PROC [ name : STRING ] RETURNS [ rd : IREF Rd ];
+
+  -- Kill it. Kill it Now.
+
+  Destroy : PROC [ ] RETURNS [];
+
+  -- Make an attempt to run a program named "name" with root context
+  -- "context" returning only when the main thread is complete
+
+  RunWait : PROC [ name : STRING, context : IREF Context ] RETURNS [];
+
+END.
+
+
+

@@ -1,0 +1,64 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      USDCallback
+-- 
+-- DESCRIPTION:
+--
+--      User Safe Disk callbacks
+-- 
+-- ID : $Id: USDCallback.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+-- 
+-- \chapter{Devices}
+-- \section{Disks}
+
+--     When a privileged application connects to a USD it must provide
+-- a USDCallback closure. This closure runs in the USD and provides
+-- access control and request monitoring. It \emph{may} just conduct
+-- IDC with the privileged application that provided it, though
+-- providing a cache of recent translations would be a good idea.
+
+USDCallback : LOCAL INTERFACE = 
+  NEEDS USD;
+  NEEDS FileIO;
+BEGIN
+
+  Initialise : PROC [ ]
+               RETURNS [ ];
+    -- Initialises a USDCallback. Must be called before other operations
+    -- are done upon the closure.
+
+  Dispose : PROC [ ]
+            RETURNS [ ];
+    -- Disposes of a USDCallback, should be called before freeing it.
+
+
+
+  Translate : PROC [ sid          : USD.StreamID,
+                     cid          : USD.ClientID,
+                     req          : FileIO.Request,
+OUT                  extent       : USD.Extent,
+OUT                  notification : CARDINAL ]
+              RETURNS [ allowed : BOOLEAN ];
+    -- Translates a request into an extent to access on the device to
+    -- fullfill this request. It returns whether or not the translation
+    -- was successful. ``notification'' is a number passed to the notify
+    -- method after the request completes.
+
+  Notify : PROC [ sid          : USD.StreamID,
+                  cid          : USD.ClientID,
+                  req          : FileIO.Request,
+                  extent       : USD.Extent,
+                  notification : CARDINAL,
+                  data         : ADDRESS ]
+              RETURNS [ ];
+    -- Is passed the data received from a disk request and the
+    -- notification number given to it by the translation.
+END.

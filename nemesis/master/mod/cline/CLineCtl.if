@@ -1,0 +1,35 @@
+-----------------------------------------------------------------------------
+-- (C) 1998                                                                --
+-- Rolf Neugebauer                                                         --
+-- Department of Computing Science - University of Glasgow                 --
+-----------------------------------------------------------------------------
+--
+--        File: CLineCtl.if
+--      Author: Rolf Neugebauer
+--     Changes: 
+--
+--        Date: 1998
+--
+-- Environment: Comandline edit
+-- Description: 
+--
+-----------------------------------------------------------------------------
+-- $Id: CLineCtl.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-----------------------------------------------------------------------------
+--
+-- \chapter{Miscellaneous Interfaces}
+--
+
+-- CLineCtl allows for controlling the behaviour of CLine. It can be
+-- understood as sort of terminal control interface. Currently it only
+-- allows echo on/off. But if someone wants to implement
+-- canonical/noncanicial modes etc ...
+-- Currently this is very  ad-hoc.
+
+
+CLineCtl : LOCAL INTERFACE =
+BEGIN
+  -- Switch local Echo on or off. Default is on.
+  Echo : PROC    [mode:BOOLEAN]
+         RETURNS [];
+END.

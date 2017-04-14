@@ -1,0 +1,102 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      FragPool.if
+-- 
+-- DESCRIPTION:
+--
+--      Delay the processing of an IP fragment until either it times
+--      out, or its final demux destination becomes known.
+-- 
+-- ID : $Id: FragPool.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+-- 
+-- \chapter{Networks}
+--
+
+-- A "FragPool" is used internally be the "Netif" module for the
+-- management of un-reassembled fragments.
+
+-- It does {\bf not} fully reassemble fragments.  It simply delays the
+-- processing of buffers which are unmatched fragments until a head
+-- fragment comes in.  It should be assisted by the packet filter
+-- module, which returns "DELAY" for all IP fragments.  The packet
+-- filter should also return a valid "PF.Handle" if the packet was a
+-- head fragment.
+
+-- It is the client's responsibility to correctly piece together the
+-- resultant datagram.  Note that if the client's reassembly times
+-- out, the client MUST send an ICMP Time Exceeded (Reassembly
+-- Timeout) to the originator of the packet (RFC1122).
+
+FragPool : LOCAL INTERFACE =
+NEEDS IO;
+NEEDS PF;
+BEGIN
+
+	frag : TYPE = RECORD [ nrecs : CARDINAL,
+                               recs  : REF IO.Rec,
+			       hdrsz : CARDINAL ];
+
+	fraglist : TYPE = SEQUENCE OF frag;
+
+	-- fragments are keyed on this:
+	key : TYPE = RECORD [ src_addr : CARDINAL,
+			      dst_addr : CARDINAL,
+			      id       : SHORT CARDINAL,
+			      proto    : OCTET ];
+
+
+	-- "PutPkt" is used to place a single fragment into the
+	-- fragment pool.  Its arrival time is noted, and if it is not
+	-- resolved by a later head fragment in a timely manner, the
+	-- fragment release function will be called with this fragment
+	-- as an argument. (The fragment release function is set when
+	-- an IREF for this interface is created).
+
+	-- If "rxhdl" is "FAIL" then the fragment is simply queued for
+	-- later processing, unless there is an active association
+	-- between the fragment's IP id and an "rxhdl".
+
+	-- If "rxhdl" is valid, then it sets up this association.  The
+	-- client delivery function is called for all queued
+	-- fragments.  Future "PutPkt" operations with the same IP id
+	-- will be delivered to "rxhdl".  The association is lost when
+	-- it times out, or if another head fragment with that IP id
+	-- is received.
+
+	PutPkt : PROC [ nrecs : CARDINAL;
+			recs : REF IO.Rec;
+			rxhdl : PF.Handle;
+			hdrsz : CARDINAL ]
+		 RETURNS [ ];
+
+
+	-- In order to transmit fragments, the pool has to keep track of the
+	-- key each IO channel is allowed to transmit.  An IO channel
+	-- can only have one key bound to it.
+
+	-- "TXFilt" examines the header described by "base" and "len"
+	-- in order to decide whether it is suitable to be transmitted
+	-- from an IO channel with "key" as its current key.  If the
+	-- packet is the head fragment, "key" is updated with the new
+	-- information, and "txok" is "True".  Otherwise if the packet
+	-- matches "key", txok" is "True".  Anything else is an
+	-- attempt to transmit a bogus fragment, and "txok" will be
+	-- "False".
+
+	-- Note that this means applications must transmit their head
+	-- fragments first.  Note also that if an application is using
+	-- muxed IO channels then fragments may not be interleaved. It
+	-- is an application's responsibility to ensure this.
+	TXFilt : PROC [ IN OUT key : key;
+                        base : ADDRESS;
+                        len  : CARDINAL ]
+		 RETURNS [ txok : BOOLEAN ];
+END.

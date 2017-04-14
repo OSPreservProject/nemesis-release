@@ -1,0 +1,31 @@
+{
+  'packages' : [
+     ('prcs', 'releasemisc:live.@', '/..'),
+     ('prcs', 'ccore:live.@', '/nemesis'),
+     ('prcs', 'cnet:live.@', '/nemesis'),
+     ('prcs', 'cws:live.@', '/nemesis'),
+     ('prcs', 'caudio:live.@', '/nemesis'),
+     ('prcs', 'cfs:live.@', '/nemesis'),
+     ('prcs', 'catm:live.@', '/nemesis'),
+     ('prcs', 'tgtx86:live.@', '/nemesis'),
+     ('prcs', 'nemtools:live.@', '/tools/source'),
+     ('prcs', 'dpatch:live.@', '/dpatch'), 
+   ],
+  'basepath' : '/anfs/scratch/hornet/dr10009/autobuild/cuttingedge',
+  'actions' : """
+make docs
+make README.html
+make image
+make bootloader
+echo "warning; not testing the image"
+cd ..
+rm -rf release
+mv master release
+(cd release && make dist)
+cp quickstart.tar.gz /usr/groups/pegasus/nemesis/quickstart.tar.gz
+echo "lock and load"
+""",
+  'prcsrepo' : '/local/scratch/dr10009/nemesis/PRCS',
+  'prcspath' : '/homes/dr10009/bin/ix86_linux/prcs',
+  'postfix' : 'master'
+}

@@ -1,0 +1,8 @@
+
+Local : LOCAL INTERFACE = 
+  NEEDS Beer; --  Shouldn't cause middlc to complain: Beer is LOCAL
+  NEEDS SymbolTypes;
+BEGIN
+  Random : PROC [ r: Beer.Ref ] RETURNS [];
+
+END.

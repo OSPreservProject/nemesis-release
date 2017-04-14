@@ -1,0 +1,31 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      CRendDisplayMod
+-- 
+-- DESCRIPTION:
+--
+--      Client Rendering Display generator. Stateless.
+-- 
+-- \chapter{Window System}
+-- \section{Client Rendering}
+
+-- CRendDisplayMod is a stateless module used to construct
+-- CRendDisplay objects for particular displays.
+
+CRendDisplayMod : LOCAL INTERFACE = 
+NEEDS CRendDisplay;
+BEGIN
+   -- Create a CRendDisplay object and associated connection to a
+   -- windowing system. Usually, name should be the empty string
+   -- requesting a connection to the local display.
+
+   OpenDisplay : PROC [ name : STRING ] RETURNS [ display : IREF CRendDisplay ];
+END.

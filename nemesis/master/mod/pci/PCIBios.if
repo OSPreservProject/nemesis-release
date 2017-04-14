@@ -1,0 +1,99 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1996, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      PCI bus and device management functions.
+-- 
+-- DESCRIPTION:
+--
+--      Provides methods for locating and configuring PCI devices.
+-- 
+-- FILE :	PCIBios.if
+-- CREATED :	Tue Sep 17 1996
+-- AUTHOR :	Paul Barham (Paul.Barham@cl.cam.ac.uk)
+-- ID : 	$Id: PCIBios.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Devices}
+-- \section{PCI bus}
+
+-- <Introductory description>
+
+PCIBios : LOCAL INTERFACE =
+
+BEGIN
+
+  VendorID : TYPE = SHORT CARDINAL;
+  DeviceID : TYPE = SHORT CARDINAL;
+  Class    : TYPE = CARDINAL;
+  DevFn    : TYPE = OCTET;
+  Bus	   : TYPE = OCTET;
+
+  Error : TYPE = { 
+    OK,
+    FuncNotSupported,
+    UNKNOWN1,
+    BadVendorID,
+    UNKNOWN2,
+    UNKNOWN3,
+    DeviceNotFound,
+    BadRegisterNumber,
+    SetFailed,
+    BufferTooSmall 
+  };	   
+  
+  FindClass : PROC [ class : Class, 
+		     index : CARDINAL ]
+	      RETURNS [ rc : Error,
+		       bus : Bus,
+		     devfn : DevFn ];
+
+  FindDevice : PROC [ vendor : VendorID,
+	              device : DeviceID,
+		      index  : CARDINAL ]
+	       RETURNS [  rc : Error,
+		         bus : Bus,
+		       devfn : DevFn ];
+
+  ReadConfigByte : PROC [   bus : Bus, 
+	                  devfn : DevFn,			
+		          where : OCTET ]
+	           RETURNS [ rc : Error,
+	                  value : OCTET ];
+			
+  ReadConfigWord : PROC [   bus : Bus, 
+	                  devfn : DevFn,			
+		          where : OCTET ]
+	           RETURNS [ rc : Error,
+                          value : SHORT CARDINAL ];
+
+  ReadConfigDWord : PROC [   bus : Bus, 
+	                   devfn : DevFn,			
+		           where : OCTET ]
+	            RETURNS [ rc : Error,
+			   value : CARDINAL ];
+
+  WriteConfigByte : PROC [   bus : Bus, 
+	                   devfn : DevFn,			
+		           where : OCTET,
+			   value : OCTET ]
+		    RETURNS [ rc : Error ];
+
+  WriteConfigWord : PROC [   bus : Bus, 
+	                   devfn : DevFn,			
+		           where : OCTET,
+			   value : SHORT CARDINAL ]
+		    RETURNS [ rc : Error ];
+
+  WriteConfigDWord : PROC [   bus : Bus, 
+	                    devfn : DevFn,			
+		            where : OCTET,
+			    value : CARDINAL ]
+		     RETURNS [ rc : Error ];
+
+END.

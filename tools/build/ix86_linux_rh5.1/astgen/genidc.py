@@ -1,0 +1,1 @@
+../../../../tools/source/master/astgen/genidc.py

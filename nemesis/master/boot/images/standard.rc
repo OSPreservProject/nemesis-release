@@ -1,0 +1,66 @@
+# This file is included by init.rc as soon as it has its hands on an
+# initial filesystem. The network may or may not be configured, depending
+# on whether the initial filesystem is NFS.
+
+pvs>out$PutStr["standard.rc started\n"]
+
+#pvs>out$PutStr["Mounting dev>hda partition 2 as local\n"]
+#mounts>local=modules>ext2fs$SimpleMount[dev>hda,2]
+
+pvs>out$PutStr["Loading modules: "]
+pvs>out$PutStr["Region "]
+l$Load["Region"]
+pvs>out$PutStr["SWM "]
+l$Load["SWM"]
+pvs>out$PutStr["FBBlitMod "]
+l$Load["FBBlitMod"]
+pvs>out$PutStr["wsterm "]
+l$Load["wsterm"]
+pvs>out$PutStr["ws "]
+l$Load["ws"]
+pvs>out$PutStr["cline "]
+l$Load["cline"]
+pvs>out$PutStr["ClientRender "]
+l$Load["ClientRender"]
+pvs>out$PutStr["ps2 "]
+l$Load["ps2"]
+pvs>out$PutStr["XOpen C+ "]
+l$Load["XOpenCPlus"]
+pvs>out$PutStr["XOpen FD "]
+l$Load["XOpenFD"]
+pvs>out$PutStr["XOpen Files "]
+l$Load["XOpenFiles"]
+pvs>out$PutStr["XOpen Signals "]
+l$Load["XOpenSignalsMod"]
+pvs>out$PutStr["XOPen Stdio "]
+l$Load["XOpenStdio"]
+pvs>out$PutStr["XOpen Term "]
+l$Load["XOpenTermMod"]
+pvs>out$PutStr["XOpen Time "]
+l$Load["XOpenTime"]
+pvs>out$PutStr["WTime "]
+l$Load["WTime"]
+pvs>out$PutStr["serialmouse "]
+l$Load["serialmouse"]
+pvs>out$PutStr["\n"]
+
+# Start the serial driver for the second port
+dev>serial1=modules>SerialMod$New["serial1",0x2f8,3,false]
+# Run the serial mouse driver
+modules>SerialMouse$Apply[]
+
+# XXX hack: put the default directory in the namespace
+pvs>out$PutStr["Doing home directory hack\n"]
+
+RootC>initfs = nfs
+
+# Fire up a nash (which will create a _new_ instance of Clanger, and
+# read profile.nash from the current directory)
+n = modules>NashMod$New[]
+
+# Source autoexec.nash, which will fire up nashes that the user will
+# interact with.
+n$ExecuteString["source autoexec.nash"]
+
+# When we fall off the end here, we return to init.rc. It will probably
+# open dev>serial0>rd and wait for the user.

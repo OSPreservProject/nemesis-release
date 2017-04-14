@@ -1,0 +1,30 @@
+-----------------------------------------------------------------------------
+-----------------------------------------------------------------------------
+-- 
+-- INTERFACE:
+-- 
+-- 	RdRedirMod.if
+-- 
+-- DESCRIPTION:
+-- 
+-- 	SRC Readrs
+-- 
+-- ID : $Id: RdRedirMod.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+--
+-- \chapter{Readers and Writers}
+--
+
+-- The "RdRedirMod" allows the creation of redirecting readers.
+
+RdRedirMod : LOCAL INTERFACE = 
+  NEEDS RdRedir;
+  NEEDS Rd;
+  NEEDS Heap;
+BEGIN
+
+  -- Create a new "RdRedir", with output initially going to "rd".
+  New : PROC [ rd : IREF Rd ]
+     RETURNS [ newrd: IREF RdRedir ]
+      RAISES Heap.NoMemory;
+
+END.

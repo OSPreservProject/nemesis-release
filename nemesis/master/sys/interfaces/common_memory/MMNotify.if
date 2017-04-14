@@ -1,0 +1,34 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      MMNotify
+-- 
+-- DESCRIPTION:
+--
+--      A MMNotify is type of ChannelNotify which deals with
+--      memory management events.
+--      
+--
+-- \chapter{Memory}
+-- \section{Paging and Fault Handling}
+-- 
+-- A "MMNotify" is \ldots
+
+MMNotify : LOCAL INTERFACE =
+  EXTENDS ChannelNotify;
+  NEEDS MMEntry;
+BEGIN
+
+
+  SetMMEntry: PROC    [ mme : IREF MMEntry ] 
+              RETURNS [ ];
+
+
+END.

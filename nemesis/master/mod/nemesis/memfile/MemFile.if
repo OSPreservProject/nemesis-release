@@ -1,0 +1,42 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1995, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      MemFile.if
+-- 
+-- DESCRIPTION:
+--
+--      Memory File friend interface.
+-- 
+-- ID : $Id: MemFile.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Files}
+-- 
+
+-- A "MemFile" is a "File" stored in main memory.  The interface adds
+-- management operations to "File".  Creation is via the "MemFileMod"
+-- interface.
+
+MemFile : LOCAL INTERFACE =
+  EXTENDS File;
+  NEEDS Heap;
+BEGIN
+
+  Lock   : PROC [] RETURNS [];
+  Unlock : PROC [] RETURNS [];
+
+  IsDirty   : PROC [] RETURNS [ dirty: BOOLEAN ];
+  MarkClean : PROC [] RETURNS [];
+
+  LOpenRd  : PROC [ h: IREF Heap ] RETURNS [ rd: IREF Rd ]
+               RAISES Heap.NoMemory;
+  LOpenWr  : PROC [ h: IREF Heap ] RETURNS [ wr: IREF Wr ]
+               RAISES Heap.NoMemory;
+
+END.

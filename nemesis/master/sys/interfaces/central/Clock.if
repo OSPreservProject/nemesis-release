@@ -1,0 +1,58 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1993, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Real-time clock driver interface
+-- 
+-- DESCRIPTION:
+--
+--      Allows setting and reading real time/date.
+-- 
+-- ID : $Id: Clock.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+
+-- The "Clock" interface presents a basic, low-level interface to a
+-- real-time clock, such as that found on the EB64 VL82C113 SCAMP chip:
+
+Clock : INTERFACE = 
+
+BEGIN
+
+  -- Enumeration types are provided for day and month:
+
+  Day : TYPE = { Monday, Tuesday, Wednesday, Thursday,
+      	      	 Friday, Saturday, Sunday }; 
+  Month : TYPE = { January, February, March, April, 
+      	      	   May, June, July, August,
+      	      	   September, October, November, December };
+
+  -- Times can fit into a a packed quadword:
+
+  T : TYPE = RECORD [
+    seconds : OCTET,
+    minutes : OCTET,
+    hours   : OCTET,
+    date    : OCTET,
+    month   : OCTET,
+    year    : OCTET
+  ];
+
+  -- Operations are provided to read and write the clock value.
+
+  Get : PROC    [ OUT t : T ] 
+        RETURNS [ d : Day, m : Month ];
+
+    -- Returns the day, month and a time record
+
+  Set : PROC [ t : T ] RETURNS [];
+
+    -- Sets the current time value.
+
+END.
+

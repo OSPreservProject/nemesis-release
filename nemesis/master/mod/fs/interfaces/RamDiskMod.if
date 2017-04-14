@@ -1,0 +1,30 @@
+-- RamDiskMod.if
+-- Matt Holgate - mjh44
+-- $Id: RamDiskMod.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+
+-- The "RamDiskMod" interface allows the creation of "RamDisk"
+-- interfaces.
+
+RamDiskMod: LOCAL INTERFACE =
+  NEEDS RamDisk;
+  NEEDS Heap;
+  NEEDS Rd;
+BEGIN
+
+  New: PROC [ h: IREF Heap,
+	      bs: CARDINAL,
+	      size: CARDINAL ]
+       RETURNS [ disk: IREF RamDisk ];
+    -- Allocates memory for a new ram disk with 'size' blocks on heap
+    -- 'h' and blocksize 'bs' bytes. A "RamDisk" interface through which
+    -- to access it is returned.
+
+  NewInit: PROC [ h: IREF Heap,
+ 	          bs: CARDINAL,
+	          rd: IREF Rd ]
+	   RETURNS [ disk: IREF RamDisk ];
+    -- Allocates memory for a new ram disk and initialises it with the
+    -- contents of the reader 'rd'. The number of blocks required
+    -- is calculated automatically using the blocksize.
+
+END.

@@ -1,0 +1,884 @@
+%
+%       the release manual
+%
+
+\documentclass[a4paper]{article}
+\usepackage{a4wide}%      from ctan macros/latex/contrib/other/misc/a4wide.sty
+\usepackage{url}%         from ctan macros/latex/contrib/other/misc/url.sty
+\usepackage{epsfig}%      part of the latex graphics packge
+\usepackage{html}
+
+% see ftp://ftp.tex.ac.uk/tex-archive/CTAN.sites for ctan sources
+
+%
+% process checkin information; this stupid performance allows us to
+% define a macro whose argument specification allows it gobble rcs
+% information, without actually being hacked by rcs itself
+%
+\def\dollarcharacter{$}
+\edef\defrcsid{%
+  \def\noexpand\rcsid\dollarcharacter Id: ##1 ##2 ##3/##4/##5 ##6 ##7 ##8${%
+    \gdef\noexpand\checkindate{##3/##4/##5}%
+    \gdef\noexpand\checkinauthor{##7}%
+    \gdef\noexpand\checkinversion{##2}%
+  }
+}
+\defrcsid
+
+% this is the line that gets hacked by rcs
+
+\rcsid $Id: release-notes.tex 1.3 Fri, 14 May 1999 16:18:30 +0100 dr10009 $
+
+%
+% distinguish between various uses of url package commands, etc.
+%
+\newcommand{\cmd}[1]{\texttt{#1}}
+%\newcommand{\file}  {\begingroup \urlstyle{tt}\Url}
+%\newcommand{\dir}   {\begingroup \urlstyle{tt}\Url}
+%\newcommand{\script}{\begingroup \urlstyle{tt}\Url}
+\newcommand{\file}[1]{\url{#1}}
+\newcommand{\dir}[1]{\url{#1}}
+\newcommand{\script}[1]{\url{#1}}
+
+%
+% This allows large portions of space to be used by floats
+%
+\renewcommand{\topfraction}{.9}
+\renewcommand{\bottomfraction}{.9}
+\renewcommand{\textfraction}{.1}
+\renewcommand{\floatpagefraction}{.9}
+
+\title{Nemesis Release Notes\\
+  6th edition\thanks{Revision date 1999/03/12, last checkin
+    r\checkinversion, \checkindate\ by \checkinauthor}}
+\date{January 1999\thanks{Processed \today}}
+\author{Dickon Reed}
+\def\shellcom#1{ \begin{quote} {\footnotesize \$ #1 } \end{quote}}
+
+\begin{document}
+
+
+
+\maketitle
+\tableofcontents
+
+\begin{rawhtml}
+<BODY BGCOLOR="#FFFFFF">
+\end{rawhtml}
+%% valid
+Welcome to Nemesis. This document describes the licensing of Nemesis
+and the procedures for obtaining it, working with it and contributing
+back to it that have been developed for the Nemesis release.
+
+\begin{htmlonly}
+\begin{rawhtml}
+<a href="http://www.cl.cam.ac.uk/Research/SRG/netos/nemesis/"> Look
+at the Nemesis home page for news, new versions and
+documentation. </a>
+\end{rawhtml}
+\end{htmlonly}
+
+\section{The Nemesis Free License}
+
+The intent of this document is to state the conditions under which a
+Package may be copied, such that the Copyright Holder maintains some
+semblance of artistic control over the development of the package,
+while giving the users of the package the right to use and distribute
+the Package in a more-or-less customary fashion, plus the right to make
+reasonable modifications.
+
+\subsubsection{Definitions}
+
+\begin{description}
+\item[``Package''] refers to the collection of files distributed by the
+        Copyright Holder, and derivatives of that collection of files
+        created through textual modification.
+
+\item[``Standard Version''] refers to such a Package if it has not been
+        modified, or has been modified in accordance with the wishes
+        of the Copyright Holder as specified below.
+
+\item[``Copyright Holder''] is whoever is named in the copyright or
+        copyrights for the package.
+
+\item[``You''] is you, if you're thinking about copying or distributing
+        this Package.
+
+\item[``Reasonable copying fee''] is whatever you can justify on the
+        basis of media cost, duplication charges, time of people involved,
+        and so on.  (You will not be required to justify it to the
+        Copyright Holder, but only to the computing community at large
+        as a market that must bear the fee.)
+
+\item[``Freely Available''] means that no fee is charged for the item
+        itself, though there may be fees involved in handling the item.
+        It also means that recipients of the item may redistribute it
+        under the same conditions they received it.
+\end{description}
+
+\begin{enumerate}
+\item You may make and give away verbatim copies of the source form of the
+Standard Version of this Package without restriction, provided that you
+duplicate all of the original copyright notices and associated disclaimers.
+
+\item You may apply bug fixes, portability fixes and other modifications
+derived from the Public Domain or from the Copyright Holder.  A Package
+modified in such a way shall still be considered the Standard Version.
+
+\item You may otherwise modify your copy of this Package in any way, provided
+that you insert a prominent notice in each changed file stating how and
+when you changed that file, and provided that you do at least ONE of the
+following:
+\begin{enumerate} %[a)]
+    \item place your modifications in the Public Domain or otherwise make them
+    Freely Available, such as by posting said modifications to Usenet or
+    an equivalent medium, or placing the modifications on a major archive
+    site such as uunet.uu.net, or by allowing the Copyright Holder to include
+    your modifications in the Standard Version of the Package.
+
+% this doesnt require them to send the modifications to us perhaps
+% in line 3 "and"
+
+    \item use the modified Package only within your corporation 
+      or organization.
+ 
+    \item rename any non-standard executables so the names do not conflict
+    with standard executables, which must also be provided, and provide
+    a separate manual page for each non-standard executable that clearly
+    documents how it differs from the Standard Version.
+
+% not clear that "executables" aplies
+
+    \item make other distribution arrangements with the Copyright Holder.
+\end{enumerate}
+
+\item You may distribute the programs of this Package in object code or
+executable form, provided that you do at least ONE of the following:
+\begin{enumerate} %[a)]
+    \item distribute a Standard Version of the executables and library files,
+    together with instructions (in the manual page or equivalent) on where
+    to get the Standard Version.
+
+    \item accompany the distribution with the machine-readable source of
+    the Package with your modifications.
+
+    \item give non-standard executables non-standard names, and clearly
+    document the differences in manual pages (or equivalent), together
+    with instructions on where to get the Standard Version.
+
+    \item make other distribution arrangements with the Copyright Holder.
+\end{enumerate}
+
+\item You may charge a reasonable copying fee for any distribution of this
+Package.  You may charge any fee you choose for support of this
+Package.  You may not charge a fee for this Package itself.  However,
+you may distribute this Package in aggregate with other (possibly
+commercial) programs as part of a larger (possibly commercial) software
+distribution provided that you do not advertise this Package as a
+product of your own.
+
+% This para is PERL specific:
+
+%\perl{You may embed this Package's interpreter within
+%an executable of yours (by linking); this shall be construed as a mere
+%form of aggregation, provided that the complete Standard Version of the
+%interpreter is so embedded.}
+
+% This para is PERL specific: maybe we should have something about
+% people writing applications on top (i.e. linked with our libraries)
+
+%\perl{\item \label{perl_input} The source files supplied as input 
+%to or produced as
+%output from the programs of this Package do not automatically fall
+%under the copyright of this Package, but belong to whoever generated
+%them, and may be sold commercially, and may be aggregated with this
+%Package.  If such scripts or library files are aggregated with this
+%Package via the so-called ``undump'' or ``unexec'' methods of producing a
+%binary executable image, then distribution of such an image shall
+%neither be construed as a distribution of this Package nor shall it
+%fall under the restrictions of Paragraphs 3 and 4, provided that you do
+%not represent such an executable image as a Standard Version of this
+%Package.}
+
+% Perl specific again:
+
+%\perl{\item C subroutines (or comparably compiled subroutines in other
+%languages) supplied by you and linked into this Package in order to
+%emulate functions defined by this
+%Package shall not be considered part of this Package, but are the
+%equivalent of input as in Paragraph~\ref{perl_input}.}
+
+% This para is in danger of giving us no rights at all on commercial
+% embedding!
+
+\item Aggregation of this Package with a commercial distribution is always
+permitted provided that the use of this Package is embedded; that is,
+when no overt attempt is made to make this Package's interfaces visible
+to the end user of the commercial distribution.  Such use shall not be
+construed as a distribution of this Package.
+
+\item The name of the Copyright Holder may not be used to endorse or promote
+products derived from this software without specific prior written permission.
+
+\item This package is provided ``as is'' and without any express or
+implied warranties, including, without limitation, the implied
+warranties of merchantibility and fitness for a particular purpose.
+
+\end{enumerate}
+
+\section{Overview}
+
+Nemesis is managed as a set of packages. Each package consists of a
+set of branches. Some branches of some packages are publicly
+available and some have more restricted availabilities for a variety
+of reasons. Each package, by convention, has a branch called live,
+where the main thrust of active development takes place. Other
+branches may exist as bug fixes to stable points in the live
+development, or when the direction a package is taking branches.
+
+Several versions of Nemesis are built daily and (if they compile!), then
+tarballs are made available. The most common of these is available as the
+quickstart tar ball; see the section below on Quickstart to see how to
+obtain and use it.
+
+We use a custom designed system called dpatch to make changes to
+Nemesis. See the section on Contributing your work back to us for
+details. We use PRCS as a back end for dpatch. You may wish to set
+yourself up with a Nemesis source code repository; this will make it
+possible for you to submit patches back to us easily, and will make it
+easier for you to upgrade to new versions of the Nemesis packages when
+you wish. Some sites may already have a Nemesis source code repository
+set up, and if so then you may be able to use it saving the time of
+setting up your own. See the instructions below on obtaining a source
+code repository.
+
+The standard, publicly available Nemesis packages are currently:
+
+\begin{description}
+\item[ccore] contains the Heart Of Nemesis; the low level code, IDC
+system, startup, build system and so on. You always have to have a
+version of this. 
+
+\item[tgtx86] contains x86 support. 
+
+\item[cnet] contains networking support. 
+
+\item[cws] contains windowing system support. 
+
+\item[catm] contains ATM support. 
+
+\item[caudio] contains audio support. 
+
+\item[dpatch] contains the source code management scripts we use for
+Nemesis.
+
+\item[nemtools] contains the new tools necessary to build Nemesis,
+such as fancy linkers and IDL compilers.
+
+\item[releasemisc] contains the skeleton of the quickstart tar ball.
+
+\end{description}
+
+The following packages may become available in the future:
+
+\begin{description}
+\item[tgtarm] contains ARM support. This package is not publically
+available yet, pending a copyright review.
+
+\item[tgtalpha] contains Alpha support. This package is not publically
+available yet, pending a copyright review.
+
+\item[snet] will contain extended networking support from SICS.
+
+\item[gnemx] will contain X11 support for the windowing system in cws
+from Glasgow..
+
+\item[gxopen] will contain X/Open support from Glasgow.
+
+\end{description}
+
+\section{Quickstart}
+
+We've put together a fast track mechanism for you to build and
+evaluate Nemesis. It just involves downloading one file, using tar to
+extract it and then building it. It includes everything you need to
+get started.
+
+\begin{enumerate}
+
+\item Download the quickstart tar ball:
+\begin{rawhtml}
+<a href="http://www.cl.cam.ac.uk/Research/SRG/netos/nemesis/quickstart.tar.gz">
+located here </a>
+\end{rawhtml}
+
+\item Extract the quickstart tar ball in to a scratch directory. If
+you want to use the bootfloppy mechanism (recommended for first-time
+users) then you should ensure that the scratch directory is in an ext2
+filesystem on a primary partition of an IDE disk. The quickstart tar
+ball contains many files. They are:
+
+\begin{description}
+\item[master/] which contains some READMEs (including a copy of this
+document in HTML), and a makefile and script to allow you to easily
+build things without becoming familiar with the details of our
+innovative build system.
+
+\item[master/nemesis/master] which contains the source code for
+Nemesis. You can edit it to modify Nemesis.
+
+\item[master/nemesis] which apart from the source code also contains
+logs of what has changed in the source code. Furthermore, if you type
+\cmd{make} in the top level directory, extra directories will
+appear which are called ``build trees''. They contain symbolic links
+to the source code directory \dir{master/nemesis/master} and also
+Nemesis binaries, as they are built. The convetion is that a build
+tree for a particular Nemesis target like intel will apppear in
+\dir{master/nemesis/build_intel}.
+
+\item[master/tools/source/master] contains the source code for the
+tools necessary to build nemesis.
+
+\item[master/tools/install] is where the installed copies of the
+Nemesis tools will go when you build them. Nemesis developers will
+normally have these tools on their binary path.
+
+\item[master/docs] contains source code for various Nemesis documents.
+
+\item[master/dpatch/master] contains source code for \cmd{dpatch},
+the source code management system developed for Nemesis. It isn't part
+of Nemesis and is written in python so it doesn't need to compile. You
+may like to copy \file{master/dpatch/master/ddiff.py} and
+\file{master/dpatch/master/dcheckin.py} on to your path.
+
+\item[master/misc] contains things that don't fit anywhere else. 
+
+\item[master/misc/scripts] contains a few scripts that you may 
+find  useful when working with Nemesis.
+
+\item[master/misc/syslinux] contains a compressed intel boot floppy,
+used to build Nemesis bootloaders.
+
+\item[master/misc/bootfloppy] is used during the creation of Intel
+Nemesis bootloaders.
+\end{description}
+
+\item Change in to that directory. If you are not running on a
+standard Linux system or do not wish to build an intel version of
+Nemesis, edit the start of the Makefile in the top level directory to
+change the options you want to build.
+
+\item Type \cmd{make} and take a break while the Nemesis tools and
+a Nemesis image are built for you.
+
+\item In the subdirectory:
+
+\begin{verbatim}
+nemesis/build_intel/links
+\end{verbatim}
+
+you should find a Nemesis image and some support files.
+
+\item Format a standard HD floppy and leave it in
+\file{/dev/fd0}. Type \cmd{make bootfloppy}; a build tree for the
+Nemesis bootloader will be created, and the bootloader will be
+installed on the floppy.
+
+\item The file \file{SYSLINUX.CFG} on the floppy contains a line
+which tells the bootloader how to find the
+\dir{master/nemesis/build_intel/links} directory. If you move your build
+tree, or want to use a new one, your should edit this file
+appropriately; instructions for this are in \file{help.txt} on the
+floppy.
+
+\item When the floppy is booted you will end up running the Nemesis
+bootloader. To boot the image generated when you typed \cmd{make},
+enter the command \cmd{boot}.
+
+\item If you wish to continue working with Nemesis, you should arrange
+to place the Nemesis tools on your path. They have been built as part
+of the above process for you. You need to do something like:
+
+\begin{verbatim}
+PATH=/local/scratch/dr10009/release/master/tools/install/ix86_linux_rh5.1/bin:$PATH
+export PATH
+\end{verbatim}%$
+
+\item If you want to boot Nemesis using LILO or another bootloader, or
+mount something other than a local ext2fs at boot time, you should
+read the Nemesis tutorial.
+
+\item Read the Nemesis documentation, available as postscript or HTML
+from our web site or in the quickstart tar ball.
+
+\item When you want to configure Nemesis, look at (eg)
+\begin{verbatim}
+nemesis/build_intel/choices 
+\end{verbatim}
+and modify that file.
+
+
+\item When you want to modify Nemesis, you have two choices:
+
+\begin{enumerate}
+\item You may modify the contents of nemesis/source/master or
+ tools/source/master directly. Don't edit the build
+ directories (\dir{nemesis/build_*}), apart from the choices file. The build
+ trees consist of symlinks to the master trees.
+
+\item You may use a sparse source tree. This means that files in a new
+tree you create will override files in the quickstart tar ball. It is
+called sparse because it does not need to contain every file; in fact,
+it is best if you just copy files in to it when you intend to change
+them. This is more complicated, but saves you having to back up your
+extracted quickstart tar balls. It is also much easier when you
+abandon the quickstart tarball and use checkoutandgo.py
+instead. checkoutandgo.py is located in \dir{misc/scripts} of the
+quickstart tarball and releasemisc package, along with some example
+scripts. The idea is that you add a line to a file called choices in
+each build tree. This tells the build system to, whenever creating
+symlinks, check another directory tree for files and symlink to those
+in preference to the ones in the master tree. For example, if you add
+to \file{nemesis/build_intel/choices} a line like:
+
+{\small
+\begin{verbatim}
+add_source_tree('/usr/groups/pegasus/users/dr10009/experimentalsparsetree')
+\end{verbatim}}
+
+then type \cmd{make grow} in \dir{nemesis/build_intel}, all files in
+\dir{/usr/groups/pegasus/users/dr10009/experimentalsparsetree} will
+override the master tree files. You can then copy files there, modify
+them, and just back up the sparsetree directory instead of the whole
+of the quickstart tar ball.
+
+\end{enumerate}
+
+\end{enumerate}
+
+Frequently asked questions about the quickstart process:
+
+\begin{itemize}
+\item Why do your scripts invoke gnumake?
+
+Nemesis builds on multiple Unix systems that have GNU make
+installed. However, GNU make is sometimes installed as
+\texttt{gnumake} (for example on OSF) and sometimes as \texttt{make}
+(for example on Linux). Most of the time, we handle such issues with
+platform specific make files, but you need to arrange that invoking
+gnumake runs a proper GNU make. Any recent version of GNU make should
+do. We use version 3.76.1.
+
+\end{itemize}
+
+\section{Obtaining a Nemesis source code repository}
+
+The quickstart tar ball is usually updated every day, so you can just
+download new versions of that. However, it may be much more convenient
+to set yourself up with a local Nemesis source code repository. Then,
+you will be able to work with whichever version of Nemesis you like,
+and with whichever combination of packages you like. Furthermore, you
+will be able to use PRCS to help manage your source code.
+
+You may already have access to a Nemesis source code repository on
+your site. In the Computer Laboratory of the University of Cambridge,
+where Nemesis was developed, a PRCS archive is currently available at
+\dir{/local/scratch/dr10009/nemesis/PRCS} on all normal build
+machines. If you already have access to such a PRCS, skip this section
+and proceed to the next section on working with this PRCS archive.
+
+Obtaining a source code repository will let you work with custom
+versions of Nemesis, and will save on download times.  We recommend
+you keep source code repositories on each machine you will build on;
+this really speeds up creating new build trees.
+
+A Nemesis source code repository consists of two parts; a set of
+patches in a special format called the patch archive, and a PRCS
+archive to make it easy and efficient to check out particular versions
+of Nemesis packages. The PRCS repository just provides the data for an
+easy way to check out particular version of Nemesis; it is generates
+from the patch archive.  The repository you will end up with on your
+filesystem will of course just be copies of the offical patch archives
+in Cambridge and other places. But it will enable you to retrieve any
+combination of any version of any Nemesis package.
+
+\begin{enumerate}
+\item Install PRCS if you do not already have it.
+\item You will find a script called \script{dcheckin.py} in directory \dir{master/dpatch/master} of
+any Nemesis release. It handles the Nemesis source code
+repository. As well as checking in as the names would suggest, it can
+also perform several other operations on a Nemesis patch archive. Make sure it is executable and available to you.
+\item Configure dcheckin.py by writing a \file{.dcheckinrc} file in your home
+directory. Here is an example:
+
+\begin{verbatim}
+{
+  'patch tree' : '/home/fred/nemesis/patches',
+  'prcs repository' : '/home/fred/PRCS',
+  'description map' : {
+     'project' : 'The Nemesis Project at OurSiteName'
+  }
+}
+\end{verbatim}
+
+Change the directory names tagged patch tree and prcs repository to
+suit your needs. The prcs repository does not need to be backed
+up. The patch tree only needs to be backed up if you start exporting
+your own packages.
+
+\item Download the patch repository from Cambridge by executing:
+
+{\small
+\begin{verbatim}
+dcheckin.py webimport http://www.cl.cam.ac.uk/Research/SRG/netos/nemesis/patches.html
+\end{verbatim}}
+
+(If you believe you have access to some of the non-public branches,
+you will need to find out the alternative command for you to obtain
+the extra material).
+
+You may like to run this command from a CRON job. It works
+incrementally; it will just download new patches.
+
+(At any stage, you may destroy your patch tree and PRCS
+repository, and start again from scratch. That is unless you are
+exporting a package in the way suggested below).
+
+
+\section{Working with Nemesis via a PRCS archive}
+
+You should by now have access to Nemesis in a PRCS archive. We only
+use prcs for checking versions of Nemesis out. To contribute back to
+Nemesis, see the section below. 
+
+A tool called checkoutandgo.py provides a useful way to checkout
+  multiple PRCS packages and build them.  It is located in the
+  quickstart tar ball as \script{master/misc/scripts/checkoutandgo.py}
+  but we suggest you copy it somewhere else and keep it on your
+  path. It used by us to generate the quickstart tar ball, for
+  instance. See the build system users guide for more details, or the
+  start of the source code of \script{checkoutandgo.py} where you'll
+  find an explanation of what it does and how it works. 
+
+
+For example, suppose you want to build Nemesis in a directory called
+  \dir{/anfs/scratch/hornet/dr10009/autobuild/cuttingedge}. You've got a PRCS
+  repository in \dir{/local/scratch/dr10009/nemesis/PRCS} and \cmd{prcs} is
+  on your path, as are built Nemesis tools. You also don't need ATM
+  support. You'd write a configuration file called
+  \file{nemesis_test.coag}, in your home directory for instance,
+  containing:
+
+\begin{verbatim}
+{
+  'packages' : [
+     ('prcs', 'releasemisc:live.@', '/..'),
+     ('prcs', 'ccore:live.@', '/nemesis'),
+     ('prcs', 'cnet:live.@', '/nemesis'),
+     ('prcs', 'cws:live.@', '/nemesis'),
+     ('prcs', 'caudio:live.@', '/nemesis'),
+     ('prcs', 'cfs:live.@', '/nemesis'),
+     ('prcs', 'tgtx86:live.@', '/nemesis'),
+   ],
+  'basepath' : '/anfs/scratch/hornet/dr10009/autobuild/cuttingedge',
+  'actions' : """
+python quickbuild.py establish-intel ix86_linux
+echo "include('/homes/dr10009/u/mychoicesfile')" >> nemesis/build_intel/choices
+cd nemesis/build_intel
+make
+""",
+  'prcsrepo' : '/local/scratch/dr10009/nemesis/PRCS',
+  'postfix' : 'master'
+}
+\end{verbatim}
+
+Then, invoke (from any directory):
+
+\begin{verbatim}
+checkoutandgo.py ~/coag/nemesis_test.coag
+\end{verbatim}
+
+(specifying the path to your checkoutandgo script as the argument to
+\script{checkoutandgo.py}, of course, and the path to your local PRCS
+repository instead of the example given above in the line defining
+\texttt{prcsrepo}).
+
+\script{checkoutandgo.py} will empty your build tree (specified by the
+\texttt{basepath} line if it exists, create the directory if it does
+not already exist, and then check out the versions you asked for of
+the packages you want, and invoke the \texttt{actions}
+script. \texttt{releasemisc} forms the framework for your build tree
+so you will always need that. \texttt{core, cfs} and a target package
+such as \texttt{tgtx86} are usually required. All other packages are
+optional bolt on extras.  In the example above, this then sets up a
+intel build tree, makes it use the \file{choices} file in
+\file{/homes/dr10009/u/mychoicesfile} and then builds the tree. See
+the build system users guide for an explanation of choices files.  The
+idea is that you keep the \file{choices} file, the checkoutandgo
+script and any of your own source code safe on backed up filespace. At
+any stage, you can repeat the \script{checkoutandgo.py} command to
+destroy the build tree and start again, should the non backed up
+filespace become damaged or the build tree become confused. The
+actions line contains the commands necessary to create the Nemesis
+build tree. We work by picking configuration files close to what we
+need, and modifying them for new build trees.
+
+\item You may use PRCS directly to checkout, merge or diff packages of
+course. See the PRCS documentation for details. If you want to see
+exactly what versions of files you need, then look at the
+\file{CONTENTS} file in the directory created by
+\script{checkoutandgo}. It gives the PRCS versions of each file.  You
+may want to inspect the contents of the patch repository to see what
+has changed; see the dpatch manual for details.
+
+\item When you wish to upgrade one of the packages in a checked out
+tree, you can use \script{prcs merge} or \script{prcs
+checkout}. \script{prcs checkout} is simpler; it will merely write the
+new package on top of what you have at that time. prcs merge will
+interactively reconcile your changes with what have gone
+before. Alternatively, you can just reinvoke \texttt{checkoutandgo.py}
+which is event easier but means the entire tree will be recreated
+which may take some time.
+
+\end{enumerate}
+
+
+\section{Contributing your work back to us}
+
+All changes to Nemesis must be submitted to us in dpatch format, using
+the patchman web interface (see the Nemesis home page). There are many
+ways to generate patch files.  First of all, however, make sure you
+are working with the latest versions of the Nemesis packages you want
+changed. The more out of date your versions, the less likely it is
+your patch will still be valid and will be accepted. Alternatively,
+you may try to write your patches by hand. 
+\begin{latexonly}
+See the dpatch manual for details of the dpatch format; it is present in the
+Nemesis quickstart tar ball.
+\end{latexonly}
+\begin{htmlonly}
+\begin{rawhtml}
+See the <a
+href="http://www.cl.cam.ac.uk/Research/SRG/netos/nemesis/dpatch/">
+dpatch manual for details</a>.
+\end{rawhtml}
+\end{htmlonly}
+
+If you are modifying the contents of a Nemesis quickstart tar ball
+master directory directly:
+
+\begin{enumerate}
+
+\item Use prcs populate to inform prcs of any new files you have
+created. Make sure they go in to the .prj file in the Nemesis
+directory, corresponding to the package they should end up in. Hint;
+tell PRCS explicitly what files to add to the prj file, or it may
+become confused and try to add the contents of all the other packages
+to your file.
+
+\item Invoke:
+\begin{verbatim}
+ddiff.py prcsdiff packagename > mypatch_to_packagename
+\end{verbatim}
+
+in the nemesis directory, where packagename is the name of one of the
+.prj files in that directory.
+
+If you modify the nemtools or dpatch, you need to run it in the
+directory containing the relevant .prj file.
+
+\end{enumerate}
+
+If you are working with a private tree (sparse or with symlinks), for
+each package you want to change:
+
+\begin{enumerate}
+
+\item In an empty directory, check out a fresh copy of the package.
+
+\item Copy the files from your sparse tree you want to go in to this
+package on top of your newly checked out copy of the file.
+
+\item If you have created new files in the previous step, run
+\begin{verbatim}
+prcs populate
+\end{verbatim}
+to let PRCS update your .prj file.
+
+\item Invoke:
+
+\begin{verbatim}
+ddiff.py prcsdiff > mypatch_to_packagename
+
+\end{verbatim}
+
+\end{enumerate}
+
+See the dpatch manual for more ways to use ddiff.
+
+Now, review your patch files and upload them to us using the web interface.
+
+
+\section{Making a new package}
+\emph{
+Warning; I haven't checked this section is up to date for a while;
+mail me if you find any problems, and of course make sure you keep
+your own copies of the patch files!
+}
+
+If you have some code which is new, rather than an enhancement of an
+existing package, or you wish to maintain it yourself, or you cannot
+persuade us to take on your changes, then you should make a new
+package. First perform step 1 of ``Contributing your work back to
+us'' to set up your patch tree. Your package will go in the same patch
+tree as the patches you import from us. Then:
+
+\begin{enumerate}
+\item Read about the Nemesis build system.
+  
+\item Decide on a name for your package. For example, I'll assume it
+  is called \texttt{gnemx}. (So where you see \texttt{gnemx} insert
+  the name of your new package).
+  
+\item Create a new directory, containing
+  \texttt{glue/packages/gnemx.py}. This file should contain the
+  blueprint items for your pacakge. You might want to look at the
+  corresponding files in other packages for inspiration.
+  
+\item Before you go any further, test your package. It should be the
+  case that if you copy the entire contents of your package directory
+  on top of a release tree, your package builds and works as you
+  intend.
+  
+\item Back in the directory containing just the contents of your new
+  package, execute:
+
+\begin{verbatim}
+ddiff.py create > ~/initial_gnemx_patch
+\end{verbatim}
+  
+\item Now you need to create a package and branch in your patch tree.
+  By convention, the main development and initial branch is called
+  \texttt{live}. So execute:
+
+\begin{verbatim}
+dcheckin.py create gnemx live
+\end{verbatim}
+
+You'll need a \file{.dcheckinrc} file in your home directory to let
+dcheckin know where to write to; an example is given above. Now you've
+got a new package, you should add a description of your package to
+your \file{.dcheckinrc}. Mine looks like:
+
+\begin{verbatim}
+{
+    'patch tree' : '/usr/groups/pegasus/nemesis/patches',
+    'prcs repository': '/usr/groups/pegasus/nemesis/PRCS',
+    'description map': {
+        'project' : 'The Nemesis Project\n',
+        'ccore' : 'The Cambridge Nemesis Core\n',
+        'dpatch' : 'The dpatch Project\n',
+        'catm' : 'The Cambridge Nemesis ATM subsystem\n',
+        'caudio' : 'The Cambridge Nemesis Audio subsystem\n',
+        'cnet' : 'The Cambridge Nemesis Network subsystem\n',
+        'cfs' : 'The Cambridge Nemesis filing subsystem\n',
+        'cws' : 'The Cambridge Nemesis windowing subsystem\n',
+        'nemtools' : 'The Nemesis build tools\n'
+     }
+}
+\end{verbatim}
+
+At this point, you have created your package and branch, but there
+isn't any code in the package yet.
+
+\item You should now checkin the patch you created above. Type:
+
+\begin{verbatim}
+dcheckin.py commit gnemx live ~/initial_gnemx_patch
+\end{verbatim}
+
+Make sure you give an absolute path to the name of your patch.
+
+At this point, you have a package with one branch and one patch. You
+can check that everything is working by inspecting the files
+\texttt{metaupdates} and \texttt{allupdates} in the patch tree, or you
+can type:
+
+\begin{verbatim}
+prcs info gnemx
+\end{verbatim}
+
+You should see that there has been one patch in the updates file, and
+there are now two PRCS versions of your packages (the first one is
+empty).
+
+\item Next you should publish your package. Choose a directory for
+your patches index HTML file to appear in, and build it by typing:
+
+\begin{verbatim}
+dcheckin.py publish ~/public_html/nemesis/patches.html
+\end{verbatim}
+
+In order for the patch index to work, in the directory that you have
+built the HTML file you will need to create a symlink to your patch
+tree called \file{patches}. You can test this by making sure that
+you can follow the link on your patch index web page to your patch,
+using HTTP.
+
+If you wish, mail me \texttt{Dickon.Reed@cl.cam.ac.uk} with the
+URL of your patch archive web index. I can then arrange for it to be
+indexed off the master patch index in Cambridge.
+
+\item Whenever people make changes to your package they wish your
+package repository to carry, they will need to have their patches
+applied. When a patch is submitted to you, check it for semantics,
+then apply it using:
+
+\begin{verbatim}
+dcheckin.py commit gnemx live ~/another_patch
+\end{verbatim}
+
+The patch will first of all be tested, and if it cannot be applied to
+the package and branch you specify then you will be told and you will
+need to edit the patch or ask whoever wrote it to regenerate it
+against the latest release. If the patch has been accepted then
+remember to reexecute:
+
+\begin{verbatim}
+dcheckin.py publish ~/public_html/nemesis/patches.html
+\end{verbatim}
+
+in order to expose your patch to the world.
+
+
+\end{enumerate}
+
+See the dpatch manual for more details on how dpatch works.
+
+Your patch tree contains the canonical copy of your package and its
+branches. You should make sure that at least the subdirectory
+containing your package in your patch tree is regularly backed up. The
+other directories in your tree will continue to be filled from
+Cambridge every time you run \cmd{dcheckin webimport}.
+
+
+\section{Known problems}
+
+\begin{itemize}
+\item Need comments about booting
+\item We still need to integrate documentation.
+\item The other packages of Nemesis need to be mentioned somewhere, as
+they become available.
+\item There aren't many platform makefiles in tools/source/master/mk
+\item tools/source/master/Makefile is problematic; not all targets
+have proper SUBDIRS line.
+\item The platform makefiles in the main tree are not named the same
+as the ones in the tool trees. Workaround; specify a platform in the
+main tool tree as an extra argument to quickbuild.py
+\end{itemize}
+
+
+\end{document}
+
+
+

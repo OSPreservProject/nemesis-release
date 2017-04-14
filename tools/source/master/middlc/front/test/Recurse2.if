@@ -1,0 +1,7 @@
+Recurse2 : INTERFACE =
+  NEEDS Recurse;
+BEGIN
+  Foo : TYPE = IREF Recurse;
+
+  Bar : PROC [ f: Foo ] RETURNS [ ];
+END.

@@ -1,0 +1,87 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      IDCMod.if
+-- 
+-- DESCRIPTION:
+--
+--	Single client, single server implementation of IDC.if over
+--      shared memory and a pair of event channels.
+-- 
+-- ID : $Id: IDCMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+-- 
+
+-- "IDCMod" provides a simple implementation of the "IDC" interface,
+-- suitable for supporting procedure calls between domains on the
+-- same machine.  This implementation uses two shared memory buffers
+-- and a pair of event channels between a client domain and a server
+-- domain.
+
+IDCMod : LOCAL INTERFACE =
+  NEEDS IDC;
+  NEEDS Event;
+  NEEDS Events;
+  NEEDS Heap;
+  NEEDS ProtectionDomain;
+  NEEDS Gatekeeper;
+  NEEDS Binder;
+  NEEDS Channel;
+BEGIN
+
+  Role : TYPE = { Passive, Active };
+
+  -- The passive (server) and active (client) ends of an IDC channel
+  -- are synchronised differently.  At the passive end, a single
+  -- thread executes
+  -- 
+  --|    (PrepareRX; Ack; ...; PrepareTX; Send)*.
+  -- 
+  -- At the active end, multiple threads execute
+  -- 
+  --|    (PrepareTX; Send; PrepareRX; Ack)*.
+  -- 
+  -- Only one call can be outstanding on a channel, so client threads'
+  -- access to the passive end is serialised: "PrepareTX" locks the
+  -- channel, and "Ack" releases it.
+
+  -- The "New" procedure constructs an "IDC" given its components
+  -- and the "role" required.  The two domains involved should
+  -- cooperate in agreeing on buffer addresses and connecting
+  -- event channels by using the "Binder" interfaces.  Incoming
+  -- messages are awaited by waiting on "events.rx" for successive
+  -- values from "rx_val+1" onwards.  For newly-allocated event counts,
+  -- "0" is a suitable value for "rx_val".
+
+  New : PROC    [ heap   : IREF Heap,
+      	      	  role   : Role,
+      	      	  tx_buf : IDC.Buffer,
+      	      	  rx_buf : IDC.Buffer,
+      	      	  events : Event.Pair,
+                  rx_val : Event.Val   ]
+      	RETURNS [ idc    : IREF IDC    ]
+      	RAISES Heap.NoMemory, Events.NoResources;
+
+  -- Many "IDC"s are created while using the "Binder".  On the
+  -- server side, the "BindSvr" procedure is convenient for creating
+  -- a passive "IDC" in response to a "BinderCallback.Request".
+
+  BindSvr : PROC   [ heap      : IREF Heap,
+                     pdid      : ProtectionDomain.ID,
+                     gk        : IREF Gatekeeper,
+                     clt_cks   : Binder.Cookies,       -- length 1
+                     chans     : Channel.Pairs,
+                     buf_bytes : Heap.Size;            -- for tx buf
+                 OUT svr_cks   : Binder.Cookies ]
+           RETURNS [ idc       : IREF IDC       ]
+           RAISES Binder.Error;
+
+END.

@@ -1,0 +1,40 @@
+/*
+*****************************************************************************
+**                                                                          *
+**  Copyright 1997, University of Cambridge Computer Laboratory             *
+**                                                                          *
+**  All Rights Reserved.					            *
+**                                                                          *
+*****************************************************************************
+**
+** FILE:
+**
+**      h/ix86/Type.ih
+** 
+** DESCRIPTION:
+** 
+**      Evil work-around to make Type_AnyI's work. Slightly less evil than 
+**	replicating the machine generated code
+**      
+** 
+** ID : $Id: Type.ih 1.1 Thu, 18 Feb 1999 15:09:39 +0000 dr10009 $
+** 
+*/
+
+#ifndef HACK_TYPE_IH
+#define HACK_TYPE_IH
+
+#include "../repo/Type.ih"
+
+typedef struct Type_AnyI__hack Type_AnyI__hack;
+struct Type_AnyI__hack {
+	Type_Code type;
+	int32_t val;
+	int32_t pad; 
+};
+
+#define Type_AnyI Type_AnyI__hack
+
+
+
+#endif /* HACK_TYPE_IH */

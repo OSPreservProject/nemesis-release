@@ -1,0 +1,59 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      WM
+-- 
+-- DESCRIPTION:
+--
+--      Interface provided to the WS server by a window manager
+-- 
+-- ID : $Id: WM.if 1.1 Thu, 18 Feb 1999 14:18:52 +0000 dr10009 $
+-- 
+-- \chapter{Window System}
+-- 
+
+-- A "WM" is an interface provided by a window manager to the Window
+-- Server. It allows the server to inform the window manager when a
+-- new client is connecting, and when an event is available to be
+-- delivered. 
+
+WM : LOCAL INTERFACE =
+  NEEDS WS;
+  NEEDS WSF;
+  NEEDS CRendDisplay;
+  NEEDS Domain;
+BEGIN
+
+  Failure : EXCEPTION [];
+
+  NewClient :   PROC [ wsf : IREF WSF,
+                       dom : Domain.ID ] 
+                RETURNS [ ws : IREF WS ]
+                RAISES Failure;
+
+  -- When a new client is connecting to the Window Server, it will
+  -- call the "NewClient" method of its window manager, passing in the
+  -- "WSF" closure which it has associated with that client. The
+  -- window manager should return a "WS" closure which the Window
+  -- Server is to pass via an IDC offer to the client. This allows the
+  -- window manager to intercept all calls made by the client to the
+  -- Window Server, and perform appropriate actions.
+                     
+  HandleEvent : PROC [ ev : REF WS.Event,
+                       defclient : IREF WSF  ] RETURNS [];
+
+  -- When an event has been proceduced by the Window Server, it is
+  -- passed to "HandleEvent". The "WSF" closure associated with the
+  -- client owning the window associated with the event is passed as
+  -- "defclient". If the window manager wishes to pass the event on to
+  -- any of its clients, it should call the "DeliverEvent" method of
+  -- their "WSF" closures.
+
+END.

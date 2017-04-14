@@ -1,0 +1,64 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Activation.if
+--
+-- Description:
+--
+--      Vector via which the real processor is given to a VP.
+--
+-- ID : $Id: Activation.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Domains, Events and Activation}
+-- 
+
+-- A domain differs from the normal concept of a user process
+-- in the way in which the processor is presented to it.
+-- The domain's user-level scheduler can be explicitly informed
+-- when the processor is given to the domain by invocations on
+-- its \emph{activation vector}, an "IREF Activation" associated
+-- with the domain's \emph{virtual processor} (VP).
+
+Activation : LOCAL INTERFACE = 
+  NEEDS VP;
+BEGIN
+
+  -- A domain may be activated because
+  -- \begin{itemize}
+  -- 
+  --   \item it was preempted and has now been rescheduled,
+  -- 
+  --   \item it yielded or ran out of contracted CPU time and has
+  --         now been given a fresh allocation,
+  -- 
+  --   \item it ran out of contracted CPU time and has now been
+  -- 	      allocated some extra time, or
+  -- 
+  --   \item events have been delivered to it.
+  -- 
+  --   \item it has been reactivated by itself.
+  -- 
+  -- \end{itemize}
+
+  Reason : TYPE = { Preempted, Allocated, Extra, Event, Reactivated };
+
+  -- In the future, other activation reasons such as page faults
+  -- and other asynchronous events may be added.  The trade-offs
+  -- between this mechanism and the use of well-known "Channel.RX"s
+  -- will be investigated.
+
+  Go : PROC [ vp: IREF VP, ar: Reason ] NEVER RETURNS;
+
+  -- A domain is activated by disabling activations, then invoking
+  -- "Go" on its VP's activation vector with the appropriate value
+  -- of "ar".  "Go" executes on a small, permanently resident activation
+  -- stack associated with the VP.
+
+END.

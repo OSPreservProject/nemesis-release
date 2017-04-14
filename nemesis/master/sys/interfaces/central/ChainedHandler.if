@@ -1,0 +1,47 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      ChainedHandler.if
+-- 
+-- DESCRIPTION:
+--
+--      A base type for chains of handler closures e.g. for event
+--      notifications or timeouts.
+-- 
+-- ID : $Id: ChainedHandler.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Domains, Events and Activation}
+--
+
+-- A "ChainedHandler" interface is used as the base type for handler
+-- closures which may be chained together. It allows members of the
+-- chain to insert/remove themselves into/from the chain cleanly.
+
+ChainedHandler : LOCAL INTERFACE =
+
+BEGIN
+
+    -- "Position" describes the position of one handler in a chain
+    -- relative to another. The first handler in the chain (i.e. the
+    -- first handler to receive notifications/events) is "Before" all
+    -- other handlers.
+
+    Position : TYPE = { Before, After };
+
+    -- "SetLink" tells a handler that its neighbour in the chain
+    -- referred to be the "pos" parameter has changed. The event
+    -- source for this chain should be masked while this call is in
+    -- progress (e.g. by using ActivationF.Mask/UnmaskEvent, or
+    -- VP.ActivationsOff/On)
+
+    SetLink : PROC [ pos : Position, link : IREF ChainedHandler ]
+              RETURNS [];
+
+END.

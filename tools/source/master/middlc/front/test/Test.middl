@@ -1,0 +1,11 @@
+-- An interface to be exported by the example module
+
+Test : INTERFACE =
+BEGIN
+
+  Request   : TYPE = STRING;
+  Exception : EXCEPTION [ arg : CARDINAL ];
+
+  Foo : PROC [ req : Request ] RETURNS [ repl: CARDINAL ] RAISES Exception;
+
+END .

@@ -1,0 +1,297 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      CRend
+-- 
+-- DESCRIPTION:
+--
+--      Client Rendering module interface.
+-- 
+-- ID : $Id: CRend.if 1.1 Thu, 18 Feb 1999 14:18:52 +0000 dr10009 $
+-- 
+-- \chapter{Window System}
+-- \section{Client Rendering}
+
+-- Nemesis has a \emph{client rendering} library called CRend that
+-- provides simple two dimensional rendering facilities
+-- along the lines of XLib. Additionally, facilities are provided for
+-- talking to the windowing system to create, destroy and manipulate
+-- windows. The CRend library supercedes lib/WS.
+
+-- Before drawing operations can be performed, as a CRend object must
+-- be obtained. There are two sources of CRend objects provided by the
+-- library. First of all, one may create, using the CRendPixmap
+-- factory, a CRend object on a pixel map supplied by the
+-- programmer. There is no reason this pixel map must be assoicated
+-- with a window.
+
+-- Alternativly, the CRendDisplayMod factory may be used to cosntruct
+-- a CRendDisplay object. A CRendDisplay corresponds with a connection
+-- to the window system which was established when then CRendDisplay
+-- object was created. The CRendDisplay interface may then create
+-- windows. The create operation returns a CRend object which then is
+-- used to render on to the interface.
+
+-- Internally, all CRend objects render on to a pixel map. So, a CRend
+-- object created by CRendDisplay does not draw directly to the
+-- display. Instead, the Update operation on the object should be
+-- called to flush through the rendering to the display.
+
+-- \emph{The client rendering library is not, in general,
+-- clipped. Attempts to render off the edges of a window may well
+-- cause memory outside of the CRend pixel map to be modified. The
+-- programmer must ensure that any clipping required is performed
+-- prior to invocation of a rendering operation}.
+
+-- (The reasoning for this lack of clipping is as follows; if clipping
+-- were provided by the library, it would have to be performed on
+-- every rendering operation. In nearly all cases, it is possible to
+-- write code to use CRend such that clipping is not necessary or very
+-- much cheaper than at least one clip per render operation).
+
+CRend : LOCAL INTERFACE = 
+NEEDS WS;
+BEGIN
+
+  -- The ResizeWindow operation may involve allocating more
+  -- memory. This exception is raised by that operation should
+  -- sufficent memory not be available.
+
+  NoResources: EXCEPTION [];
+
+  -- Origin-relative and cursor-relative plotting modes are selected
+  -- where appropiate using the CoordMode enumeration.
+  CoordMode : TYPE = { Origin, Relative };
+
+  -- Normal and XOR plotting modes are selected where appropriate
+  -- using the PlotMode enumeration.
+  PlotMode  : TYPE = { Normal, XOR };  
+
+  -- Coordinates are taken relative to a top left origin. 
+  Point     : TYPE = RECORD [ x : INTEGER, y : INTEGER ];
+
+  -- Line segments are specified as X,X,Y,Y; a common mistake is to
+  -- assume it is X,Y,X,Y
+  Segment   : TYPE = RECORD [ x1 : INTEGER, x2 : INTEGER,
+                              y1 : INTEGER, y2 : INTEGER];
+
+  -- Rectangles are specified as top left coordinates and a width,
+  -- height pair.
+  Rectangle : TYPE = RECORD [ x : INTEGER, y : INTEGER,
+                              width : CARDINAL, height : CARDINAL ];
+
+  -- Arcs are specified as center, width, height and start/end angles.
+  -- Angles are measured in 1/64 degrees counter-clockwise from
+  -- "3 o'clock".  An arc extentAngle long is drawn from startAngle.
+  Arc : TYPE = RECORD [ x : INTEGER,
+                        y : INTEGER,
+                        width : CARDINAL,
+                        height : CARDINAL,
+                        startAngle : CARDINAL,
+	                extentAngle : CARDINAL ];
+
+  -- Methods
+
+  -- CRend objects contain graphics contexts which include the
+  -- background and foreground colours. These colours default to black
+  -- and white respectivly. 
+
+  -- The pixel parameter here is a raw value to be placed on the pixel
+  -- map. At present, to construct such values requires knowledge of
+  -- the display hardware. A seperate interface should be used 
+  -- for mapping arbitary colours to these values.
+
+  SetBackground : PROC [ pixel : CARDINAL ] RETURNS [ ];
+  SetForeground : PROC [ pixel : CARDINAL ] RETURNS [ ];
+
+  -- Set the way in which new pixels are merged with existing ones.
+  -- In Normal mode:  new\_value = fg
+  -- In XOR mode:     new\_value = old\_value $\oplus$ fg
+
+  SetPlotMode : PROC [ mode : PlotMode ]
+              RETURNS [ ];
+
+  -- Render a single pixel at the specified coordinates in the current
+  -- foreground colour
+
+  DrawPoint : PROC [ x : INTEGER, 
+                     y : INTEGER ] 
+              RETURNS [ ];
+
+  -- Render an array of pixels, length npoints, pointed to by Point,
+  -- in the foreground colour. If mode is Origin, all coordinates are
+  -- relative to the top left hand corner of the pixel map. If mode is
+  -- Relative, the first coordinate is absolute then subsequent
+  -- coordinates are relative to the previous coordinates.
+
+  DrawPoints : PROC [ points : REF Point,
+                      npoints : CARDINAL,
+                      mode : CoordMode ] 
+               RETURNS [ ];
+
+
+  -- Draw a single pixel thick line, in the foreground colour, from
+  -- (x1,y1) to (x2,y2)
+  DrawLine : PROC [ x1 : INTEGER,
+                    x2 : INTEGER,
+                    y1 : INTEGER,
+                    y2 : INTEGER ]
+             RETURNS [ ];
+
+  -- Draw a line connecting all the points in points together.
+
+  DrawLines : PROC [ points : REF Point,
+                     npoints : CARDINAL,
+                     mode : CoordMode ] 
+               RETURNS [ ];
+
+  -- Draw a single pixel thick rectangle outline for a rectangle whose
+  -- top left coordinate is (x,y) and with width and height as
+  -- specified.
+
+  DrawRectangle : PROC [ x : INTEGER,
+                         y : INTEGER,
+                         width : INTEGER,
+                         height : INTEGER ]
+                  RETURNS [ ];
+
+
+  -- Draw nrectangles as specified by the array of Rectangle types
+  -- pointed to by rectangles.
+
+  DrawRectangles : PROC [ rectangles : REF Rectangle,
+                          nrectangles : CARDINAL ]
+                   RETURNS [ ];
+
+  -- Identical to DrawRectangle, except the rectangle is filled in the
+  -- current foreground colour.
+  FillRectangle : PROC [ x : INTEGER,
+                         y : INTEGER,
+                         width : INTEGER,
+                         height : INTEGER ]
+                  RETURNS [ ];
+
+  -- Identical to DrawRectangles, except the rectangles are filled in the
+  -- current foreground colour.
+
+  FillRectangles : PROC [ rectangles : REF Rectangle,
+                          nrectangles : CARDINAL ]
+                   RETURNS [ ];
+
+  -- Draw an arc.  Angles are measured in 1/64 degrees counter-clockwise
+  -- from "3 o'clock".  An arc extentAngle long is drawn from startAngle.
+
+  DrawArc : PROC [ x : INTEGER,
+                   y : INTEGER,
+                   width : CARDINAL,
+                   height : CARDINAL,
+                   startAngle : CARDINAL,
+	           extentAngle : CARDINAL ]
+            RETURNS [ ];
+
+  -- Draw narcs as specified by the array of Arc types pointed to by
+  -- arcs.
+
+  DrawArcs : PROC [ arcs : REF Arc,
+                    narcs : CARDINAL ]
+             RETURNS [ ]; 
+
+  -- Draw nsegments lines, each one described by a Segment in the
+  -- array pointed to by Segment.
+
+  DrawSegments : PROC [ segments : REF Segment,
+                        nsegments : CARDINAL ]
+                 RETURNS [ ];
+
+
+  -- Draw a string s with it's top left at (x,y). It will obliterate
+  -- a rectangle on the screen. The string will appear as written in
+  -- the foreground colour with the background colour underneath,
+  -- though colours in between these two colours may be used for
+  -- antialiasing.
+
+  DrawString : PROC [ x : INTEGER,
+                      y : INTEGER, 
+                      s : STRING ] 
+               RETURNS [ ];
+
+  -- Render the pixel map based at data, with width, height and stride
+  -- as specified, with top left at (x,y).
+
+  DrawPixmap : PROC [ x,y: INTEGER; 
+                     data: DANGEROUS ADDRESS; 
+                    width,height,stride:CARDINAL ] RETURNS [];
+ 
+  -- Return the address of the pixel data, and the stride in pixels
+
+  GetPixelData : PROC [] RETURNS [ addr : DANGEROUS ADDRESS; stride :CARDINAL];
+
+  -- Return the size of the object
+
+  GetWidth : PROC [] RETURNS [ width : CARDINAL ];
+
+  GetHeight : PROC [] RETURNS [ height : CARDINAL ];
+
+  -- The following operations may only be peformed on an object
+  -- generated by CRendDisplay rather than by CRendPixmap.
+
+  -- Cause at least enough updates to be sent to the framebuffer to bring the
+  -- image on the framebuffer up to date. A straightforward
+  -- implementation may just flush the entire pixel map to the
+  -- framebuffer.
+
+  Flush : PROC [ ] RETURNS [ ];
+
+  -- Indicate that the passed rectangle should be redrawn on the next
+  -- flush, regardless of whether it is currently marked as up to
+  -- date.
+
+  ExposeRectangle : PROC [ x : INTEGER,
+                           y : INTEGER,
+                           width : INTEGER,
+                           height : INTEGER ]
+                    RETURNS [ ];
+
+  -- Close this CRend window, causing the CRend object to be destroyed.
+
+  Close : PROC [] RETURNS [];
+  
+  -- Make sure the window corresponding to this CRend object is
+  -- mapped (that is, visible).
+
+  Map : PROC [] RETURNS [];
+
+  -- Make sure the window corresponding to this CRend object is
+  -- unmapped (that is, invisible).
+  
+  UnMap : PROC [] RETURNS [];
+
+  -- Set window size to width by height pixels. Any newly exposed area
+  -- will be painted with the background colour. Any unchanged area
+  -- will have it's image left intact.
+  ResizeWindow : PROC [ width,height : CARDINAL ] RETURNS [] RAISES NoResources;
+        
+  -- Ask the windowing system to move the window to the specified coordinates.
+
+  MoveWindow : PROC [ x,y : INTEGER ] RETURNS [];
+
+  -- Scroll the rectangle (x, y, x+width, y + height) by 
+  -- (xoffset, yoffset) pixels
+
+  ScrollRectangle : PROC [ x, y, width, height : CARDINAL,
+                              xoffset, yoffset : INTEGER ]
+                    RETURNS [];
+
+  -- Get the windowing system ID for this window 
+
+  GetID: PROC [] RETURNS [ id: WS.WindowID ];
+
+
+END.

@@ -1,0 +1,17 @@
+
+Bug : INTERFACE = 
+BEGIN
+
+   Buggy  : PROC [
+		   a : INTEGER; b : INTEGER; c : INTEGER ]
+	    RETURNS [
+		   a1 : INTEGER; b1 : INTEGER; c1 : INTEGER ];
+
+   Buggy1 : PROC [ a : INTEGER; a : INTEGER ] RETURNS [] ;
+
+   Buggy2 : PROC [
+		   a : INTEGER; b : INTEGER; c : INTEGER ]
+	    RETURNS [
+		   a : INTEGER; b : INTEGER; c : INTEGER ];
+
+END.

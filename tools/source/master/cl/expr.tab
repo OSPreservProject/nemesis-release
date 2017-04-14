@@ -1,0 +1,68 @@
+/* CLUless compiler front end
+ ***********************************************************************
+ * Copyright 1997 University of Cambridge Computer Laboratory          *
+ * All Rights Reserved                                                 *
+ * Authors: Dickon Reed (Dickon.Reed@cl.cam.ac.uk)                     *
+ *          Richard Mortier (rmm1002@cam.ac.uk)                        *
+ ***********************************************************************/ 
+/* CLUless
+ *
+ * expr.tab; for use with "gentables.py" 
+ *
+ * Dickon Reed, 1996 
+ * Richard Mortier, 1997
+ *
+ * $Id: expr.tab 1.1 Thu, 18 Feb 1999 14:20:06 +0000 dr10009 $
+ *
+ * $Log: expr.tab,v $
+ * Revision 1.1  1997/06/25 17:07:48  dr10009
+ * Initial revision
+ *
+ * Revision 2.3  1997/04/12 13:26:19  rmm1002
+ * Changed type of number to be stored as string.
+ *
+ * Revision 2.2  1997/04/10 22:57:35  rmm1002
+ * Added expression types for characters and strings (Dickon hadn't bothered!)
+ *
+ * Revision 2.1  1997/04/04 15:35:17  rmm1002
+ * Mass check-in; now have vaguely working compiler, makes on P5 & Alpha
+ *
+ * Revision 1.10  1997/02/04 16:48:45  rmm1002
+ * Finished first look and layout fixup
+ *
+ * Revision 1.1  1997/02/03 16:39:40  rmm1002
+ * Initial revision
+ *
+ */
+
+#BEGIN#
+expr,2
+variable,var,n_decl,decl
+num_val,num,n_cptr,val
+real_val,real,n_cptr,val
+bool_val,bool,n_integer,val
+char_val,char,n_cptr,val
+str_val,str,n_cptr,val
+pvs,pvs
+subexpr,sub,n_expr,sub
+tuple,tuple,n_list,tuple
+dot_op,.,n_expr,sub,n_id,field
+arrow_op,->,n_expr,sub,n_id,field
+array_lookup,[],n_expr,l,n_expr,r
+address_op,&,n_expr,l
+deref_op,*,n_expr,l
+invoke_op,invoke,n_expr,sub,n_list,list
+positive_op,+,n_expr,c
+negative_op,-,n_expr,c
+mult_op,*,n_expr,l,n_expr,r
+div_op,/,n_expr,l,n_expr,r
+mod_op,%,n_expr,l,n_expr,r
+add_op,+,n_expr,l,n_expr,r
+sub_op,-,n_expr,l,n_expr,r
+lt_op,<,n_expr,l,n_expr,r
+gt_op,>,n_expr,l,n_expr,r
+le_op,<=,n_expr,l,n_expr,r
+ge_op,>=,n_expr,l,n_expr,r
+eq_op,==,n_expr,l,n_expr,r
+ne_op,!=,n_expr,l,n_expr,r
+ass_op,=,n_expr,l,n_expr,r

@@ -1,0 +1,117 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1995, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Entry
+-- 
+-- DESCRIPTION:
+--
+--      Provides support for ANSAware/RT-style entrys.
+-- 
+-- ID : $Id: Entry.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+-- \section{Tasks and Entrys}
+
+-- An "Entry" is an object which encapsulates a scheduling policy
+-- for incoming invocation requests from a number of IDC bindings.
+-- This is based on the notion of entries in ANSAware/RT; for more
+-- information on the ANSAware/RT Computation and Engineering 
+-- models, see \cite{apm:rtengineering,apm:rtoverview}. 
+
+Entry : LOCAL INTERFACE =
+  NEEDS IDCServerStubs;
+  NEEDS Channel;
+  NEEDS Time;
+  NEEDS Closure;
+BEGIN
+
+  -- As far as the "Entry" is concerned, each binding it has
+  -- responsibility for is in one of a number of states.
+
+  State : TYPE = {
+    Idle,            -- open, but with nothing pending.
+    Pending,         -- open, and has activity pending.
+    Active,	     -- open, and being serviced by a thread. 
+    CloseRequested,  -- to be closed down (any thread can do this work).
+    Closing,         -- being closed down by a thread.
+    Dead             -- peer has closed the binding.
+   };
+
+  -- The following exceptions can be raised:
+
+  TooManyChannels : EXCEPTION [];
+    -- Attempt to bind too many "Channel.EndPoint"s to this
+    -- "Entry". 
+
+  Inconsistent : EXCEPTION [ ];
+    -- The "Entry" detected an internal problem, due either to a bug
+    -- or some other entity affecting binding states. 
+
+  -- To use an entry to queue invocations on a binding, the binding
+  -- must be registered with the entry.  The "Bind" operation will
+  -- ensure that when event notification occurs on an endpoint, an
+  -- ANSA thread will be enqueued to call the server stubs'
+  -- "dispatcher".  "Bind" will itself handle registration with the
+  -- underlying user-level "Tasks" scheduler.
+  --
+  -- A given endpoint may be bound to at most one "dispatcher"; "Bind"
+  -- will raise "Channel.Invalid" on attempts to violate this
+  -- condition.
+  -- 
+  -- While a binding is in "State.Active", it is served by a single
+  -- thread: a "dispatcher" need not be re-entrant unless it is
+  -- bound to more than one endpoint.
+
+  Bind : PROC    [ chan       : Channel.Endpoint,
+		   dispatcher : IREF IDCServerStubs ]
+         RETURNS []
+         RAISES Channel.Invalid, Channel.BadState, TooManyChannels;
+    -- Arrange that the "Dispatch" operation of "dispatcher" is invoked
+    -- by an ANSA thread in response to event notification on endpoint
+    -- "chan". 
+
+  -- The binding of an event channel end-point to an entry can be
+  -- removed by calling "Unbind". This takes care of deregistering the
+  -- entry with the "Tasks" scheduler.
+
+  Unbind : PROC [ chan: Channel.Endpoint ] RETURNS []
+	   RAISES Channel.Invalid;
+    -- Further event notifications on channel "chan" will not cause
+    -- the entry "Notify" method to be called. Will raise
+    -- "Channel.Invalid" if the channel is not bound to this entry.
+
+  -- When an ANSA task (i.e., a Nemesis "Thread") wishes to service an
+  -- ANSA thread enqueued on an entry, it calls "Rendezvous" with a
+  -- timeout.  If there is a thread enqueued on the entry, it is
+  -- executed by the "ANSATask" before "Rendezvous" returns.
+
+  Rendezvous : PROC [ to : Time.ns ] RETURNS [ done : BOOLEAN ];
+    -- Wait until time "to" for an ANSA thread to execute on the
+    -- caller.  Return "True" if we did execute something in the end.
+
+  -- "Closure" returns a closure which can be used when forking
+  -- an ANSA task purely to execute ANSA threads enqueued on this
+  -- entry. 
+
+  Closure : PROC [] RETURNS [ cl : IREF Closure ];
+    -- Return a "Closure" with the following "Apply" method:
+    --
+    --| while (True)
+    --|   Entry_Rendezvous (`this entry`, FOREVER);
+
+ 
+  -- "Close" shuts down the entry. All endpoints must be detached
+  -- before this function is called.
+
+  Close : PROC [] RETURNS [] RAISES TooManyChannels;
+    -- Raises "TooManyChannels" if there are still end-points bound to
+    -- the entry.
+
+END.

@@ -1,0 +1,5 @@
+Word : INTERFACE =
+BEGIN
+  T : TYPE = DANGEROUS WORD;
+  P : PROC [ arg : IREF Word; arg2 : IREF Bogus ] RETURNS [];
+END.

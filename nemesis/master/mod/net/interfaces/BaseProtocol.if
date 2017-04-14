@@ -1,0 +1,35 @@
+------------------------------------------------------------------------------
+--
+-- File:
+-- 
+--	BaseProtocol.if
+--
+-- Description:
+--
+--	Parent of all lowest level network protocols
+--
+-- Revision History:
+--
+-- ID :	$Id: BaseProtocol.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+-- 
+-- \chapter{Networks}
+-- 
+
+-- BaseProtocol.if defines the operations that can be done to base
+-- network protocols.  In addition to all the standard operations
+-- availble from Protocol.if, there is a "Go" method that supplies
+-- real IOs to read and write to.
+
+BaseProtocol : LOCAL INTERFACE =
+EXTENDS Protocol;
+NEEDS   IDCOffer;
+BEGIN
+
+  -- Complete the configuration of the stack, and enable it.
+  -- Should be called after doing a "FlowMan.Graft()" to get the
+  -- "IDCOffer"s. If either "IDCOffer" is "NULL", then this is a
+  -- simplex protocol.
+  Go : PROC [ rx: IREF IDCOffer,
+              tx: IREF IDCOffer ] RETURNS [];
+
+END.

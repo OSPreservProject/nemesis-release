@@ -1,0 +1,15 @@
+ModEx : MODULE = 
+
+  IMPORTS m : Mutable ;
+
+  EXPORTS Example     : Test;
+  EXPORTS Example1    : Test;
+  EXPORTS ExampleMgmt : TestMgmt;
+
+BEGIN
+
+  Strategy : TYPE = { Conservative, Aggressive };
+
+  PARAMETERS [ tableSize: CARDINAL; strategy: Strategy ];
+
+END .

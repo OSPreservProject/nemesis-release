@@ -1,0 +1,25 @@
+SymbolTable : INTERFACE = 
+  NEEDS SymbolTypes;
+BEGIN
+  Data : TYPE = CARDINAL; -- to clash with SymbolTypes.Data
+
+  T: TYPE = RECORD [
+       loc : LONG CARDINAL,
+       val : INTEGER,
+     bytes : ARRAY 8 OF OCTET ];
+
+  Duplicate  : EXCEPTION [ ];
+
+  Enter : PROC [ s : T;
+               val : SymbolTypes.Data ]
+          RETURNS [ ]
+          RAISES Duplicate;
+        
+  Lookup : PROC [ s : T ]
+          RETURNS [ val : SymbolTypes.Data;
+                  found : BOOLEAN ];
+
+  Remove :  PROC [ s : T ]
+          RETURNS [ d : Data ];
+
+END.

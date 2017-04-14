@@ -1,0 +1,24 @@
+# This file is usually run at the end of standard.rc, which in turn is
+# included at the end of init.rc, which is run in the System domain (1)
+
+!pvs>out$PutStr["autoexec.nash executing\n"]
+
+!penv>nash = <| qos>cpu>k = true |>
+!penv>nash>b_env>defStackWords = 16384
+# This is the other half of the home directory hack.
+!penv>nash>b_env>fs_cert>init=initfs>pwd_string
+# We don't need to source profile.nash explicitly; that should
+# already have been done.
+
+#!pvs>out$PutStr["Starting UDPnash...\n"]
+#!run modules>UDPnash penv>nash
+
+!pvs>out$PutStr["Starting ps2 driver...\n"]
+!modules>PS2$Apply[]
+#!pvs>out$PutStr["Starting TTYnash...\n"]
+#!run modules>TTYnash penv>nash
+
+# If you want a Nash on your serial line, uncomment this:
+!pvs>out$PutStr["Starting SerialNash...\n"]
+!spawn(modules>Serialnash$Apply[],"SerialNash",penv>nash)
+## (Doesn't return - yet...)

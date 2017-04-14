@@ -1,0 +1,158 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      FSDir
+-- 
+-- DESCRIPTION:
+--
+--      A directory context within a filesystem
+-- 
+-- ID : $Id: FSDir.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+-- 
+-- \chapter{Filesystems}
+--
+
+-- The "FSDir" interface is a directory context for filesystem access.
+-- It encapsulates the concept of "current directory".
+
+FSDir : LOCAL INTERFACE =
+  NEEDS FSTypes;
+  NEEDS FileIO;
+  NEEDS Type;
+BEGIN
+
+  --
+  -- Operations on the current working directory
+  --
+
+  Lookup : PROC [ name   : FSTypes.Name, 
+		  follow : BOOLEAN ]
+	RETURNS [ rc : FSTypes.RC ];
+    -- Points this FSDir closure at a particular file or directory in the
+    -- filesystem. Once this has been done, Open and the various Stat calls
+    -- may be used. If "follow" is True and the last element of the path
+    -- is a symlink then the symlink will be followed (recursively if
+    -- necessary). If not, then the symlink itself will be selected.
+    --
+    -- The interface is arranged this way to avoid the race condition between
+    -- stat() and open() that is the cause of so many security problems
+    -- under Unix.
+
+  Create : PROC [ name : FSTypes.Name ]
+	RETURNS [ rc : FSTypes.RC ];
+    -- Creates a file in the current directory. "name" may be a path. This
+    -- call will only succeed if "name" does not already exist. The FSDir
+    -- is pointed at the newly-created file, which may subsequently be
+    -- accessed by opening it.
+
+  MkDir : PROC [ name : FSTypes.Name ] 
+       RETURNS [ rc : FSTypes.RC ];
+    -- Creates a directory of the specified name in the current direrectory.
+    -- "name" may be a pathname; any missing elements will be created as
+    -- directories.
+
+  Rename : PROC [ from : FSTypes.Name, 
+                  to   : FSTypes.Name ]
+	RETURNS [ rc : FSTypes.RC ];
+    -- Renames a file. "from" and "to" are pathnames relative to the current
+    -- directory.
+
+  Symlink : PROC [ name : FSTypes.Name, 
+		   path : FSTypes.Name ]
+	 RETURNS [ rc : FSTypes.RC ];
+     -- Creates a symlink with name "name" and contents "path".
+
+  Duplicate : PROC [ ]
+	RETURNS [ rc    : FSTypes.RC, 
+		  fsdir : Type.Any ];
+    -- Creates a new FSDir that has the same current working directory and
+    -- access rights as this one.
+
+  Delete : PROC [ name : FSTypes.Name ]
+	RETURNS [ rc : FSTypes.RC ];
+    -- Deletes "name" in the current directory. If "name" is a directory then
+    -- this call will only succeed if "name" is empty.
+
+  Close : PROC [ ] 
+       RETURNS [ ];
+    -- Deletes this FSDir and frees all resources associated with it.
+    -- Note that files which have been opened using this FSDir are \emph{not}
+    -- closed.
+
+  Delegate : PROC [ ] 
+          RETURNS [ certificate : STRING ];
+    -- Return a delegation certificate for this working directory. Details
+    -- still fuzzy - will be filled in when I've thought more about security.
+    -- For now just returns a filesystem-specific identifier for the current
+    -- directory, which may be treated as a string. XXX this will change.
+
+  --
+  -- Operations on the currently selected inode
+  --
+
+  Release : PROC [ ] 
+         RETURNS [ ];
+    -- Reverses the action of "Lookup". Operations in this section that
+    -- are called when no inode is selected will return "FSTypes.RC.FAILURE".
+
+  InodeType : PROC [ ]
+	RETURNS [ rc    : FSTypes.RC, 
+		  type : FSTypes.InodeType ];
+    -- Once a FSDir has been pointed at an inode using the Lookup operation,
+    -- the type of the inode may be determined using this call.
+
+  CWD : PROC [ ] 
+     RETURNS [ rc : FSTypes.RC ];
+    -- Change the working directory to the current inode.
+
+  Size : PROC [ ]
+      RETURNS [ rc   : FSTypes.RC, 
+		size : FileIO.Size ];
+    -- Returns the size of a file.
+
+  NLinks : PROC [ ]
+	RETURNS [ rc : FSTypes.RC, 
+		  n  : FSTypes.NLinks ];
+    -- Returns the number of names the file has.
+
+  NForks : PROC [ ]
+	RETURNS [ rc : FSTypes.RC, 
+		  n  : CARDINAL ];
+  -- How many separately addressable sections does the file have?
+
+  ATime : PROC [ ] RETURNS [ rc : FSTypes.RC, atime : FSTypes.Time ];
+  MTime : PROC [ ] RETURNS [ rc : FSTypes.RC, mtime : FSTypes.Time ];
+  CTime : PROC [ ] RETURNS [ rc : FSTypes.RC, ctime : FSTypes.Time ];
+    -- These are separate because "ATime" is a lot harder to 
+    -- determine than "CTime" in a distributed environment \cite{Burrows}.
+
+  Open : PROC [ fork    : CARDINAL, 
+		mode    : FSTypes.Mode,
+		options : FSTypes.Options ]
+	RETURNS [ rc     : FSTypes.RC, 
+		  fileio : IREF FileIO ];
+    -- Allows access to a file.
+
+  Link : PROC [ name : FSTypes.Name ] 
+      RETURNS [ rc : FSTypes.RC ];
+    -- Creates a hard link of the current inode to the supplied name.
+
+  ReadDir : PROC [ ]
+	 RETURNS [ rc : FSTypes.RC, entries : FSTypes.DirentSeq ];
+    -- Returns some entries from the directory. Further calls to
+    -- ReadDir will return the remaining entries. The number of entries
+    -- transferred is filesystem dependent. The end of the directory is
+    -- indicated by the return of a sequence of length 0.
+
+  ReadLink : PROC [ ] 
+          RETURNS [ rc : FSTypes.RC, contents : FSTypes.Name ];
+    -- Returns symbolic link contents.
+
+END.

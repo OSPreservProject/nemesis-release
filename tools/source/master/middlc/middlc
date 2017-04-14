@@ -1,0 +1,78 @@
+#!/bin/sh
+#
+
+options=''
+argsdone=0
+verbose=0
+
+# fingerprints: we compute a 48-bit fingerprint of a middl interface
+# from the output of middlc_front.
+#
+# "canonicalise" is AWK to remove stuff like date-stamps, userids etc. from
+# the middlc_front output.
+#
+# "fp_reduce" is a C program to take the 128-bit ascii-hex md5 value and
+# reduce it to a 48-bit ascii-hex value by xoring successive 48-bit chunks
+#
+# XXX - the fingerprint stuff is a quick EXPERIMENTAL HACK - who knows when
+#       throwing away so many bits of the md5 is going to bite us....
+#
+fp=''
+canonicalise='!(/^i\.frontEnd/||/^i\.compTime/||/^i\.userName/||/^i\.machine/||/^i\.idlFile/)'
+
+
+while [ $argsdone != 1 ]
+do
+  case $1 in
+  -ih)  options='ModBE.GenerateTypes( i, fingerprint ); '$options ; shift ;;
+  -def) options='ModBE.GenerateRep( i, fingerprint ); '$options ; shift ;;
+  -mch) options='ModBE.GenerateIDC1Marshalling( i, fingerprint ); '$options ; shift;;
+  -sc)  options='ModBE.GenerateIDC1Stubs( i ); '$options ; shift;;
+  -IDC) options='ModBE.GenerateIDCMarshalling( i ); '$options ; shift;;
+  -c)   options='ModBE.GenerateTmpl( i ); '$options ; shift;;
+  -V)   verbose=1 ; shift ;;
+  *)    argsdone=1
+  esac
+done
+
+# Try and make it work in a test directory too
+
+BINPATH=`dirname $0`
+if [ -x $BINPATH/middlc_front ] 
+then
+  MIDDLC_FRONT=$BINPATH/middlc_front
+  PYTHONPATH=$BINPATH/../python
+else if [ -x $BINPATH/front/middlc_front ]
+  then
+    MIDDLC_FRONT=$BINPATH/front/middlc_front
+    PYTHONPATH=$BINPATH/python
+  else
+    echo "Cannot find middlc_front"
+    exit 1
+  fi
+fi
+
+# If no back-end options have been given, we're interested in the
+# output of the front end.  Otherwise, we run the Python backend.
+
+if [ "$options" ] ; then
+  # Put standard path on the end in case the defaults are broken AGAIN
+  PYTHONPATH=$PYTHONPATH:/usr/lib/gnu/python
+  export PYTHONPATH
+
+  if [ $verbose != 0 ] ; then
+    echo "PYTHONPATH=$PYTHONPATH"
+    set -x
+  fi
+  $MIDDLC_FRONT $* > /tmp/middlc$$.py && \
+      fp=`awk $canonicalise < /tmp/middlc$$.py | md5 | $BINPATH/fp_reduce` && \
+      echo $fp >> /tmp/middlc$$.py && \
+      echo $options >> /tmp/middlc$$.py && \
+      python /tmp/middlc$$.py && rm /tmp/middlc$$.py || \
+                         (rm /tmp/middlc$$.py && exit 1)
+else
+  if [ $verbose != 0 ] ; then
+    set -x
+  fi
+  $MIDDLC_FRONT $*
+fi

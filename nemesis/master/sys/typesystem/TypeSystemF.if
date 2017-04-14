@@ -1,0 +1,40 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      TypeSystemF
+-- 
+-- DESCRIPTION:
+--
+--      TypeSystem friends interface
+-- 
+-- ID : $Id: TypeSystemF.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Runtime Type System}
+
+-- The "TypeSystemF" interface provides a means for the runtime loader
+-- to register new types.
+
+TypeSystemF : LOCAL INTERFACE =
+  EXTENDS TypeSystem;
+BEGIN
+
+  -- The type representing an "INTERFACE" is currently defined in C.
+  -- There is no reason why it should not eventually be defined in
+  -- \MIDDL.
+
+  IntfInfo : TYPE = ADDRESS; -- really an "(Intf_st*)" from "TypeSystem_st.h"
+
+  NameClash     : EXCEPTION [];
+  TypeCodeClash : EXCEPTION [];
+
+  RegisterIntf : PROC [ intf: IntfInfo ] RETURNS []
+    RAISES NameClash, TypeCodeClash;
+
+END.

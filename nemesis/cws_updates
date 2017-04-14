@@ -1,0 +1,301 @@
+ The Cambridge Nemesis windowing subsystem
+==========================================
+
+#00015 dr10009 pp Matt Holgate (holgate@dcs.gla.ac.uk) Wed Jun  2 14:22:02 1999
+-------------------------------------------------------------------------------
+Change to window clipping (otherwise mouse drags don't work)
+mod/ws/savewm/savewm.c             -- Adjust clip only when LAlt pressed
+
+#00014 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Wed Jun  2 13:40:14 1999
+--------------------------------------------------------------------------
+
+glue/packages/cws.py               -- bigger stacks for a few things
+
+#00013 dr10009 pp Rolf Neugebauer (neugebar@dcs.gla.ac.uk) Sun May 16 20:44:29 1999
+-----------------------------------------------------------------------------------
+qosbars env tweak
+glue/packages/cws.py               -- qosbars need kpriv
+
+#00012 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Fri May 14 15:14:01 1999
+--------------------------------------------------------------------------
+
+dev/pci/mga/mga_hw/modes.c         -- G200 support
+dev/pci/mga/mga_hw/mga_dac3026.c   -- G200 support
+dev/pci/mga/mga_hw/mga.h           -- G200 support
+dev/pci/mga/mga_hw/mga.c           -- G200 support
+dev/pci/mga/mga_hw/mga_dacG200.c   ++ G200 support
+
+#00011 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu May  6 17:01:41 1999
+--------------------------------------------------------------------------
+
+glue/packages/cws.py               -- more extra info
+
+#00010 dr10009 pp Rolf Neugebauer (neugebar@dcs.gla.ac.uk) Fri Apr 30 15:50:23 1999
+-----------------------------------------------------------------------------------
+oops forgot this on
+dev/pci/mga/mga_hw/mga.h           -- removed double MGAMMIOBase de
+
+#00009 dr10009 pp Rolf Neugebauer (neugebar@dcs.gla.ac.uk) Fri Apr 30 11:49:50 1999
+-----------------------------------------------------------------------------------
+Thanks to RJB and IAP fixes to memory mapped IO. Cursor works no
+dev/pci/mga/mga_hw/mga.h           -- correct OUTREG*
+dev/pci/mga/mga_hw/mga.c           -- correct type for pci_dense_to_phy
+
+#00008 dr10009 pp Paul Menage (Paul.Menage@cl.cam.ac.uk) Fri Apr 30 12:06:43 1999
+---------------------------------------------------------------------------------
+Revert qosbars
+app/qosbars/bars.c                 -- Reverted to version that was current before mjh splatted an old version ove
+it. Tidied code. Added display of redraw rate.
+
+#00007 dr10009 pp Paul Menage (Paul.Menage@cl.cam.ac.uk) Wed Apr 28 16:05:11 1999
+---------------------------------------------------------------------------------
+
+mod/ws/savewm/savewm.c             -- Cleaner macro definitions
+
+#00006 dr10009 pp Paul Menage (Paul.Menage@cl.cam.ac.uk) Tue Apr 27 20:39:31 1999
+---------------------------------------------------------------------------------
+Allow WS/FB users to obtain number of active pixel bit
+dev/pci/mga/main.c                 -- Deal with FB.if chang
+dev/pci/s3/s3.c                    -- Deal with FB.if chang
+mod/fb/interfaces/FB.if            -- Extend Info[] result
+mod/ws/crend/displaymod.c          -- Deal with WS.if chang
+mod/ws/interfaces/WS.if            -- Extend Info[] result
+mod/ws/savewm/savewm.c             -- Deal with WS.if chang
+mod/ws/wssvr/WSSvr_st.h            -- Deal with FB.if and WS.if chang
+mod/ws/wssvr/fb.c                  -- Deal with FB.if chang
+mod/ws/wssvr/main.c                -- Deal with WS.if chang
+mod/ws/wsterm/display.c            -- Deal with WS.if chang
+
+#00005 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Apr 20 17:16:07 1999
+--------------------------------------------------------------------------
+no overview
+glue/packages/cws.py               -- describe me
+app/qosbars                        ** NEW DIRECTORY
+app/qosbars/bars.c                 ++ describe me
+app/carnage                        ** NEW DIRECTORY
+app/carnage/viper.poly             ++ describe me
+app/carnage/render.h               ++ describe me
+app/carnage/render.c               ++ describe me
+app/carnage/objects.h              ++ describe me
+app/carnage/missile_obj.h          ++ describe me
+app/carnage/geometry_types.h       ++ describe me
+app/carnage/geometry.h             ++ describe me
+app/carnage/geometry.c             ++ describe me
+app/carnage/fighter_obj.h          ++ describe me
+app/carnage/cube.poly              ++ describe me
+app/carnage/carnage.c              ++ describe me
+app/carnage/bolt_obj.h             ++ describe me
+app/carnage/Carnage_st.h           ++ describe me
+
+#00004 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Apr 13 16:10:49 1999
+--------------------------------------------------------------------------
+
+glue/packages/cws.py               -- fix tyop
+
+#00003 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Apr 13 15:39:55 1999
+--------------------------------------------------------------------------
+
+glue/packages/cws.py               -- windowing system
+mod/ws/wssvr                       ** NEW DIRECTORY
+mod/ws/wssvr/windows.c             ++ 
+mod/ws/wssvr/mouse.c               ++ 
+mod/ws/wssvr/main.c                ++ 
+mod/ws/wssvr/kbd.c                 ++ 
+mod/ws/wssvr/fb.c                  ++ 
+mod/ws/wssvr/events.c              ++ 
+mod/ws/wssvr/backdrop.c            ++ 
+mod/ws/wssvr/WSSvr_st.h            ++ 
+
+#00002 dr10009 pp Austin Donnelly (and1000@cl.cam.ac.uk) Wed Jan 20 14:10:34 1999
+---------------------------------------------------------------------------------
+Added scrdump and serialmouse
+glue/packages/cws.py               -- added scrdump and serialmouse
+app                                ** NEW DIRECTORY
+app/serialmouse                    ** NEW DIRECTORY
+app/serialmouse/serialmouse.c      ++ serialmouse event translator
+app                                ** NEW DIRECTORY
+app/scrdump                        ** NEW DIRECTORY
+app/scrdump/scrdump.c              ++ screen dump commandline tool
+
+#00001 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Jan 12 14:48:50 1999
+--------------------------------------------------------------------------
+no overview
+
+                                   ** describe me
+app                                ** describe me
+app/launcher                       ** describe me
+dev                                ** describe me
+dev/pci                            ** describe me
+dev/pci/mga                        ** describe me
+dev/pci/mga/common_hw              ** describe me
+dev/pci/mga/mga_hw                 ** describe me
+dev/pci/s3                         ** describe me
+dev/pci/s3/xrip                    ** describe me
+dev/pci/s3/xrip/commonhw           ** describe me
+dev/pci/s3/xrip/h                  ** describe me
+dev/pci/s3/xrip/hc                 ** describe me
+dev/pci/s3/xrip/hnull              ** describe me
+dev/pci/s3/xrip/s3                 ** describe me
+glue                               ** describe me
+glue/packages                      ** describe me
+mod                                ** describe me
+mod/fb                             ** describe me
+mod/fb/fbblit                      ** describe me
+mod/fb/interfaces                  ** describe me
+mod/ws                             ** describe me
+mod/ws/crend                       ** describe me
+mod/ws/interfaces                  ** describe me
+mod/ws/region                      ** describe me
+mod/ws/savewm                      ** describe me
+mod/ws/wsterm                      ** describe me
+app/launcher/Makefile              ++ describe me
+app/launcher/buttons.ppm           ++ describe me
+app/launcher/buttons.xcf           ++ describe me
+app/launcher/launcher.c            ++ describe me
+app/launcher/launcher.gui.py       ++ describe me
+app/launcher/launcher.h            ++ describe me
+dev/pci/mga/FB_st.h                ++ describe me
+dev/pci/mga/Makefile               ++ describe me
+dev/pci/mga/blit_16.c              ++ describe me
+dev/pci/mga/common_hw/Makefile     ++ describe me
+dev/pci/mga/common_hw/pci_stuff.c  ++ describe me
+dev/pci/mga/common_hw/pci_stuff.h  ++ describe me
+dev/pci/mga/common_hw/vga.h        ++ describe me
+dev/pci/mga/common_hw/vgaHW.c      ++ describe me
+dev/pci/mga/common_hw/xf86.h       ++ describe me
+dev/pci/mga/cursor32.xpm.h         ++ describe me
+dev/pci/mga/main.c                 ++ describe me
+dev/pci/mga/mga_hw/Makefile        ++ describe me
+dev/pci/mga/mga_hw/mga.c           ++ describe me
+dev/pci/mga/mga_hw/mga.h           ++ describe me
+dev/pci/mga/mga_hw/mga_bios.h      ++ describe me
+dev/pci/mga/mga_hw/mga_dac3026.c   ++ describe me
+dev/pci/mga/mga_hw/mga_reg.h       ++ describe me
+dev/pci/mga/mga_hw/modes.c         ++ describe me
+dev/pci/mga/mga_hw/vgatables.c     ++ describe me
+dev/pci/mga/stub.S                 ++ describe me
+dev/pci/s3/FB_st.h                 ++ describe me
+dev/pci/s3/Makefile                ++ describe me
+dev/pci/s3/blit_16.c               ++ describe me
+dev/pci/s3/s3.c                    ++ describe me
+dev/pci/s3/s3.h                    ++ describe me
+dev/pci/s3/stub.S                  ++ describe me
+dev/pci/s3/xrip/Makefile           ++ describe me
+dev/pci/s3/xrip/commonhw/ATTDac.c  ++ describe me
+dev/pci/s3/xrip/commonhw/BUSmemcpy.S ++ describe me
+dev/pci/s3/xrip/commonhw/BUSmemcpy.c ++ describe me
+dev/pci/s3/xrip/commonhw/Ch8391clk.c ++ describe me
+dev/pci/s3/xrip/commonhw/CirrusClk.c ++ describe me
+dev/pci/s3/xrip/commonhw/CirrusClk.h ++ describe me
+dev/pci/s3/xrip/commonhw/I2061Aalt.c ++ describe me
+dev/pci/s3/xrip/commonhw/I2061Acal.c ++ describe me
+dev/pci/s3/xrip/commonhw/I2061Aset.c ++ describe me
+dev/pci/s3/xrip/commonhw/IBMRGB.c  ++ describe me
+dev/pci/s3/xrip/commonhw/IBMRGB.h  ++ describe me
+dev/pci/s3/xrip/commonhw/ICD2061A.h++ describe me
+dev/pci/s3/xrip/commonhw/ICS2595.c ++ describe me
+dev/pci/s3/xrip/commonhw/ICS2595.h ++ describe me
+dev/pci/s3/xrip/commonhw/IODelay.S ++ describe me
+dev/pci/s3/xrip/commonhw/IODelay.c ++ describe me
+dev/pci/s3/xrip/commonhw/Makefile  ++ describe me
+dev/pci/s3/xrip/commonhw/S3gendac.c++ describe me
+dev/pci/s3/xrip/commonhw/S3gendac.h++ describe me
+dev/pci/s3/xrip/commonhw/SC11412.c ++ describe me
+dev/pci/s3/xrip/commonhw/SC11412.h ++ describe me
+dev/pci/s3/xrip/commonhw/STG1703clk.c ++ describe me
+dev/pci/s3/xrip/commonhw/SlowBcopy.S ++ describe me
+dev/pci/s3/xrip/commonhw/SlowBcopy.c ++ describe me
+dev/pci/s3/xrip/commonhw/Ti3025clk.c ++ describe me
+dev/pci/s3/xrip/commonhw/Ti3026clk.c ++ describe me
+dev/pci/s3/xrip/commonhw/Ti302X.h  ++ describe me
+dev/pci/s3/xrip/commonhw/xf86_HWlib.h ++ describe me
+dev/pci/s3/xrip/commonhw/xf86_PCI.c++ describe me
+dev/pci/s3/xrip/commonhw/xf86_PCI.h++ describe me
+dev/pci/s3/xrip/h/IBMRGB.h         ++ describe me
+dev/pci/s3/xrip/h/Makefile         ++ describe me
+dev/pci/s3/xrip/h/Ti302X.h         ++ describe me
+dev/pci/s3/xrip/h/assyntax.h       ++ describe me
+dev/pci/s3/xrip/h/compiler.h       ++ describe me
+dev/pci/s3/xrip/h/xf86_Config.h    ++ describe me
+dev/pci/s3/xrip/h/xf86_OSlib.h     ++ describe me
+dev/pci/s3/xrip/h/xf86_Option.h    ++ describe me
+dev/pci/s3/xrip/h/xrip.h           ++ describe me
+dev/pci/s3/xrip/hc/IBMRGBCurs.c    ++ describe me
+dev/pci/s3/xrip/hc/Makefile        ++ describe me
+dev/pci/s3/xrip/hc/Ti3026Curs.c    ++ describe me
+dev/pci/s3/xrip/hc/pegcursor2.xpm.c++ describe me
+dev/pci/s3/xrip/hnull/Makefile     ++ describe me
+dev/pci/s3/xrip/hnull/X.h          ++ describe me
+dev/pci/s3/xrip/hnull/Xmd.h        ++ describe me
+dev/pci/s3/xrip/hnull/cfb.h        ++ describe me
+dev/pci/s3/xrip/hnull/cfb16.h      ++ describe me
+dev/pci/s3/xrip/hnull/cfb32.h      ++ describe me
+dev/pci/s3/xrip/hnull/fontstruct.h ++ describe me
+dev/pci/s3/xrip/hnull/input.h      ++ describe me
+dev/pci/s3/xrip/hnull/misc.h       ++ describe me
+dev/pci/s3/xrip/hnull/pixmapstr.h  ++ describe me
+dev/pci/s3/xrip/hnull/s3linear.h   ++ describe me
+dev/pci/s3/xrip/hnull/scrnintstr.h ++ describe me
+dev/pci/s3/xrip/hnull/servermd.h   ++ describe me
+dev/pci/s3/xrip/hnull/site.h       ++ describe me
+dev/pci/s3/xrip/hnull/vga.h        ++ describe me
+dev/pci/s3/xrip/hnull/xf86Procs.h  ++ describe me
+dev/pci/s3/xrip/s3/Makefile        ++ describe me
+dev/pci/s3/xrip/s3/XF86_S3.c       ++ describe me
+dev/pci/s3/xrip/s3/mmio_928.c      ++ describe me
+dev/pci/s3/xrip/s3/regs3.h         ++ describe me
+dev/pci/s3/xrip/s3/s3.c            ++ describe me
+dev/pci/s3/xrip/s3/s3.h            ++ describe me
+dev/pci/s3/xrip/s3/s3Bt485.h       ++ describe me
+dev/pci/s3/xrip/s3/s3Conf.c        ++ describe me
+dev/pci/s3/xrip/s3/s3ELSA.c        ++ describe me
+dev/pci/s3/xrip/s3/s3ELSA.h        ++ describe me
+dev/pci/s3/xrip/s3/s3_generic.c    ++ describe me
+dev/pci/s3/xrip/s3/s3consts.h      ++ describe me
+dev/pci/s3/xrip/s3/s3im.c          ++ describe me
+dev/pci/s3/xrip/s3/s3init.c        ++ describe me
+dev/pci/s3/xrip/s3/s3linear.h      ++ describe me
+dev/pci/s3/xrip/s3/s3misc.c        ++ describe me
+dev/pci/s3/xrip/vgaHW.c            ++ describe me
+dev/pci/s3/xrip/xrip.c             ++ describe me
+dev/pci/s3/xrip/xripio.c           ++ describe me
+dev/pci/s3/xrip/xripmisc.c         ++ describe me
+glue/packages/cws.py               ++ describe me
+mod/fb/fbblit/FBBlitMod.c          ++ describe me
+mod/fb/interfaces/FB.if            ++ describe me
+mod/fb/interfaces/FBBlit.if        ++ describe me
+mod/fb/interfaces/FBBlitMod.if     ++ describe me
+mod/fb/interfaces/HWCur.if         ++ describe me
+mod/fb/interfaces/Region.if        ++ describe me
+mod/ws/README                      ++ describe me
+mod/ws/crend/CRendDisplayMod_st.h  ++ describe me
+mod/ws/crend/CRendDisplay_st.h     ++ describe me
+mod/ws/crend/CRend_st.h            ++ describe me
+mod/ws/crend/crend.c               ++ describe me
+mod/ws/crend/display.c             ++ describe me
+mod/ws/crend/displaymod.c          ++ describe me
+mod/ws/crend/fontdata.c            ++ describe me
+mod/ws/crend/fontindex.c           ++ describe me
+mod/ws/crend/pixmap.c              ++ describe me
+mod/ws/interfaces/CRend.if         ++ describe me
+mod/ws/interfaces/CRendDisplay.if  ++ describe me
+mod/ws/interfaces/CRendDisplayMod.if ++ describe me
+mod/ws/interfaces/CRendPixmap.if   ++ describe me
+mod/ws/interfaces/WM.if            ++ describe me
+mod/ws/interfaces/WMMod.if         ++ describe me
+mod/ws/interfaces/WS.if            ++ describe me
+mod/ws/interfaces/WSF.if           ++ describe me
+mod/ws/region/Region.c             ++ describe me
+mod/ws/savewm/savewm.c             ++ describe me
+mod/ws/wsterm/WSprivate.h          ++ describe me
+mod/ws/wsterm/default8x16.c        ++ describe me
+mod/ws/wsterm/display.c            ++ describe me
+mod/ws/wsterm/events.c             ++ describe me
+mod/ws/wsterm/font.h               ++ describe me
+mod/ws/wsterm/lines.c              ++ describe me
+mod/ws/wsterm/points.c             ++ describe me
+mod/ws/wsterm/rectangles.c         ++ describe me
+mod/ws/wsterm/strings.c            ++ describe me
+mod/ws/wsterm/windows.c            ++ describe me
+mod/ws/wsterm/wsterm.c             ++ describe me
+

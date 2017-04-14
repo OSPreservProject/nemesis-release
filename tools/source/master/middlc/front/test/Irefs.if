@@ -1,0 +1,9 @@
+Irefs : LOCAL INTERFACE = 
+
+BEGIN
+
+AliasIref : TYPE = IREF Irefs;
+
+Iref    : PROC [ in: IREF Irefs ] RETURNS [ out: AliasIref ];
+
+END.

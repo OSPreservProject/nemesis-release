@@ -1,0 +1,21 @@
+# Resource file used by the Document class of the HTML module
+from HTMLcolors import *
+
+author = 'Dickon Reed'
+email = 'Dickon.Reed@cl.cam.ac.uk'
+bgcolor = WHITE
+textcolor = BLACK
+linkcolor = BLUE
+vlinkcolor = RED6
+banner = None
+logo = ('http://www.cl.cam.ac.uk/Research/SRG/pegasus/nemesis/image/nemlogo_small.gif', 228, 57)
+blank = ('http://www.cl.cam.ac.uk/Research/SRG/pegasus/nemesis/image/blank.gif', 66, 22)
+prev = ('http://www.cl.cam.ac.uk/Research/SRG/pegasus/nemesis/image/back.gif', 66, 22)
+next = ('http://www.cl.cam.ac.uk/Research/SRG/pegasus/nemesis/image/next.gif', 66, 22)
+top = ('http://www.cl.cam.ac.uk/Research/SRG/pegasus/nemesis/image/top.gif', 66, 22)
+home = ('http://www.cl.cam.ac.uk/Research/SRG/pegasus/nemesis/image/home.gif', 66, 22)
+#gohome = 'http://www.cl.cam.ac.uk/Research/SRG/pegasus/nemesis/index.html'
+
+# background is some weird paper effect thingy
+# background = '/~dr10009/bg-dots.gif'
+

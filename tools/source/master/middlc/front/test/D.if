@@ -1,0 +1,6 @@
+D : INTERFACE =
+  NEEDS B;
+  NEEDS C;
+BEGIN
+
+END.

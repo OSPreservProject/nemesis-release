@@ -1,0 +1,76 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1996, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Filesystem.if
+-- 
+-- DESCRIPTION:
+--
+--      Interface exported by all filesystems
+-- 
+-- ID : $Id: Filesystem.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+-- 
+-- \chapter{Files}
+--
+
+-- Filesystems export this interface allowing operations (such as 
+-- mount/unmount) to be performed on a filesystem, either local or remote.
+-- Semantics of the filesystem and the file/directory name-space are
+-- filesystem-type-specific.
+
+-- Note that an instance of a Filesystem object is a filesystem \textbf{type}, 
+-- not an individually-mounted filesystem. For instance, the NFSFilesystem
+-- instance may be used to mount/unmount an arbitrary number of NFS 
+-- filesystems.
+
+-- Mounting a filesystem results in a Directory, which extends the Context
+-- interface. Normal Context operations on this Directory will allow you 
+-- to list the files in the Directory, and Get will return an IREF for an 
+-- IDCOffer which may be bound to a File object. 
+
+Filesystem : LOCAL INTERFACE =
+	NEEDS Directory;
+BEGIN
+
+  -- Errors that might occur.
+  Bad   : TYPE = {Server, MountPoint, Permission, Option};
+  Error : EXCEPTION [ reason: Bad ];
+ 
+
+  -- Mount options may be specified:
+  MountOption  : TYPE = {ReadOnly, ReadWrite}; -- extend as required
+  MountOptions : TYPE = SET OF MountOption;
+
+
+  Mount: PROC [ server     : STRING,
+                mountpoint : STRING,
+                options    : MountOptions ]
+      RETURNS [ dir: IREF Directory ]
+      RAISES Error;
+    -- The arguments to "Mount" are specific to the type of filesystem
+    -- to be mounted.
+    --
+    -- The "server" argument specifies the name of a fileserver 
+    -- to service the request; e.g., for NFS, this is the IP address
+    -- of the NFS server. "mountpoint" specifies the name of the
+    -- filesystem or root of the tree to mount. 
+
+  Unmount: PROC [ dir: IREF Directory ]
+        RETURNS [ ];
+
+  SimpleMount: PROC [ server     : STRING,
+                      mountpoint : STRING ]
+            RETURNS [ dir: IREF Directory ]
+            RAISES Error;
+    -- "SimpleMount" is just like "Mount", but doesn't take any  
+    -- mount options.  The filesystem is mounted with the
+    -- "ReadOnly" option.  THis is to circumvent a problem with
+    -- Clanger being unable to construct arguments of type
+    -- "MountOptions".
+END.

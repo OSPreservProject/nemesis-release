@@ -1,0 +1,7 @@
+This directory contains windowing system libraries
+
+interfaces/	Various WS interfaces
+crend/		Client Rendering modules
+savewm/		Screensaver Window Manager module
+region/		Region manipulation code
+wsterm/		Xterm-alike

@@ -1,0 +1,69 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      IDCMarshalCtl.if
+-- 
+-- DESCRIPTION:
+--
+--      Support for transports to control generation of marshalling
+--      byte code for operations. Used for callbacks by the stub
+--      generator
+-- 
+-- ID : $Id: IDCMarshalCtl.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+-- 
+
+IDCMarshalCtl : LOCAL INTERFACE =
+NEEDS Interface;
+NEEDS Operation;
+NEEDS Type;
+BEGIN
+
+    Code : TYPE = { Native, IDC, Custom };
+
+
+    -- The stub generator will call "Interface" when starting to
+    -- generate byte code for the given interface. A "False" result
+    -- indicates that the generation should fail.
+                          
+    Interface : PROC    [ intf : IREF Interface ]             
+                RETURNS [ ok : BOOLEAN ];
+
+  
+    -- The stub generator will call "Operation" when starting to
+    -- generate byte code for the given operation. A "False" return
+    -- value for the "ok" result indicates that the generation should
+    -- fail. If the "resultsFirst" return value is "True", on
+    -- operation return any results will be marshalled before OUT and
+    -- INOUT parameters. 
+
+    Operation : PROC    [ op : IREF Operation ]
+                RETURNS [ ok           : BOOLEAN,
+                          resultsFirst : BOOLEAN ];
+                               
+    -- The stub generator will call "Type" when starting to generate
+    -- byte code for the given type. A "False" return value for "ok"
+    -- result indicates that the generation should fail. If the "code"
+    -- return value is "Code.Custom", the bytecode interpreter will
+    -- not attempt to marshal/unmarshal objects of that type itself,
+    -- but will call the "mCustom"/"uCustom" methods of the "IDC"
+    -- closure associated with an invocation. If "code" is "Code.IDC",
+    -- the interpreter will use the "IDC" interface to marshal objects
+    -- of that type. If "code" is "Code.Native" then the native IDC
+    -- format will be used for marshalling objects of that type.
+  
+    Type :      PROC    [ type : Type.Code ]
+                RETURNS [ ok   : BOOLEAN,
+                          code : Code ];
+                          
+
+END.
+         

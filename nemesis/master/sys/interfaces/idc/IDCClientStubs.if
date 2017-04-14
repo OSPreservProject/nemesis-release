@@ -1,0 +1,53 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      IDCClientStubs
+-- 
+-- DESCRIPTION:
+--
+--      Client-side state for an IDC binding.
+-- 
+-- ID : $Id: IDCClientStubs.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+-- 
+
+-- The "IDCClientStubs" interface defines the state available on
+-- the client end of any IDC binding.
+
+IDCClientStubs : LOCAL INTERFACE =
+  NEEDS Type;
+  NEEDS IDCClientBinding;
+  NEEDS IDC;
+BEGIN
+
+  -- By convention the state pointers of both client surrogate
+  -- closures and "IDCClientBinding"s point to the following "State"
+  -- record:
+
+  State : TYPE = RECORD [
+    srgt    : Type.Any,                  -- surrogate type and closure pointer
+    binding : IREF IDCClientBinding,     -- Binding runtime state
+    marshal : IREF IDC,                  -- Marshalling code
+    stubs   : ADDRESS                    -- per-binding state for stubs
+  ];
+
+  -- "InitState" should be called by a transport when initialising a
+  -- binding, to allow the stubs code to register a piece of
+  -- per-binding state in the "stubs" field. This is ugly.
+
+  InitState : PROC [ IN OUT state : State ] RETURNS [];
+
+  -- "DestroyState" undoes any work performed by "InitState" and should
+  -- be called by a transport when destroying a binding.
+
+  DestroyState : PROC [ IN OUT state : State ] RETURNS [];
+  
+END.

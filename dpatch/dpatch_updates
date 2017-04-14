@@ -1,0 +1,280 @@
+ The dpatch Project
+===================
+
+#00044 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Jun 10 14:54:36 1999
+--------------------------------------------------------------------------
+
+dcheckin.py                        -- better date parsing code
+patchman/multiuser.py              -- tweak passwd file stuff
+patchman/patchman.py               -- check for symlinks
+
+#00043 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Mon May 17 11:50:41 1999
+--------------------------------------------------------------------------
+
+ddiff.py                           -- prcs diff triggered removes
+dcheckin.py                        -- more paranoia
+patchman/patchman.py               -- fix typo
+patchman/patchmancli               ++ command line interface to patchman
+
+#00042 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Mon May 10 15:05:03 1999
+--------------------------------------------------------------------------
+
+dcheckin.py                        -- fix paranoia
+patchman/patchman.py               -- fs upload facility
+
+#00041 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu May  6 11:04:00 1999
+--------------------------------------------------------------------------
+a couple more security fixes
+dcheckin.py                        -- disallow double dots
+patchman/patchman.py               -- encapsualate text properly
+
+#00040 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Wed May  5 23:39:15 1999
+--------------------------------------------------------------------------
+
+dcheckin.py                        -- more paranoia
+patchman/patchman.py               -- update
+
+#00039 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Wed May  5 22:11:27 1999
+--------------------------------------------------------------------------
+tidying up
+dcheckin.py                        -- fix chmod
+patchman/patchman.py               -- supply PRCS repository
+patchman/validator.py              -- better validator logs
+
+#00038 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Wed May  5 21:40:40 1999
+--------------------------------------------------------------------------
+
+dcheckin.py                        -- fixes
+
+#00037 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Wed May  5 21:23:32 1999
+--------------------------------------------------------------------------
+
+dcheckin.py                        -- security fixes
+
+#00036 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue May  4 13:45:16 1999
+--------------------------------------------------------------------------
+
+dcheckin.py                        -- revert broken check in
+
+#00035 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue May  4 13:39:28 1999
+--------------------------------------------------------------------------
+
+dcheckin.py                        -- postpone forked problem
+
+#00034 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue May  4 11:36:42 1999
+--------------------------------------------------------------------------
+evolution
+dpatch.tex                         -- null change
+ddiff.py                           -- fix end of line bug
+dcheckin.py                        -- sort out error handling
+patchman/multiuser.py              -- chmod password file
+patchman/patchman.py               -- logging and other misc fixes
+
+#00033 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Apr 29 18:12:20 1999
+--------------------------------------------------------------------------
+no overview
+dpatch.tex                         -- describe me
+ddiff.py                           -- describe me
+
+#00032 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Apr 29 14:23:42 1999
+--------------------------------------------------------------------------
+tidying u
+ddiff.py                           -- optionally ignore master
+
+#00031 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Apr 29 14:18:57 1999
+--------------------------------------------------------------------------
+
+patchman/multiuser.py              -- sort out message
+patchman/patchman.py               -- misc stuff
+
+#00030 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Fri Apr 16 18:20:02 1999
+--------------------------------------------------------------------------
+no overview
+ddiff.py                           -- describe me
+dcheckin.py                        -- describe me
+patchman/multiuser.py              -- describe me
+patchman/patchman.py               -- describe me
+
+#00029 dr10009 pp Stranger (anon@nowhere) never
+-----------------------------------------------
+XXX no description
+
+
+#00028 dr10009 pp Stranger (anon@nowhere) never
+-----------------------------------------------
+XXX no description
+
+
+#00027 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Apr 15 16:41:10 1999
+--------------------------------------------------------------------------
+
+dcheckin.py                        -- enhance webimport
+
+#00026 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Feb 25 13:48:52 1999
+--------------------------------------------------------------------------
+
+dcheckin.py                        -- handle missing descriptions in
+.dcheckinrc better for import mode
+
+#00025 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Feb 23 16:32:32 1999
+--------------------------------------------------------------------------
+ddiff tweaks
+ddiff.py                           -- ddiff tweaks
+
+#00024 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Fri Feb 19 12:31:52 1999
+--------------------------------------------------------------------------
+
+dcheckin.py                        -- more tracing for apply
+patchman/validator.py              -- more tracing for logs
+
+#00023 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Fri Feb 19 12:06:03 1999
+--------------------------------------------------------------------------
+
+dcheckin.py                        -- fs mode
+
+#00022 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Feb 18 14:12:17 1999
+--------------------------------------------------------------------------
+
+dcheckin.py                        -- support RC file option
+
+#00021 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Wed Feb 10 15:47:30 1999
+--------------------------------------------------------------------------
+
+dcheckin.py                        -- remove old line
+
+#00020 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Feb  4 14:33:17 1999
+--------------------------------------------------------------------------
+
+patchman/patchman.py               -- fix typo
+
+#00019 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Feb  4 14:20:48 1999
+--------------------------------------------------------------------------
+patchman web interface
+patchman                           ** new directory for patchman
+patchman/README                    ++ docs about patchman
+patchman/patchman.rc               ++ HTML style for patchman
+patchman/validator.py              ++ verify patches work
+patchman/patchman.py               ++ patchman itself
+patchman/passwordgen.py            ++ password generator
+patchman/multiuser.py              ++ mutli user authentication
+patchman/imgsize.py                ++ part of htmlgen
+patchman/cgi_module_publisher.py   ++ part of bobo
+patchman/bobo.py                   ++ part of bobo
+patchman/bci.py                    ++ part of bobo
+patchman/authtest.py               ++ test about multiuser.py
+patchman/ImagePaletteH.py          ++ part of HTMLgen
+patchman/ImageH.py                 ++ part of HTMLgen
+patchman/ImageFileH.py             ++ part of HTMLgen
+patchman/HTMLgen.py                ++ part of HTMLgen
+patchman/HTMLcolors.py             ++ part of HTMLgen
+patchman/CGIResponse.py            ++ part of BOBO
+patchman/BoboHTTPServer.py         ++ a simple web server
+
+#00018 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Feb  4 13:50:18 1999
+--------------------------------------------------------------------------
+
+ddiff.py                           -- remove top level garbage in diff
+dcheckin.py                        -- sort out directories in apply mode
+
+#00017 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Fri Jan 29 12:42:42 1999
+--------------------------------------------------------------------------
+
+dcheckin.py                        -- sandboxed execution of patches
+
+#00016 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Fri Jan 22 14:09:07 1999
+--------------------------------------------------------------------------
+
+dcheckin.py                        -- allupdates file support
+
+#00015 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Jan 19 15:18:03 1999
+--------------------------------------------------------------------------
+
+ddiff.py                           -- remove some debugging verbosity
+
+#00014 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Jan 19 13:53:34 1999
+--------------------------------------------------------------------------
+
+dcheckin.py                        -- Keep dirs in rebuild
+
+#00013 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Jan 19 12:01:34 1999
+--------------------------------------------------------------------------
+
+ddiff.py                           -- better prcs diff mode
+dcheckin.py                        -- automatically make directories
+
+#00012 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Fri Jan 15 15:13:23 1999
+--------------------------------------------------------------------------
+distribution
+dpatch.tex                         -- document new stuff
+dcheckin.py                        -- distribution
+
+#00011 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Jan 14 13:41:07 1999
+--------------------------------------------------------------------------
+
+dpatch.tex                         -- document new remove command
+ddiff.py                           -- better encoding, better 
+interaction
+dcheckin.py                        -- remove and rmdir commands
+
+#00010 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Mon Dec 21 15:35:22 1998
+--------------------------------------------------------------------------
+
+ddiff.py                           -- understand PRCS 1.2.11 diff format
+dcheckin.py                        -- tack packagename on to start of 
+upates files. Finish rebuild mode.
+
+#00009 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Fri Dec 18 14:26:15 1998
+--------------------------------------------------------------------------
+
+ddiff.py                           -- misc fixes
+fix no .ddiffrc case, get author details using getdocstr, tidy up patch mode
+Makefile                           -- tidy up latex chaff
+
+#00008 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Fri Dec 18 14:03:22 1998
+--------------------------------------------------------------------------
+
+dpatch.tex                         -- improve ddiff tutorial
+
+#00007 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Fri Dec 18 13:38:55 1998
+--------------------------------------------------------------------------
+chmod command support
+dpatch.tex                         -- document chmod command
+dcheckin.py                        -- add chmod command
+
+#00006 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Dec 17 18:07:55 1998
+--------------------------------------------------------------------------
+Make the scripts executable
+ddiff.py                           !! +x
+dcheckin.py                        !! +x
+
+#00005 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Dec 17 18:07:55 1998
+--------------------------------------------------------------------------
+
+ddiff.py                           -- sort out newlines
+
+#00004 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Dec 17 18:01:34 1998
+--------------------------------------------------------------------------
+
+ddiff.py                           -- prcsdiff mode
+
+#00003 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Dec 17 18:00:51 1998
+--------------------------------------------------------------------------
+
+ddiff.py                           -- better docstring support
+
+#00002 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Dec 17 17:49:35 1998
+--------------------------------------------------------------------------
+
+ddiff.py                           -- bug fix; name clash
+dcheckin.py                        -- more tracing around interpreter
+
+#00001 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Dec 17 16:50:54 1998
+--------------------------------------------------------------------------
+My working version of dpatch checked in to itself
+                                   ** Root directory of project
+Makefile                           ++ Makefile to build documentation
+dcheckin.py                        ++ Script too maintain checkin repository
+ddiff.py                           ++ Script to create dpatch files
+dpatch.tex                         ++ Dpatch manual
+
+

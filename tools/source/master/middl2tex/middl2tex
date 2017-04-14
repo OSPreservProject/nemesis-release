@@ -1,0 +1,308 @@
+#!/usr/bin/env python
+#
+
+#########################################################################
+#                                                                       #
+#  Copyright 1994, University of Cambridge Computer Laboratory  	#
+#                                                                       #
+#  All Rights Reserved.						        #
+#                                                                       #
+#########################################################################
+#
+# ID :    $Id: middl2tex 1.1 Thu, 18 Feb 1999 14:20:06 +0000 dr10009 $
+# Author: dme
+#
+# middl2tex pathname indexname
+#
+# middl2tex writes to the standard output a LaTeX translation of the
+# .if file 'pathname'.  It was inspired by Greg Nelson's m3totex program.
+#
+# The strategy is very simple-minded.  First, we skip everything up
+# to and including the first blank line.  This is assumed to be
+# a boilerplate header with copyright notices, RCS tags and so on.
+# Then we translate Program blocks and Comment blocks (ignoring
+# intervening blank lines) until we reach the end of the file.
+#
+# A blank line contains only whitespace followed by a carriage return.
+#
+# A comment line is a line whose first non-blank characters are '--'.
+# 
+# A Program block is a sequence of non-comment lines.  A program
+# block has leading and trailing blank lines removed.  Each
+# remaining line is output verbatim in typewriter font up to
+# any trailing comment, which is output as slanted text.
+#
+# A Comment block is a sequence of comment lines.
+# 
+# If the first comment block after a program block starts with at least
+# 3 spaces and a '--', it is assumed to be a summary procedure spec.  A
+# tab counts as two spaces for this purpose.
+# 
+# If a comment block is of the form
+# 
+#   --
+#   -- Section Heading
+#   --
+#   <blank line>
+# 
+# it is output as "\intfsection{Section Heading}"
+# 
+# An ordinary comment block is output as roman text; a summary spec is
+# output as slanted text.  In both cases, the leading blanks and '--'s
+# are removed from comment lines, and text enclosed by double quotes is
+# output unchanged in an invocation of the LaTeX "\verb" macro.
+# 
+# Comment lines whose first non-blank characters are '--|' are
+# assumed to contain example code.  The remaining text on the line
+# is output as verbatim typewriter text, apart from characters
+# enclosed in backquotes ("`"), which escape to the normal font
+# for the comment block.
+#
+# Comment lines whose first non-blank characters are '--\' are
+# assumed to contain LaTeX directives for the next program block.
+# 
+
+#------------------------------------------------------------------
+
+import sys
+import os
+import regex
+import regsub
+import string
+import commands
+
+#-------------------------------------------------------------- Patterns:
+
+# Regular expression fragments:
+
+whitespace_re   = '\([ \t]*\)'
+comment_re      = '--\(.*\)$'
+quotation_re    = '"\([^"]*\)"'
+breaking_re     = '\([ \t\\.]\)'
+
+# The patterns we're interested in:
+
+whitespace_pat   = regex.compile (whitespace_re)
+comment_line_pat = regex.compile (whitespace_re + comment_re)
+bare_comment_pat = regex.compile (whitespace_re + '--' + whitespace_re + '$')
+blank_line_pat   = regex.compile (whitespace_re + '$')
+quotation_pat    = regex.compile (quotation_re)
+breaking_pat     = regex.compile (breaking_re)
+
+#---------------------------------------------------------- The translator:
+
+tab_spaces = '  '
+
+def TTline (line, first) :
+  if first : res = ''
+  else     : res = '\\hfil\\break'
+
+  if len (line) > 0 :
+    if line[-1] == '\n' :
+      line = line[:-1]
+
+  bits = regsub.split (regsub.gsub ('\t', tab_spaces, line), '`')
+
+  tt = 1
+  for bit in bits:
+    if tt:
+      res = res + '\\verb`' + bit + '`'
+    else:
+      res = res + TTquotes (bit)
+    tt = not tt
+
+  return res + '\n'
+
+def TTquotes (line) :
+  res  = ''
+  bits = regsub.split (line, '"')
+  tt   = 0
+  for bit in bits:
+    if tt:
+      res = res + '{\\tt '
+      for c in bit:
+	res = res + QuoteChar (c)
+      res = res + '}'
+    else:
+      res = res + bit
+    tt = not tt
+
+  return res 
+
+def QuoteChar (c) :
+  if   c == '%' : return '\\char\'045{}'
+  elif c == '_' : return '\\char\'137{}'
+  elif c == '&' : return '\\char\'046{}'
+  elif c == '$' : return '\\char\'044{}'
+  elif c == '^' : return '\\char\'136{}'
+  elif c == '#' : return '\\char\'043{}'
+  elif c == '{' : return '\\char\'173{}'
+  elif c == '}' : return '\\char\'175{}'
+  elif c == '*' : return '\\char\'052{}'
+  elif c == '\\': return '\\char\'134{}'
+  else :          return c
+
+
+#def TTquotes (line) :
+#  res  = ''
+#  bits = regsub.split (line, '"')
+#  tt   = 0
+#  for bit in bits:
+#    if tt:
+#      res = res + '\\verb`'
+#      for c in bit:
+#	if breaking_pat.match (c) != -1 :
+#	  res = res + '`\\penalty0\\verb`' + c
+#	else :
+#	  res = res + c
+#      res = res + '`'
+#    else:
+#      res = res + bit
+#    tt = not tt
+#
+#  return res
+#
+#  return regsub.gsub (quotation_pat, '\\verb`\\1`', line)
+
+class MiddlXlater:
+
+  def init (xl, argv):
+    xl.outfd = sys.stdout # TODO: get proper output
+    xl.name =  argv[2]
+    return xl, argv[1]
+
+  def parse (xl, fd):
+    xl.preamble ()
+
+    xl.lines       = fd.readlines ()
+    xl.nlines      = len (xl.lines)
+    xl.line        = 0
+    xl.prog_header = ''
+
+    xl.skip_header ()
+    while xl.line < xl.nlines:
+      xl.program_blocks ()
+      if xl.line < xl.nlines: xl.comment_blocks ()
+
+    xl.postamble ()
+
+
+  def preamble (xl):
+    xl.outfd.write ('%% preamble\n')
+    xl.outfd.write ('\\index{' + xl.name + '@\\texttt{' + xl.name + '}|(}\n')
+
+  def postamble (xl):
+    xl.outfd.write ('\n\n%% postamble\n')
+    xl.outfd.write ('\\index{' + xl.name + '@\\texttt{' + xl.name + '}|)}\n')
+
+  def skip_header (xl):
+    while blank_line_pat.match (xl.lines [xl.line]) == -1 :
+      xl.line = xl.line + 1
+
+    xl.line = xl.line + 1
+
+  def skip_blank_lines (xl):
+    start_line = xl.line
+
+    while xl.line < xl.nlines and \
+	blank_line_pat.match (xl.lines [xl.line]) != -1:
+      xl.line = xl.line + 1
+
+    return xl.line - start_line
+
+  def program_blocks (xl):
+    xl.skip_blank_lines ()
+    blank_lines = 0
+    first = 1
+
+    xl.outfd.write ('{ ' + xl.prog_header)
+    xl.prog_header = ''
+
+    while xl.line < xl.nlines:
+      line = xl.lines [xl.line]
+
+      if comment_line_pat.match (line) != -1 : break
+
+      while blank_lines > 0:
+	xl.outfd.write (TTline ('', 0))
+	blank_lines = blank_lines - 1
+
+      split_line = regsub.split (line, '--')
+      xl.outfd.write (TTline (split_line[0], first))
+      first = 0
+      if len (split_line) > 1:
+	xl.outfd.write ('{\\sl --- ' + TTquotes (split_line[1]) + '}\n')
+
+      xl.line = xl.line + 1
+      blank_lines = xl.skip_blank_lines ()
+
+    xl.outfd.write ('}\n\n')
+    return
+    
+
+  def comment_blocks (xl):
+    col = 0; i = 0; line = xl.lines [xl.line]
+    while line [i] != '-':
+      if line [i] == ' ' : col = col + 1
+      else:                col = col + 2
+      i = i + 1
+
+    if col > 2 :
+      xl.outfd.write ('\\nobreak\\vskip-.5\\baselineskip{\\leftskip=1em')
+      xl.comment_block ('\\sl')
+      xl.outfd.write ('\\par}\n')
+
+    while xl.line < xl.nlines:
+      xl.skip_blank_lines ()
+      if comment_line_pat.match (xl.lines [xl.line]) == -1 : return
+      if not xl.subsection () :
+	xl.comment_block ('\\rm')
+
+  def comment_block (xl, font):
+    xl.outfd.write ('{' + font + '\n')
+    first_tt = 1
+    while xl.line < xl.nlines and \
+	comment_line_pat.match (xl.lines [xl.line]) != -1 :
+      line = comment_line_pat.group (2)
+      if len (line) == 0:
+	xl.outfd.write ('\n')
+	first_tt = 1
+      elif line[0] == '|':
+	xl.outfd.write (TTline (line[1:], first_tt))
+	first_tt = 0
+      elif line[0] == '\\':
+	xl.prog_header = xl.prog_header + line + '\n'
+	first_tt = 1
+      else:
+	xl.outfd.write (TTquotes (line) + '\n')
+	first_tt = 1
+      xl.line = xl.line + 1
+
+    xl.outfd.write ('}\n\n')
+
+  def subsection (xl):
+    if xl.nlines - xl.line < 4 : return 0
+    if bare_comment_pat.match (xl.lines[xl.line])   == -1 : return 0
+    if comment_line_pat.match (xl.lines[xl.line+1]) == -1 : return 0
+    if bare_comment_pat.match (xl.lines[xl.line+2]) == -1 : return 0
+    if blank_line_pat.match   (xl.lines[xl.line+3]) == -1 : return 0
+
+    xl.outfd.write ('\n\n\\intfsection{' + \
+	string.strip (comment_line_pat.group (2)) + '}\n\n')
+    xl.line = xl.line + 4
+    return 1
+
+#------------------------------------------------------------ Main program:
+
+def main():
+  try:
+    xlater, file = (MiddlXlater ()).init (sys.argv)
+    fp = open (file, 'r')
+  except IOError, msg:
+    print '%s: %s' % (sys.argv [0], msg)
+    sys.exit (1)
+
+  xlater.parse (fp)
+  fp.close ()
+      
+main ()

@@ -1,0 +1,36 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      FBBlitMod
+-- 
+-- DESCRIPTION:
+--
+--      Interface for creating FBBlit closures for a callpriv update
+--      stream 
+-- 
+-- ID : $Id: FBBlitMod.if 1.1 Thu, 18 Feb 1999 14:18:52 +0000 dr10009 $
+-- 
+-- \chapter{Devices}
+-- \section{Frame Buffer}
+
+
+FBBlitMod : LOCAL INTERFACE = 
+  NEEDS FB;
+  NEEDS FBBlit;
+  NEEDS CallPriv;
+BEGIN
+
+-- "New: returns an FBBlit closure for an FB update stream "stream"
+-- using  the callpriv vector "cp"
+
+  New : PROC [sid : FB.StreamID; cp : CallPriv.Vector ] 
+	RETURNS [blit : IREF FBBlit];
+
+END.

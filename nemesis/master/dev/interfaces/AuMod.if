@@ -1,0 +1,73 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+---- INTERFACE:
+--
+--	AuMod.if
+--
+-- DESCRIPTION:
+--
+--	Factory module for various kinds of Au closures.
+--
+--
+-- \chapter{Devices}
+-- \section{Audio}
+--
+
+
+AuMod : LOCAL INTERFACE =
+NEEDS Au;
+NEEDS AuPlaybackWriter;
+BEGIN
+
+  NewPlaybackWriter : PROC [ 
+          au : Au.Rec, 
+	  format : Au.FormatDescription, 
+	  minimum_latency : LONG INTEGER,
+	  streamname : STRING,
+	  queue_length : REF INTEGER
+  ] RETURNS [ 
+          closure : IREF AuPlaybackWriter 
+  ];
+
+  -- Create a playback writer for au, taking data in format. minimum\_latency
+  -- is a hint as to what the minimum buffer length should be, in samples.
+  -- If au is NULL, try to obtain it from the name space instead,
+  -- blocking until it appears.
+  --
+  -- A latency of zero means that the Put operation on closure will
+  -- place data to be played as soon as is safe. A latency of greater
+  -- than zero causes the data to be placed in the buffer so that is
+  -- played slightly later, allowing the user not to call Put as
+  -- regularly as it would have to otherwise. A small negative latency
+  -- may be used to cut in to the safety zone; it is liable to cause
+  -- samples not to be played, however.
+  --
+  -- queue\_length may be set to NULL, but if it is not then the writer
+  -- will repeatedly write the current queue length in of the variable.
+
+  NewAsyncPlaybackWriter : PROC [
+           au : Au.Rec,
+	   format : Au.FormatDescription,
+	   minimum_latency : LONG INTEGER,
+           maximum_length : CARDINAL,
+           streamname : STRING
+  ] RETURNS [
+	   closure : IREF AuPlaybackWriter,
+	   thread : IREF Thread
+  ];
+ 
+  -- Similar to NewPlaybackWriter, except that a new thread is created
+  -- to actually play the data out. Data may be written in a similar
+  -- manner to the synchronous version, but the queue may expand to
+  -- a maximum of maximum\_length samples before optionally blocking.
+  -- Storage for maxmium\_length worth of samples will be allocated in
+  -- advance. The thread closure created is returned.
+
+  -- XXX; expose queue length operations here.
+
+END.

@@ -1,0 +1,101 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Disk.if
+-- 
+-- DESCRIPTION:
+--
+--      What does it do?
+-- 
+-- FILE :	Disk.if
+-- CREATED :	Thu Jan  9 1997
+-- AUTHOR :	Paul Barham (Paul.Barham@cl.cam.ac.uk)
+-- ID : 	$Id: Disk.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+-- 
+-- \chapter{Devices}
+-- \section{Disks}
+--
+
+-- The "Disk" interface provides a standardised abstraction of a 
+-- conventional rigid disk.  The underlying I/O operations are 
+-- as for any other block device, but the "Disk" interface also 
+-- provides methods for scheduling I/O accesses according to disk
+-- geometry etc.
+
+Disk : LOCAL INTERFACE =
+  EXTENDS BlockDev;
+  NEEDS Time;
+BEGIN
+
+    -- 
+    -- Types
+    --
+
+  Head     : TYPE = CARDINAL;
+	-- Which disk head.
+
+  Cylinder : TYPE = CARDINAL;
+	-- Cylinder position.
+
+  Rotation : TYPE = Time.ns;
+	-- Rotational offset from arbitrary index.
+
+  Position : TYPE = RECORD [ c : Cylinder,
+	                     h : Head, 
+	                     r : Rotation ];
+	-- A 3D co-ordinate on the disk.
+
+  Params   : TYPE = RECORD [ blksz   : CARDINAL,
+       		             blocks  : BlockDev.Block,
+	                     cyls    : Cylinder,
+		 	     heads   : Head,
+			     seek    : Time.ns,
+	      	             rotate  : Time.ns,
+			     headsw  : Time.ns,
+			     xfr     : Time.ns ];
+
+	-- Describes visible parameters of a disk.
+
+
+    --
+    -- Operations
+    --
+
+  GetParams : PROC [ OUT p : Params ] RETURNS [];
+
+  	-- Read the parameters of this disk.
+
+  Translate : PROC [     b : BlockDev.Block, 
+                     OUT p : Position ]
+	      RETURNS [];
+
+  	-- Turn a block number into a "Position";
+
+  Where : PROC [ t : Time.ns, OUT p : Position ] RETURNS [];
+
+	-- Returns the estimated current position of the disk head at time "t".
+	-- e.g. Could use the completion time of the last transaction,
+	-- current time and rotation speed of the drive.
+
+  ReadTime : PROC [ b : BlockDev.Block ]
+	     RETURNS [ t : Time.ns ];
+
+	-- Returns the estimated time when block "b" could be read.
+	-- Can use any internal knowlege of the geometry, caching behaviour,
+	-- etc. to calculate this estimate.
+
+  WriteTime : PROC [ b : BlockDev.Block ]
+	      RETURNS [ t : Time.ns ];
+
+	-- Returns the estimated time when block "b" could be written.
+	-- Can use any internal knowlege of the geometry, write buffer,
+	-- etc. to calculate this estimate.
+
+END.

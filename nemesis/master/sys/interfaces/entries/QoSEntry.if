@@ -1,0 +1,94 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1996, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      QoSEntry.if
+-- 
+-- DESCRIPTION:
+--
+--
+-- ID : $Id: QoSEntry.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Networks}
+--
+
+-- A "QoSEntry" is an extension of an "IOEntry". It incorporates a
+-- scheduling policy for "IO" channels based loosely on the Nemesis
+-- EDF Atropos scheduler. This allows a quality of service to be
+-- defined for each IO channel in the form of a period and a slice of
+-- ``time'' to allocate during that period. When "Rendezvous" is
+-- called an IO channel is selected according to the QoS declarations
+-- for service by a single server thread. The server thread is then
+-- expected to serve a single packet from the IO channel, call
+-- "Charge", and return for another IO channel to service using
+-- "Rendezvous".
+
+-- The scheduling algorithm operates using three internal queues of IO
+-- channels - "Waiting", for channels that have work pending but have
+-- run out of allocation, "Idle", for IO channels that have no work
+-- pending and "Runnable", for IO channels that have work pending and
+-- have remaining time in their current period.
+
+QoSEntry: LOCAL INTERFACE =
+  EXTENDS IOEntry;
+  NEEDS Time;
+BEGIN
+
+  OverAllocation : EXCEPTION [];
+    -- OverAllocation will be raised if a call to "SetQoS" requests a
+    -- level of service that would take the overall allocation over
+    -- 100\%.
+
+  InvalidIO : EXCEPTION [];
+    -- An attempt was made to "Charge" or "SetQoS" on an IO that is
+    -- not managed by this particular "QoSEntry".
+
+  -- As far as the "QoSEntry" is concerned, each binding it has
+  -- responsibility for is in one of a number of states:
+
+  State : TYPE = {
+    Idle,            -- open, but with nothing pending.
+    Waiting,         -- out of allocation.
+    Runnable,        -- ready to go.
+    CloseRequested,  -- to be closed down (any thread can do this work).
+    Closing          -- being closed down by a thread.
+   };
+
+  -- By default all channels added to an entry will have extra time service
+  -- only. This means that they get a fair proportion of the service
+  -- time that is currently unused being either unallocated or not
+  -- used by a channel with a guarantee.
+
+  -- "SetQoS" is invoked by the server to set the quality of service for
+  -- "io". "p" is the period, "s" is the slice and "x" allows the IO
+  -- channel share extra time in the system. The "l" parameter gives 
+  -- the amount of latitude to be granted in the case that a client 
+  -- has poor blocking behaviour; its default should be zero unless
+  -- you have a good reason for increasing it. 
+
+  SetQoS : PROC [ io: IREF IO,  p:Time.T, s:Time.T, x:BOOLEAN, l:Time.T ]
+	   RETURNS []
+	   RAISES OverAllocation, InvalidIO;
+
+  -- Charge "io" for "time" nanoseconds of work. This allows a server
+  -- to charge an IO channel for the work that it has carried out on
+  -- its behalf. This need not correspond to the wall-clock time
+  -- actually spent in the server for example, but could be estimated
+  -- time to transmit a packet or the seek time of a disk.
+
+  Charge : PROC [ io: IREF IO,  time: Time.T ]
+	   RETURNS []
+	   RAISES InvalidIO;
+
+  -- Dump a scheduler log.  For debugging use only, requires
+  -- a custom-compiled "QoSEntry" to work.  Will probably vanish in
+  -- the future.
+  dbg: PROC[] RETURNS [];
+
+END.

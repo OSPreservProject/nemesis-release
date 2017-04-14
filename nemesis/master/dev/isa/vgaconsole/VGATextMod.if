@@ -1,0 +1,37 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      VGATextMod
+-- 
+-- DESCRIPTION:
+--
+--      Output to a VGA text-mode display
+-- 
+-- ID : $Id: VGATextMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Console}
+--
+
+-- Many architectures support a VGA standard text mode. This interface
+-- allows a number of writers to be obtained on this display.
+
+VGATextMod : LOCAL INTERFACE =
+  NEEDS Wr;
+  NEEDS Beep;
+BEGIN
+
+  New : PROC [ displaybase : CARDINAL,
+               displayheight : CARDINAL, displaywidth : CARDINAL,
+	       windowheight : CARDINAL, windowwidth : CARDINAL,
+	       windowx : CARDINAL, windowy : CARDINAL,
+	       beeper : IREF Beep ]
+	RETURNS [ wr : IREF Wr ];
+
+END.

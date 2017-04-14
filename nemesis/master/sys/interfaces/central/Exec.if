@@ -1,0 +1,102 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Exec
+-- 
+-- DESCRIPTION:
+--
+--      Convenient interface to domain creation.
+-- 
+-- ID : $Id: Exec.if 1.2 Fri, 21 May 1999 18:19:54 +0100 dr10009 $
+-- 
+-- \chapter{Loader}
+-- 
+-- 
+
+
+-- The "Exec" interface provides a convenient way of creating new
+-- domains.  It is especially suitable for use from command line
+-- interpreters which provide a syntax for creating "Context"s.
+
+Exec : LOCAL INTERFACE =
+  NEEDS Type;
+  NEEDS TypeSystem;
+  NEEDS Context;
+  NEEDS Domain;
+  NEEDS ProtectionDomain;
+  NEEDS Load;
+  NEEDS Rd;
+  NEEDS DomainMgr;
+  NEEDS Heap;
+BEGIN
+
+  -- Raised when trying to load a program that doesn't have an entry point.
+  NoEntryPoint : EXCEPTION [];
+
+  
+  -- "Run" creates a new domain running "module" in an environment
+  -- specified by "env".
+
+  Run : PROC    [ module : Type.Any,
+		  env    : IREF Context,
+		  pdid   : ProtectionDomain.ID,
+		  name   : STRING ]
+        RETURNS [ did    : Domain.ID ]
+        RAISES TypeSystem.Incompatible, Load.Failure, Rd.Failure,
+               DomainMgr.AdmissionDenied, Heap.NoMemory;
+
+  -- The domain executes "Closure.Apply" on a closure obtained from
+  -- "module" as follows.  If "module" is itself a "Closure", that is used.
+  -- If it is a "Rd", it is passed to "Load.FromRd" and the resulting
+  -- export closure (obtained from the newly-loaded symbol table) is used.
+  -- If "module" is a "File", the result of "File.OpenRd" is loaded.
+  -- Finally, if "module" is an "IDCOffer", it is bound and the result is
+  -- processed in the same way.  Otherwise, "Type.Incompatible" is raised.
+  -- 
+  -- The new domain's root context will contain a copy of "env" bound
+  -- to the name "env".
+  -- 
+  -- Certain names bound in "env" are also used by "Run" as parameters
+  -- when creating the new domain; they are as follows:
+  -- 
+  --|   pdid                               ProtectionDomain.ID
+  --|   qos/cpu/{p, s, l, nctxts, x, k}   `arguments to "DomainMgr"`
+  --|   b_env                             `arguments to "Builder"`
+  -- 
+  -- If any of these names is not bound, a sensible default will be
+  -- substituted.
+
+  -- "Load" is like "Run", except that it does not create a domain:
+  -- it simply loads its "module" argument.  It returns a sequence
+  -- giving all the "_export"ed symbols in the module.
+
+  Exports : TYPE = SEQUENCE OF Type.Any;
+
+  Load : PROC    [ module  : Type.Any, pdid : ProtectionDomain.ID ]
+         RETURNS [ exports : Exports   ]
+         RAISES TypeSystem.Incompatible, Load.Failure, Rd.Failure,
+                Heap.NoMemory;
+
+  -- Load a program and return its entry point, but do not start it.
+  -- Raise NoEntryPoint if a closure entry point cannot be found
+
+  LoadProgram : PROC [ module : Type.Any, pdid : ProtectionDomain.ID ]
+         RETURNS [ entrypoint : IREF Closure   ]
+         RAISES TypeSystem.Incompatible, Load.Failure, Rd.Failure,
+                Heap.NoMemory, NoEntryPoint;
+
+  -- Check environment passed in, filling it out with defaults if
+  -- necessary. This is the routine used by Run in order to default
+  -- domain arguments.
+
+  FillEnv : PROC [ env : IREF Context ] RETURNS [];
+
+
+END.

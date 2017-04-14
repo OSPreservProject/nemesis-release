@@ -1,0 +1,75 @@
+------------------------------------------------------------------------------
+--
+-- File:
+-- 
+--	IOData.if
+--
+-- Description:
+--
+--	Types for the data areas of IO channels.
+--
+-- Revision History:
+--
+-- ID :	$Id: IOData.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Input-Output Channels}
+-- 
+-- The "IO_Rec"s transmitted across an "IO" channel contain references
+-- to data contained in some memory shared (in terms of access rights)
+-- between the parties involed in the communication. 
+-- Often these memory areas will be pre-agreed area during the binding
+-- of the channel --- this interface allows for the specificiation of
+-- both pre-allocated and to-be-allocated data areas.
+-- This interface currently deals purely with memory regions; it may
+-- be modified in the future to handle explicit "Stretch"s instead. 
+
+IOData : LOCAL INTERFACE =
+  NEEDS Mem;
+BEGIN
+
+  -- An allocated or allocated region of memory to be used as an IO
+  -- buffer is described by the below structure.
+  Buffer : TYPE = RECORD [ base : ADDRESS, 
+			   len  : WORD     ];	  
+     -- If "base" is a valid address (i.e. aligned and non-zero), then
+     -- "len" gives the extent of an allocated memory region starting
+     -- at the address "base". 
+     -- Otherwise "len" specifies the required amount of memory (in
+     -- bytes) which needs to be allocated for this buffer. 
+
+  -- The participating parties in an IO channel typically have a set
+  -- of memory related desires/requirements on the data areas they
+  -- use. These constraints may be specified by using variable of the
+  -- below type.
+  Param : TYPE = RECORD [ attrs  : Mem.Attrs,
+                          awidth : CARDINAL, 
+                          pwidth : CARDINAL   ];
+    -- a region of memory which will be described by "IO_Rec"s
+    -- transferred by an "IO" has constraints as shown above.  The
+    -- "attrs" field is used to specify virtual and physical
+    -- properties such as whether the data need be DMAable, or should
+    -- be nailed down, etc. The "awidth" field specifies the desired
+    -- alignment of the base of the data area and "pwidth" specifies
+    -- the desired contiguity of the virtual to phyiscal mapping.
+
+
+  -- A data area for an "IO" channel, then, is specified by a 
+  -- combination of a buffer descriptor and a parameter spec. 
+  -- If the buffer has been allocated (i.e. the "base" field of "buf"
+  -- is valid), then the "param" structure, if present, describes the
+  -- actual parameters of that buffer. Otherwise the "param" structure
+  -- contains \emph{requirements} for the allocation of that buffer. 
+  Area : TYPE = RECORD [ buf : Buffer, param : Param ];
+     -- a shared area of memory which is an integral part of an 
+     -- "IO" channel. 
+
+  -- Finally, an "IO" channel can in principle have an arbitrary
+  -- number of pre-defined data areas; for example, each "IO_Rec" in a
+  -- packet might point to memory in a different data area. There are
+  -- more complex cases also ("protocols") but for now we ignore these
+  -- in the hope of getting something sensible working quickly. 
+  Shm: TYPE = SEQUENCE OF Area;
+     -- a sequence (possible empty) of shared areas of memory which
+     -- are (to be) used by an "IO" channel. 
+   
+END.

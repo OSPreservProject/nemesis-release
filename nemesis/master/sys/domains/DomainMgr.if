@@ -1,0 +1,125 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Domain Manager
+-- 
+-- DESCRIPTION:
+--
+--      Creates domains.
+-- 
+-- ID : $Id: DomainMgr.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+--
+-- \chapter{Domains, Events and Activation}
+-- 
+-- 
+
+-- The domain manager implements the "DomainMgr" interface, which
+-- provides operations to create a new domain, specifying its
+-- scheduling parameters, and to destroy a domain.  At present,
+-- this interface is concerned only with kernel-level scheduling.
+-- In the future, facilities will be provided to alter the scheduling
+-- parameters of a running domain (to support the QoS manager), and to
+-- support the loader.
+
+DomainMgr : LOCAL INTERFACE =
+  NEEDS Activation;
+  NEEDS ProtectionDomain;
+  NEEDS Time;
+  NEEDS Domain;
+  NEEDS VP;
+  NEEDS IDCOffer;
+  NEEDS Binder;
+BEGIN
+
+  -- 
+  -- Creating domains
+  -- 
+
+  NewDomain : PROC    [ avec        : IREF Activation,
+                        IN OUT pdid : ProtectionDomain.ID,
+                        nctxts      : CARDINAL,
+                        neps        : CARDINAL,
+                        nframes     : CARDINAL,
+                        actstrsz    : CARDINAL,
+                        k           : BOOLEAN,
+                        name        : STRING                 ]
+              RETURNS [ vp          : IREF VP,
+                        id          : Domain.ID,
+                        salloc      : IREF IDCOffer          ];
+
+
+  -- Create a new VP with entry point "avec" in the protection 
+  -- domain identified by "pdid", with "nctxts" context slots 
+  -- and "neps" event channel end-points. 
+  -- If "pdid" is "NULL_PDID", then a new protection domain is 
+  -- created, and "pdid" modified to return its identifier.   
+  -- 
+  -- An offer is returned for the child's StretchAllocator. This can
+  -- be used up until the child binds to the StretchAllocator itself.
+  -- 
+  -- The new VP will have a total of "nframes" guaranteed physical
+  -- frames for demand paging (or whatever). It will also have a
+  -- nailed stretch of "actstrsz" bytes for use in its startup. If 
+  -- "k" is "True", the domain should be given system privileges.
+  -- 
+  -- The new VP will run in a domain identified by "id". It will not
+  -- actually be added to the scheduler until either "AddContracted"
+  -- or "AddBestEffort" are called.
+  --
+
+  AdmissionDenied : EXCEPTION [];
+
+  AddContracted : PROC    [ id : Domain.ID,
+                            p  : Time.ns,
+                            s  : Time.ns,
+                            l  : Time.ns,
+                            x  : BOOLEAN   ] 
+                  RETURNS [ ]
+                  RAISES AdmissionDenied, Binder.Error;
+
+  -- Add the domain "id" to the kernel scheduler.
+  -- The domain is to be scheduled according to a guaranteed periodic
+  -- contract: an allocation of "s" nanoseconds of CPU time every "p"
+  -- nanoseconds is requested, with a wakeup latency hint of "l"
+  -- nanoseconds. If "x" is "True", the domain is prepared to make use
+  -- of any extra CPU time it may be given. 
+  -- 
+  -- If the kernel schedule can accommodate the request, "id" is
+  -- added to the schedule and a domain identifier "d" assigned;
+  -- the first activation will be through "avec".
+  -- Otherwise, the "AdmissionDenied" exception is raised.
+
+
+
+  AddBestEffort : PROC    [ d : Domain.ID   ]
+                  RETURNS [ ] 
+                  RAISES AdmissionDenied, Binder.Error;
+
+  -- Add the domain "id" to the kernel scheduler as a best
+  -- effort domain. Such domains do not get scheduled according to any
+  -- particular parameters, but rather are allocated CPU time if and
+  -- when it is available. 
+
+  -- The "Remove" procedure removes a domain (either contracted or
+  -- best effort) from the kernel scheduler. The domain must exist. 
+
+  Remove : PROC [ d : Domain.ID ] RETURNS []
+           RAISES Binder.Error;
+
+  -- The "Destroy" procedure destroys the resources associated with
+  -- the domain "id". 
+
+  Destroy :  PROC    [ d : Domain.ID ] 
+             RETURNS [ ] RAISES Binder.Error;
+
+
+
+
+END.

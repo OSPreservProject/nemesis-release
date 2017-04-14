@@ -1,0 +1,53 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Context Module
+-- 
+-- DESCRIPTION:
+--
+--      Creates unrooted naming contexts.
+-- 
+-- ID : $Id: ContextMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Naming Contexts}
+-- 
+
+-- "ContextMod" is an interface to a module implementing
+-- general-purpose "Context"s and "MergedContext"s. Not all contexts
+-- will be generated in this way: some will be hardwired into the
+-- system at build time, others will be provided by remote proxies,
+-- filing systems, etc. Contexts which are to be created by domains for
+-- their own name space configuration will generally use an interface
+-- like this.
+
+ContextMod : LOCAL INTERFACE =
+  NEEDS Context;
+  NEEDS MergedContext;
+  NEEDS Heap;
+  NEEDS TypeSystem;
+BEGIN
+
+  -- To build a context generally requires a "Heap" (to get the
+  -- storage from) and a "TypeSystem" used internally to determine
+  -- whether an object is a substype of "Context" when trying to
+  -- resolve compound pathnames. 
+
+  NewContext : PROC    [ h : IREF Heap, ts : IREF TypeSystem ] 
+               RETURNS [ c : IREF Context ]
+               RAISES Heap.NoMemory;
+    -- Constructs a new naming context.
+
+  NewMerged : PROC    [ h : IREF Heap, ts : IREF TypeSystem ]
+              RETURNS [ m : IREF MergedContext ]
+              RAISES Heap.NoMemory;
+    -- Constructs a new ordered merge of contexts.
+
+
+END.

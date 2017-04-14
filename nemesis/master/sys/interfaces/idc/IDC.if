@@ -1,0 +1,238 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      IDC.if
+-- 
+-- DESCRIPTION:
+--
+--      Abstract inter-domain communication channels
+-- 
+-- ID : $Id: IDC.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+-- 
+
+IDC : LOCAL INTERFACE =
+  NEEDS Heap;
+  NEEDS Binder;
+  NEEDS Event;
+  NEEDS Type;
+BEGIN
+
+  -- Associated with the closure are transmit and receive buffers in memory
+  -- and a synchronisation mechanism which controls access to these buffers.
+  -- A buffer is represented by a "Cookie", where the "a" field points to the
+  -- base of the buffer, and the "w" field gives the size of the buffer
+  -- in bytes.
+
+  Buffer  : TYPE = Binder.Cookie;
+  Buffers : TYPE = Binder.Cookies;
+
+  -- 
+  -- Interaction with marshalling code
+  -- 
+
+  -- IDC marshalling is in general carried out by macros and
+  -- statically-linked systems of stub modules. The "BufferDesc"
+  -- record presents a common data structure to represent a buffer,
+  -- and is used by the generated stub code. "BufferDesc"s are
+  -- returned from the execution protocol interfaces
+  -- "IDCClientBinding" and "IDCServerBinding".
+
+  -- When returned from "InitCall" or "InitCast", "b.base" will point
+  -- to the base of the current transmit buffer, "b.ptr" will be set
+  -- to the address where marshalled values should be placed, and
+  -- "b.space" will be set to the number of bytes remaining in the
+  -- current transmit buffer. 
+
+  -- When returned from "ReceiveCall", "b.base" will point to the base of
+  -- the current receive buffer, "b.ptr" will be set to the address
+  -- of the first value to be unmarshalled, and "b.space" will be set
+  -- to the number of bytes remaining in the current receive buffer.
+
+  -- "b.heap" is constant for the lifetime of the binding.  It will be
+  -- initialised to a closure for the heap in which complex values are
+  -- allocated during unmarshalling.
+
+  BufferRec : TYPE = RECORD [
+    base  : ADDRESS,
+    ptr   : ADDRESS,
+    space : WORD,
+    heap  : IREF Heap
+  ];
+
+  BufferDesc : TYPE = REF BufferRec;
+
+  AddrSeq : TYPE = SEQUENCE OF ADDRESS;
+
+  -- 
+  -- Marshalling failures
+  -- 
+
+  -- The following exception may be raised when marshalling fails
+  -- through lack of space or invalid data.
+
+  Failure : EXCEPTION [];
+
+  -- 
+  -- Marshalling basic types
+  -- 
+
+  -- If there is sufficient space in the current buffer, "mType (v: TYPE)"
+  -- marshals "v" into it and returns "True"; otherwise, "mType" returns
+  -- "False".
+
+  --\footnotesize
+
+  mBoolean         : PROC [ bd : BufferDesc, b  : BOOLEAN ]
+                     RETURNS [ ok: BOOLEAN ];
+  mShortCardinal   : PROC [ bd : BufferDesc, sc : SHORT CARDINAL ]
+                     RETURNS [ ok: BOOLEAN ];
+  mCardinal        : PROC [ bd : BufferDesc, c  : CARDINAL ]
+                     RETURNS [ ok: BOOLEAN ];
+  mLongCardinal    : PROC [ bd : BufferDesc, lc : LONG CARDINAL ]
+                     RETURNS [ ok: BOOLEAN ];
+  mShortInteger    : PROC [ bd : BufferDesc, si : SHORT INTEGER ]
+                     RETURNS [ ok: BOOLEAN ];
+  mInteger         : PROC [ bd : BufferDesc, i  : INTEGER ]
+                     RETURNS [ ok: BOOLEAN ];
+  mLongInteger     : PROC [ bd : BufferDesc, li : LONG INTEGER ]
+                     RETURNS [ ok: BOOLEAN ];
+  mReal            : PROC [ bd : BufferDesc, r  : REAL ]
+                     RETURNS [ ok: BOOLEAN ];
+  mLongReal        : PROC [ bd : BufferDesc, lr : LONG REAL ]
+                     RETURNS [ ok: BOOLEAN ];
+  mOctet           : PROC [ bd : BufferDesc, o  : OCTET ]
+                     RETURNS [ ok: BOOLEAN ];
+  mChar            : PROC [ bd : BufferDesc, c  : CHAR ]
+                     RETURNS [ ok: BOOLEAN ];
+  mAddress         : PROC [ bd : BufferDesc, a  : ADDRESS ]
+                     RETURNS [ ok: BOOLEAN ];
+  mWord            : PROC [ bd : BufferDesc, w  : WORD ]
+                     RETURNS [ ok: BOOLEAN ];
+
+  -- 
+  -- Unmarshalling basic types
+  -- 
+
+  -- If there is sufficent unread data in the current buffer,
+  -- "uType (ptr: REF TYPE)" unmarshals a value of type "TYPE", stores
+  -- it in the referent of "ptr" and returns "True"; otherwise, "uType"
+  -- returns "False".
+
+  --\footnotesize
+
+  uBoolean         : PROC [ bd : BufferDesc, b  : REF BOOLEAN ]
+                     RETURNS [ ok: BOOLEAN ];
+  uShortCardinal   : PROC [ bd : BufferDesc, sc : REF SHORT CARDINAL]
+                     RETURNS [ ok: BOOLEAN ];
+  uCardinal        : PROC [ bd : BufferDesc, c  : REF CARDINAL ]
+                     RETURNS [ ok: BOOLEAN ];
+  uLongCardinal    : PROC [ bd : BufferDesc, lc : REF LONG CARDINAL]
+                     RETURNS [ ok: BOOLEAN ];
+  uShortInteger    : PROC [ bd : BufferDesc, si : REF SHORT INTEGER ]
+                     RETURNS [ ok: BOOLEAN ];
+  uInteger         : PROC [ bd : BufferDesc, i  : REF INTEGER ]
+                     RETURNS [ ok: BOOLEAN ];
+  uLongInteger     : PROC [ bd : BufferDesc, li : REF LONG INTEGER ]
+                     RETURNS [ ok: BOOLEAN ];
+  uReal            : PROC [ bd : BufferDesc, r  : REF REAL ]
+                     RETURNS [ ok: BOOLEAN ];
+  uLongReal        : PROC [ bd : BufferDesc, lr : REF LONG REAL ]
+                     RETURNS [ ok: BOOLEAN ];
+  uOctet           : PROC [ bd : BufferDesc, o  : REF OCTET ]
+                     RETURNS [ ok: BOOLEAN ];
+  uChar            : PROC [ bd : BufferDesc, c  : REF CHAR ]
+                     RETURNS [ ok: BOOLEAN ];
+  uAddress         : PROC [ bd : BufferDesc, a  : REF ADDRESS ]
+                     RETURNS [ ok: BOOLEAN ];
+  uWord            : PROC [ bd : BufferDesc, w  : REF WORD ]
+                     RETURNS [ ok: BOOLEAN ];
+
+  -- 
+  -- Marshalling, unmarshalling and freeing \MIDDL\ sequence types
+  -- 
+
+  -- Like the operations above, except that variable-length unmarshalled
+  -- values (strings and sequences) are allocated in a heap associated
+  -- with this "IDC" closure.
+
+  --\footnotesize
+
+  mString          : PROC [ bd : BufferDesc, s : STRING ]
+                     RETURNS [ ok: BOOLEAN ];
+  uString          : PROC [ bd : BufferDesc, s : REF STRING ]
+                     RETURNS [ ok: BOOLEAN ];
+
+  ByteSequence     : TYPE = SEQUENCE OF OCTET;
+
+  mByteSequence    : PROC [ bd : BufferDesc,
+                            bs : ByteSequence ]
+                     RETURNS [ ok: BOOLEAN ];
+
+  uByteSequence    : PROC [ bd     : BufferDesc,
+                            OUT bs : ByteSequence ]
+                     RETURNS [ ok: BOOLEAN ];
+
+  mStartSequence   : PROC [ bd  : BufferDesc,
+                            num : CARDINAL ]
+                     RETURNS [ ok : BOOLEAN ];
+
+  uStartSequence   : PROC [ bd  : BufferDesc,
+                            num : REF CARDINAL ]
+                     RETURNS [ ok : BOOLEAN ];
+
+  mSequenceElement : PROC [ bd : BufferDesc ]
+                     RETURNS [ ok : BOOLEAN ];
+
+  uSequenceElement : PROC [ bd : BufferDesc ]
+                     RETURNS [ ok : BOOLEAN ];
+
+  mEndSequence     : PROC [ bd : BufferDesc ] 
+                     RETURNS [ ok : BOOLEAN ];
+
+  uEndSequence     : PROC [ bd : BufferDesc ]
+                     RETURNS [ ok : BOOLEAN ];
+
+  mCustom          : PROC [ bd         : BufferDesc,
+                            tc         : Type.Code,
+                            arg        : ADDRESS,
+                            shouldFree : BOOLEAN ]
+                     RETURNS [ ok : BOOLEAN ];
+
+  uCustom          : PROC [ bd      : BufferDesc,
+                            tc      : Type.Code,
+                            arg     : ADDRESS,
+                            memlist : REF AddrSeq ] 
+                     RETURNS [ ok : BOOLEAN ];
+  
+  -- 
+  -- Other types
+  -- 
+
+  --\footnotesize
+
+  mByteArray       : PROC [ bd : BufferDesc,
+                            ba : REF OCTET, len : WORD ] 
+                     RETURNS [ ok: BOOLEAN ];
+  uByteArray       : PROC [ bd : BufferDesc,
+                            ba : REF OCTET, len : WORD ] 
+                     RETURNS [ ok: BOOLEAN ];
+
+  mBitSet          : PROC [ bd : BufferDesc,
+                            bs : REF OCTET, size : WORD ] 
+                     RETURNS [ ok: BOOLEAN ];
+
+  uBitSet          : PROC [ bd : BufferDesc,
+                            bs : REF OCTET, size : WORD ] 
+                     RETURNS [ ok: BOOLEAN ];
+
+  
+END.

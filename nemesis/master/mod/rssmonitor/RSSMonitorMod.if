@@ -1,0 +1,24 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1999, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+
+
+-- "RSSMonitorMod" is used to create a RSSMontior
+
+RSSMonitorMod : LOCAL INTERFACE = 
+NEEDS RSSMonitor;
+BEGIN
+
+   -- Create and install a new RSSMonitor in the current domain.
+   -- If export is true, make it available to other domains via IDC
+   -- in a standard way.
+
+   New : PROC [ export : BOOLEAN ] 
+         RETURNS [ rssmonitor : IREF RSSMonitor ];
+    
+END.
+  

@@ -1,0 +1,37 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      TypeSystemMod
+-- 
+-- DESCRIPTION:
+--
+--      Instantiates TypeSystem interface
+-- 
+-- ID : $Id: TypeSystemMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Runtime Type System}
+
+-- The "TypeSystem" interface is implemented by "TypeSystemMod".
+
+TypeSystemMod : LOCAL INTERFACE =
+  NEEDS TypeSystemF;
+  NEEDS Heap;
+  NEEDS LongCardTblMod;
+  NEEDS StringTblMod;
+BEGIN
+
+  New : PROC    [ h: IREF Heap,
+		  l: IREF LongCardTblMod,
+		  s: IREF StringTblMod ]
+        RETURNS [ t: IREF TypeSystemF ]
+        RAISES Heap.NoMemory;
+    -- Return a "TypeSystemF" allocated in "h".
+
+END.

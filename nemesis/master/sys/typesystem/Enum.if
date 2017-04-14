@@ -1,0 +1,39 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Enum
+-- 
+-- DESCRIPTION:
+--
+--      Extension of Context used to represent elements of enumeration
+--      type class 
+-- 
+-- ID : $Id: Enum.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Runtime Type System}
+-- 
+-- 
+
+-- The "TypeSystem" represents \MIDDL\ enumeration types by instances
+-- of the "Enum" interface.
+
+Enum : LOCAL INTERFACE =
+  EXTENDS Context;
+  NEEDS Type;
+BEGIN
+
+  -- The "Context" part of this interface maps each of the enumeration's
+  -- elements' names (as strings) to the corresponding "Enum.Value".
+  -- The list provided by "Context.List" gives the element names
+  -- in the order defined by the enumeration type.
+
+  Value : TYPE = CARDINAL;
+
+END.

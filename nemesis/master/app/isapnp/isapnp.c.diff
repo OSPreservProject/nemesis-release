@@ -1,0 +1,529 @@
+0a1,22
+> /*
+>  * isapnp for Nemesis. Ported from the linux version by Michael Dales 
+>  * (michael@dcs.gla.ac.uk) and Rolf Neugebauer (neugebar@dcs.gla.ac.uk).
+>  *
+>  * This program is for use on machines that don't have a BIOS which will
+>  * correctly configure PnP hardware. It takes in a config file generated
+>  * using pnpdump (we generated it under Linux) on the same machine.
+>  *
+>  * Important: Read the README.Nemesis for info on how to use this program. 
+>  *
+>  * This has benn compiled and tested successfully on x86. There are some
+>  * #define EB164 from the original code, but there have not been tested
+>  * yet. There is a chunck of hac.., erm, tweaks, in a section called 
+>  * #define NEMESIS which allow it to compile properly on that
+>  * platform.
+>  *
+>  * For the curious isapnp.c.diff shows what we changed to get from the
+>  * standard version to this version.
+>  *
+>  * Last modified: 4th June 1999
+>  */
+> 
+626c648
+< #line 1 "isapnp.y"
+---
+> // #line 1 "isapnp.y"
+628,629c650
+< #line 3 "isapnp.y"
+< #include <unistd.h>
+---
+> // #line 3 "isapnp.y"
+633a655
+> #include <unistd.h>
+641c663
+< #include <sys/types.h>
+---
+> //#include <sys/types.h>
+645c667
+< #    ifdef _AXP_
+---
+> #    ifdef EB164
+648c670
+< #       include <asm/io.h>
+---
+> #       include <io.h>
+753a776,837
+> /* -------------------------------------------------------------
+>  * This is needed to get the code to compile under nemesis
+>  */
+> #if NEMESIS
+> 
+> unsigned iopl(unsigned port){return(0);}
+> 
+> #if 1 // If not using posix lib
+> int fileno( FILE *stream) {return 0;}
+> int isatty(int desc) { return 0;}
+> void perror(const char *s) {eprintf("ERROR: %s\n", s);}
+> #define getc(_x) fgetc(_x)
+> #define putchar(_c) fputc(_c, stdout)
+> #endif 
+> 
+> #include <../time.h>
+> #include <ecs.h>
+> 
+> void usleep(unsigned wait) { PAUSE(MICROSECS(wait));}
+> 
+> int strncasecmp(char *str1, char *str2, unsigned length)
+> {
+>   char *buffer1, *buffer2;
+>   int  counter, return_value;
+> 
+>   /* Allocate space for temp buffer */
+>   if((buffer1 = malloc(strlen(str1)+1)) == (char *)0) {
+>     perror("Allocating spare memory");
+>     exit(1);
+>   }
+>   else {
+>     (void)strcpy(buffer1, str1);
+>   }
+>   if((buffer2 = malloc(strlen(str2)+1)) == (char *)0) {
+>     perror("Allocating spare memory");
+>     exit(1);
+>   }
+>   else {
+>     (void)strcpy(buffer2, str2);
+>   }
+> 
+>   /* Decase letters to lower case */
+>   for(counter = 0 ; counter < strlen(str1) ; counter++)
+>     if(str1[counter] >= 'a')
+>       buffer1[counter] = (char)('A' + (str1[counter]-'a'));
+>   for(counter = 0 ; counter < strlen(str2) ; counter++)
+>     if(str2[counter] >= 'a')
+>       buffer2[counter] = (char)('A' + (str2[counter]-'a'));
+> 
+>   /* Now calculate the return value */
+>   return_value = strncmp(str1, str2, length);
+> 
+>   /* Free up the space */
+>   (void)free(str1);
+>   (void)free(str2);
+> 
+>   /* Now give the return value */
+>   return(return_value);
+> }
+> #endif // NEMESIS
+> /* ------------------------------------------------------------- */
+> 
+848c932
+< 			fprintf(stderr, "Unable to allocate memory for action list processing line %d\n", linenumber);
+---
+> 			eprintf("Unable to allocate memory for action list processing line %d\n", linenumber);
+885c969
+< 		fprintf(stderr, "Port address %s (0x%04x) out of range 0x203..0x3ff\n", s, read_port);
+---
+> 		eprintf("Port address %s (0x%04x) out of range 0x203..0x3ff\n", s, read_port);
+897c981
+< 		fprintf(stderr, "READPORT not set\n");
+---
+> 		eprintf("READPORT not set\n");
+953c1037
+< 		fprintf(stderr, "Warning - ISOLATE called twice, or after CSN - clearing board count\n");
+---
+> 		printf("Warning - ISOLATE called twice, or after CSN - clearing board count\n");
+1045,1051c1129,1135
+< 		/*
+< 		printf("%02x ", serial_identifier[nextboard][index]);
+< 		*/
+< 	}
+< 	/*
+< 	printf("csum is %02x\n", csum);
+< 	*/
+---
+> 		
+> 		eprintf("%02x ", serial_identifier[nextboard][index]);
+> 		
+> 	}
+> 	
+> 	eprintf("csum is %02x\n", csum);
+> 	
+1085c1169
+< 	/*
+---
+> 	
+1088c1172
+< 		printf("csum = %02x\n", csum);
+---
+> 		eprintf("csum = %02x\n", csum);
+1090c1174
+< 	*/
+---
+> 	
+1132c1216
+< 		fprintf(stderr, "Timeout attempting to read ident - is READPORT correct ?\n");
+---
+> 		eprintf("Timeout attempting to read ident - is READPORT correct ?\n");
+1150c1234
+< 	    fprintf(stderr, "Timeout attempting to read resource data - is READPORT correct ?\n");
+---
+> 	    eprintf("Timeout attempting to read resource data - is READPORT correct ?\n");
+1335c1419
+< 		fprintf(stderr, "LD setting verify failed, this may not be a problem\n"
+---
+> 		eprintf("LD setting verify failed, this may not be a problem\n"
+1412c1496
+< 		fprintf(stderr, "Warning - IRQ2 is not a valid selection, changing it to IRQ9 (See clarifications 4.6.2)\n");
+---
+> 		eprintf("Warning - IRQ2 is not a valid selection, changing it to IRQ9 (See clarifications 4.6.2)\n");
+1601c1685
+< 		fprintf(stderr, "Can only poke bytes\n");
+---
+> 		eprintf("Can only poke bytes\n");
+1865c1949
+< #line 1075 "isapnp.y"
+---
+> // #line 1075 "isapnp.y"
+1952c2036
+< #line 1077 "isapnp.y"
+---
+> // #line 1077 "isapnp.y"
+1957c2041
+< #line 1079 "isapnp.y"
+---
+> // #line 1079 "isapnp.y"
+1962c2046
+< #line 1080 "isapnp.y"
+---
+> // #line 1080 "isapnp.y"
+1967c2051
+< #line 1081 "isapnp.y"
+---
+> // #line 1081 "isapnp.y"
+1972c2056
+< #line 1082 "isapnp.y"
+---
+> // #line 1082 "isapnp.y"
+1977c2061
+< #line 1083 "isapnp.y"
+---
+> // #line 1083 "isapnp.y"
+1981c2065
+< #line 1085 "isapnp.y"
+---
+> // #line 1085 "isapnp.y"
+1984c2068
+< #line 1085 "isapnp.y"
+---
+> // #line 1085 "isapnp.y"
+1988c2072
+< #line 1087 "isapnp.y"
+---
+> // #line 1087 "isapnp.y"
+1990c2074
+< #line 1088 "isapnp.y"
+---
+> // #line 1088 "isapnp.y"
+1993c2077
+< #line 1088 "isapnp.y"
+---
+> // #line 1088 "isapnp.y"
+1998c2082
+< #line 1089 "isapnp.y"
+---
+> // #line 1089 "isapnp.y"
+2003c2087
+< #line 1090 "isapnp.y"
+---
+> // #line 1090 "isapnp.y"
+2008c2092
+< #line 1091 "isapnp.y"
+---
+> // #line 1091 "isapnp.y"
+2013c2097
+< #line 1092 "isapnp.y"
+---
+> // #line 1092 "isapnp.y"
+2018c2102
+< #line 1094 "isapnp.y"
+---
+> // #line 1094 "isapnp.y"
+2023c2107
+< #line 1096 "isapnp.y"
+---
+> // #line 1096 "isapnp.y"
+2028c2112
+< #line 1097 "isapnp.y"
+---
+> // #line 1097 "isapnp.y"
+2033c2117
+< #line 1099 "isapnp.y"
+---
+> // #line 1099 "isapnp.y"
+2038c2122
+< #line 1100 "isapnp.y"
+---
+> // #line 1100 "isapnp.y"
+2043c2127
+< #line 1102 "isapnp.y"
+---
+> // #line 1102 "isapnp.y"
+2048c2132
+< #line 1103 "isapnp.y"
+---
+> // #line 1103 "isapnp.y"
+2053c2137
+< #line 1105 "isapnp.y"
+---
+> // #line 1105 "isapnp.y"
+2058c2142
+< #line 1106 "isapnp.y"
+---
+> // #line 1106 "isapnp.y"
+2063c2147
+< #line 1107 "isapnp.y"
+---
+> // #line 1107 "isapnp.y"
+2068c2152
+< #line 1108 "isapnp.y"
+---
+> // #line 1108 "isapnp.y"
+2073c2157
+< #line 1109 "isapnp.y"
+---
+> // #line 1109 "isapnp.y"
+2078c2162
+< #line 1110 "isapnp.y"
+---
+> // #line 1110 "isapnp.y"
+2083c2167
+< #line 1111 "isapnp.y"
+---
+> // #line 1111 "isapnp.y"
+2088c2172
+< #line 1113 "isapnp.y"
+---
+> // #line 1113 "isapnp.y"
+2093c2177
+< #line 1114 "isapnp.y"
+---
+> // #line 1114 "isapnp.y"
+2098c2182
+< #line 1116 "isapnp.y"
+---
+> // #line 1116 "isapnp.y"
+2103c2187
+< #line 1118 "isapnp.y"
+---
+> // #line 1118 "isapnp.y"
+2108c2192
+< #line 1119 "isapnp.y"
+---
+> // #line 1119 "isapnp.y"
+2113c2197
+< #line 1121 "isapnp.y"
+---
+> // #line 1121 "isapnp.y"
+2118c2202
+< #line 1122 "isapnp.y"
+---
+> // #line 1122 "isapnp.y"
+2123c2207
+< #line 1124 "isapnp.y"
+---
+> // #line 1124 "isapnp.y"
+2128c2212
+< #line 1125 "isapnp.y"
+---
+> // #line 1125 "isapnp.y"
+2133c2217
+< #line 1127 "isapnp.y"
+---
+> // #line 1127 "isapnp.y"
+2138c2222
+< #line 1128 "isapnp.y"
+---
+> // #line 1128 "isapnp.y"
+2142c2226
+< #line 1131 "isapnp.y"
+---
+> // #line 1131 "isapnp.y"
+2145c2229
+< #line 1131 "isapnp.y"
+---
+> // #line 1131 "isapnp.y"
+2150c2234
+< #line 1132 "isapnp.y"
+---
+> // #line 1132 "isapnp.y"
+2155c2239
+< #line 1134 "isapnp.y"
+---
+> // #line 1134 "isapnp.y"
+2160c2244
+< #line 1135 "isapnp.y"
+---
+> // #line 1135 "isapnp.y"
+2165c2249
+< #line 1137 "isapnp.y"
+---
+> // #line 1137 "isapnp.y"
+2169c2253
+< #line 1139 "isapnp.y"
+---
+> // #line 1139 "isapnp.y"
+2172c2256
+< #line 1139 "isapnp.y"
+---
+> // #line 1139 "isapnp.y"
+2177c2261
+< #line 1140 "isapnp.y"
+---
+> // #line 1140 "isapnp.y"
+2182c2266
+< #line 1142 "isapnp.y"
+---
+> // #line 1142 "isapnp.y"
+2186c2270
+< #line 1144 "isapnp.y"
+---
+> // #line 1144 "isapnp.y"
+2189c2273
+< #line 1144 "isapnp.y"
+---
+> // #line 1144 "isapnp.y"
+2193c2277
+< #line 1146 "isapnp.y"
+---
+> // #line 1146 "isapnp.y"
+2196c2280
+< #line 1146 "isapnp.y"
+---
+> // #line 1146 "isapnp.y"
+2201c2285
+< #line 1147 "isapnp.y"
+---
+> // #line 1147 "isapnp.y"
+2206c2290
+< #line 1148 "isapnp.y"
+---
+> // #line 1148 "isapnp.y"
+2211c2295
+< #line 1150 "isapnp.y"
+---
+> // #line 1150 "isapnp.y"
+2216c2300
+< #line 1151 "isapnp.y"
+---
+> // #line 1151 "isapnp.y"
+2221c2305
+< #line 1152 "isapnp.y"
+---
+> // #line 1152 "isapnp.y"
+2226c2310
+< #line 1154 "isapnp.y"
+---
+> // #line 1154 "isapnp.y"
+2231c2315
+< #line 1155 "isapnp.y"
+---
+> // #line 1155 "isapnp.y"
+2236c2320
+< #line 1156 "isapnp.y"
+---
+> // #line 1156 "isapnp.y"
+2241c2325
+< #line 1158 "isapnp.y"
+---
+> // #line 1158 "isapnp.y"
+2245c2329
+< #line 1160 "isapnp.y"
+---
+> // #line 1160 "isapnp.y"
+2248c2332
+< #line 1160 "isapnp.y"
+---
+> // #line 1160 "isapnp.y"
+2253c2337
+< #line 1161 "isapnp.y"
+---
+> // #line 1161 "isapnp.y"
+2258c2342
+< #line 1163 "isapnp.y"
+---
+> // #line 1163 "isapnp.y"
+2263c2347
+< #line 1164 "isapnp.y"
+---
+> // #line 1164 "isapnp.y"
+2268c2352
+< #line 1166 "isapnp.y"
+---
+> // #line 1166 "isapnp.y"
+2273c2357
+< #line 1167 "isapnp.y"
+---
+> // #line 1167 "isapnp.y"
+2278c2362
+< #line 1169 "isapnp.y"
+---
+> // #line 1169 "isapnp.y"
+2283c2367
+< #line 1170 "isapnp.y"
+---
+> // #line 1170 "isapnp.y"
+2288c2372
+< #line 1171 "isapnp.y"
+---
+> // #line 1171 "isapnp.y"
+2293,2294c2377,2378
+< #line 1172 "isapnp.y"
+< BEGIN(PEARSHAPED); fprintf(stderr, "Don't know what to do with %s", yytext); parseerror = 1;
+---
+> // #line 1172 "isapnp.y"
+> BEGIN(PEARSHAPED); eprintf("Don't know what to do with %s", yytext); parseerror = 1;
+2301,2302c2385,2386
+< #line 1174 "isapnp.y"
+< fprintf(stderr, "%s on or around line %d\n", yytext, linenumber); yyterminate();
+---
+> // #line 1174 "isapnp.y"
+> eprintf("%s on or around line %d\n", yytext, linenumber); yyterminate();
+2306c2390
+< #line 1176 "isapnp.y"
+---
+> // #line 1176 "isapnp.y"
+2914c2998
+< 
+---
+> #if 0
+2923a3008,3009
+> #endif 
+> 	b->yy_is_interactive = 0;
+3114c3200
+< 	(void) fprintf( stderr, "%s\n", msg );
+---
+> 	(void) eprintf("%s\n", msg );
+3209c3295,3296
+< #if YY_MAIN
+---
+> #if 0
+> //#if YY_MAIN
+3216c3303
+< #line 1176 "isapnp.y"
+---
+> // #line 1176 "isapnp.y"
+3226c3313
+< 		fprintf(stderr, "%s\nThis is free software, see the sources for details.\n"
+---
+> 		eprintf("%s\nThis is free software, see the sources for details.\n"
+3232c3319
+< #ifdef _AXP_
+---
+> #ifdef EB164
+3245a3333,3335
+> 
+> 	eprintf("isapnp: Finished parsing, about to munge registers\n");
+> 
+3248c3338
+< 		fprintf(stderr, "Error occurred parsing config file on line %d --- no action taken\n", linenumber);
+---
+> 		eprintf("Error occurred parsing config file on line %d --- no action taken\n", linenumber);
+3268c3358
+< 				fprintf(stderr, "Error occurred executing request '%s' on or around line %d --- further action aborted\n", actions[i].name, actions[i].linenum);
+---
+> 				eprintf("Error occurred executing request '%s' on or around line %d --- further action aborted\n", actions[i].name, actions[i].linenum);
+3275c3365
+< #ifdef _AXP_
+---
+> #ifdef EB164

@@ -1,0 +1,177 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      NFS.if
+-- 
+-- DESCRIPTION:
+--
+--      NFS interface in Middl.
+-- 
+-- FILE :       NFS.if
+-- CREATED :    Tue Jan 20 1998
+-- AUTHOR :     Stephen Early
+-- ID :         $Id: NFS.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+-- 
+-- \chapter{File Systems}
+-- \section{The Network File System}
+--
+
+NFS : LOCAL INTERFACE =
+  NEEDS FSTypes;
+  NEEDS IDCOffer;
+  NEEDS FileIO;
+BEGIN
+
+  --
+  -- Types
+  --
+
+  Handle : TYPE = CARDINAL;
+
+  -- 
+  -- Handles
+  -- 
+
+  -- A "Handle" is a reference to filesystem metadata held within
+  -- the server. An example of this is an inode. Handles cannot be
+  -- invented or guessed by the client, they are allocated by the
+  -- server.
+
+  Free : PROC [ handle : Handle ] RETURNS [ ok : BOOLEAN ];
+    -- Frees the handle; the filesystem server is then free to discard
+    -- metadata related to the handle.
+
+  GetPath : PROC [ handle : Handle ] RETURNS [ path : STRING ];
+    -- Returns the refresh path stored in the handle. Used to implement the
+    -- Delegate operation for now.
+
+  --
+  -- Root Directory
+  --
+
+  Root : PROC [ ] RETURNS [ rc: FSTypes.RC, root : Handle ];
+    -- Obtains a new handle on the root inode.
+
+  --
+  -- Generic Inode Ops
+  --
+    
+  InodeType : PROC    [ inode : Handle ] 
+              RETURNS [ itype : FSTypes.InodeType ];
+    -- This allows us to determine which flavour of Inode a handle
+    -- refers to.
+
+  BlockSize : PROC [ handle : Handle ] RETURNS [ blocksize : CARDINAL ];
+    -- Returns the blocksize of this inode.
+
+  Size : PROC [ inode : Handle ] RETURNS [ size : FileIO.Size ];
+    -- Returns the size of the data in the inode, if appropriate.
+
+  NLinks : PROC [ inode : Handle ] RETURNS [ n : FSTypes.NLinks ];
+
+  ATime : PROC [ inode : Handle ] RETURNS [ atime : FSTypes.Time ];
+  MTime : PROC [ inode : Handle ] RETURNS [ mtime : FSTypes.Time ];
+  CTime : PROC [ inode : Handle ] RETURNS [ ctime : FSTypes.Time ];
+    -- These are separate because "Atime" is a lot harder to 
+    -- determine than "CTime" in a distributed environment \cite{Burrows}.
+
+  --
+  -- File Specific Inode Ops
+  --
+
+  Open : PROC   [ file    : Handle,
+                  mode    : FSTypes.Mode,
+	  	  options : FSTypes.Options ]
+         RETURNS [ rc     : FSTypes.RC, 
+                   handle : Handle ];
+    -- Opens the specified inode. Returns a Handle that refers to the open
+    -- file. The file is closed when the handle is freed.
+
+  Create : PROC    [ dir     : Handle,
+		     name    : FSTypes.Name,
+		     options : FSTypes.Options ]
+	   RETURNS [ rc      : FSTypes.RC,
+		     handle  : Handle ];
+    -- Creates a file of the specified name, read/write, and returns a handle
+    -- corresponding to the newly-created file. The handle is \emph{not} open.
+
+  Delete : PROC [ dir  : Handle,
+		  name : FSTypes.Name ]
+	RETURNS [ rc   : FSTypes.RC ];
+
+  FetchBlock : PROC [ handle    : Handle,
+		      fileblock : FileIO.Block,
+		      location  : DANGEROUS ADDRESS ]
+	     RETURNS [ rc       : FSTypes.RC ];
+    -- Fetches a block from an open file.
+
+  PutBlock : PROC [ handle    : Handle,
+		    fileblock : FileIO.Block,
+		    location  : DANGEROUS ADDRESS ]
+	     RETURNS [ rc     : FSTypes.RC ];
+    -- Puts a block to an open file.
+
+  SetLength : PROC [ handle : Handle,
+		     length : FileIO.Size ]
+	   RETURNS [ rc     : FSTypes.RC ];
+    -- Sets the length of an open file, truncating if necessary.
+
+  --
+  -- Directory specific Inode Ops
+  --
+  Lookup : PROC [ dir : Handle, path : FSTypes.Name, follow : BOOLEAN ] 
+           RETURNS [ rc : FSTypes.RC, inode : Handle ];
+    -- Look up the pathname "path" in this directory to return a handle
+    -- for an inode.
+
+  Link : PROC [ dir  : Handle,
+                name : FSTypes.Name, 
+                i    : Handle ]
+         RETURNS [ rc : FSTypes.RC ];
+
+  MkDir : PROC [ dir : Handle, path : FSTypes.Name ]
+          RETURNS [ rc : FSTypes.RC ];
+    -- Creates a new directory.
+
+  RmDir : PROC [ dir : Handle, path : FSTypes.Name ]
+          RETURNS [ rc : FSTypes.RC ];
+
+  Rename : PROC [ fromdir  : Handle,
+                  fromname : FSTypes.Name, 
+		  todir    : Handle,
+                  toname   : FSTypes.Name ]
+           RETURNS [ rc : FSTypes.RC ];
+
+  ReadDir : PROC    [ dir : Handle ] 
+              RETURNS [ rc : FSTypes.RC,
+			entries : FSTypes.DirentSeq ];
+    -- Returns a section of a directory.
+
+  --
+  -- Symlink specific operations
+  --
+
+  Symlink : PROC [ dir  : Handle,
+                   name : FSTypes.Name, 
+                   path : FSTypes.Name ]
+           RETURNS [ rc : FSTypes.RC ];
+    -- Creates a symlink
+
+  Readlink : PROC [ link : Handle ]
+          RETURNS [ rc       : FSTypes.RC,
+		     contents : FSTypes.Name ];
+
+  --
+  -- Filesystem information
+  --
+
+  Stat : PROC [ ] RETURNS [ info : FSTypes.Info ];
+
+END.

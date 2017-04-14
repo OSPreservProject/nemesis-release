@@ -1,0 +1,75 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      USD.if
+-- 
+-- DESCRIPTION:
+--
+--      User Safe Disk
+-- 
+-- ID : $Id: USD.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+-- 
+-- \chapter{Devices}
+-- \section{Disks}
+-- 
+
+USD : LOCAL INTERFACE = 
+  NEEDS Time;
+  NEEDS FileIO;
+BEGIN
+
+  ClientID : TYPE = LONG CARDINAL;
+    -- A "ClientID" is an opaque value held per-stream and passed as
+    -- an argument to the fault handler.
+
+  StreamID : TYPE = LONG CARDINAL;
+    -- A "StreamID" is the name of an IO stream to the USD.
+
+  RequestID : TYPE = LONG CARDINAL;
+    -- A "RequestID" is an opaque value passed in a request. If the request
+    -- results in a fault then the RequestID is passed to the fault handler.
+
+  QoS      : TYPE = RECORD [ p : Time.ns,
+                             s : Time.ns,
+                             x : BOOLEAN, 
+                             l : Time.ns ];
+    -- "QoS" is specified as a guaranteed slice "s" per period
+    -- "p". These values are used to influence the scheduling of the
+    -- various requests pending at any particular point. The "x" flag
+    -- specifies whether a particular stream should be allowed to carry
+    -- out additional transactions if no other work is pending.
+    -- The "l" value specifies the tolerance granted to clients with 
+    -- poor blocking behaviour.  
+
+  Extent   : TYPE = RECORD [ base : FileIO.Block,
+      		             len  : LONG CARDINAL ];
+    -- An "Extent" is a contiguous range of blocks on the disk.
+    -- "len" is in blocks.
+
+  Op : TYPE = { Read, Write };
+    -- The types of operation we may perform on extents.
+
+  Permissions : TYPE = SET OF Op;
+
+  DiskInfo : TYPE = RECORD [
+           label     : STRING, -- probably unused
+           blocksize : CARDINAL,
+           partitions : CARDINAL,
+           size      : LONG CARDINAL -- in blocks
+        ];
+
+  PartitionInfo : TYPE = RECORD [
+		osname    : STRING,             -- name of file system
+		ostype    : CARDINAL,           -- number of file system
+		blocksize : CARDINAL,
+		size      : LONG CARDINAL       -- in blocks
+	];
+
+END.

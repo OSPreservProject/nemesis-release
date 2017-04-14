@@ -1,0 +1,108 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      ObjectTbl
+-- 
+-- DESCRIPTION:
+--
+--      Maintains table of exported interfaces for a domain
+-- 
+-- ID : $Id: ObjectTbl.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+-- 
+
+-- An "ObjectTbl" is an IDC service which maintains a mapping from
+-- "IDCOffer"s to interfaces, either local services which have been
+-- "Export"ed or client stubs to services which have been
+-- "Import"ed. 
+
+-- The table handles incoming connection requests from other
+-- domains (which arrive via the "Binder"). A request for connection
+-- to an "IDCOffer" is looked up in the table and mapped to a
+-- "IDCService", which is invoked to create the server side
+-- connection state and return to the "Binder". 
+
+-- A second function of the table is when the domain is acting as a
+-- client: if it has received an "IDCOffer" and wishes to bind to it,
+-- it calls "Import" to return an interface of the appropriate
+-- type.  This is either a client surrogate, or the service itself if
+-- the offer has been around the houses and come back.
+
+ObjectTbl : LOCAL INTERFACE =
+  NEEDS IDCService;
+  NEEDS IDCClientBinding;
+  NEEDS IDCOffer;
+  NEEDS Type;
+BEGIN
+
+  -- There is one exception specific to the "ObjectTbl":
+
+  FailType : TYPE = { Duplicate, NoMemory, Bind };
+
+  Failure : EXCEPTION [ t : FailType ];
+    -- The table has been used in an inconsistent manner, for example
+    -- "Export"ing and offer twice, or the table is out of memory.
+
+  EntryType : TYPE = { Service, Surrogate };
+  
+  Handle : TYPE = CHOICE EntryType OF {
+    Service   => IREF IDCService,
+    Surrogate => IREF IDCClientBinding
+  };
+
+
+  -- When a service offer is created, the corresponding "IDCTransport"
+  -- registers it in the object table using "Export". 
+  -- It is an exception to try to export the same offer twice.
+  
+  Export : PROC    [ service : IREF IDCService,
+      	      	     offer   : IREF IDCOffer,
+       	      	     intf    : Type.Any ]
+      	   RETURNS []
+      	   RAISES Failure;
+
+  -- When a client domain receives an "IDCOffer" it may be from a
+  -- service local to the domain, or from a service for which the client
+  -- already has a binding.  Calling "Import" returns the service
+  -- if it is local, or the client surrogate interface if it is remote
+  -- and a binding for it already exists. 
+  -- 
+  -- Otherwise, the "Bind" method on the "IDCOffer" is invoked to
+  -- create a new binding.  This is entered in the table and client
+  -- surrogate returned.
+ 
+  Import : PROC    [ offer : IREF IDCOffer,
+                 OUT intf  : Type.Any ]
+      	   RETURNS []
+      	   RAISES Failure;
+    -- If "offer" is in the table, return its interface. Otherwise try
+    -- to bind to it and return the result of the bind.
+
+  -- A general purpose operation is also provided to query the object
+  -- table about a particular offer, without taking any particular
+  -- action. 
+
+  Info : PROC    [ offer  : IREF IDCOffer,
+      	       OUT intf   : Type.Any,
+               OUT info   : Handle        ]
+      	 RETURNS [ exists : BOOLEAN       ];
+
+  -- When a server domain wishes to withdraw a service, or a client
+  -- domain has finished used a service, the corresponding object
+  -- table entry is removed with "Delete":
+
+  Delete : PROC    [ offer   : IREF IDCOffer ] 
+      	   RETURNS [ present : BOOLEAN ];
+
+    -- If "offer" is in the table, then remove it and return
+    -- "True". Otherwise return "False".
+
+END.

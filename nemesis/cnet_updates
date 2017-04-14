@@ -1,0 +1,216 @@
+ The Cambridge Nemesis Network subsystem
+========================================
+
+#00005 dr10009 pp Tim Harris (tim.harris@cl.cam.ac.uk) Mon May  3 12:32:53 1999
+-------------------------------------------------------------------------------
+Allows packet filters for TCP connections to be removed
+mod/net/lmpf/pf.c                  -- Remove bogus semicolon
+
+#00004 dr10009 pp Paul Menage (Paul.Menage@cl.cam.ac.uk) Wed Apr 28 15:41:44 1999
+---------------------------------------------------------------------------------
+
+mod/net/resolver/resolver.c        -- Code tidy
+mod/net/resolver/Resolver.if       -- Interface tidy
+
+#00003 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Fri Apr 16 16:41:28 1999
+--------------------------------------------------------------------------
+
+h                                  ** NEW DIRECTORY
+h/iana.h                           ++ missing header
+
+#00002 dr10009 pp Tim Harris (tim.harris@cl.cam.ac.uk) Thu Feb  4 11:23:35 1999
+-------------------------------------------------------------------------------
+Remove swearing
+mod/net/protos/ip/ip.c             -- Remove swearing
+mod/net/arp/ARP.c                  -- Remove swearing
+
+#00001 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Jan 12 14:48:14 1999
+--------------------------------------------------------------------------
+no overview
+
+                                   ** describe me
+dev                                ** describe me
+dev/atm                            ** describe me
+dev/isa                            ** describe me
+dev/isa/3c509                      ** describe me
+dev/pci                            ** describe me
+dev/pci/de4x5                      ** describe me
+glue                               ** describe me
+glue/packages                      ** describe me
+lib                                ** describe me
+lib/static                         ** describe me
+lib/static/socket                  ** describe me
+lib/static/sunrpc                  ** describe me
+lib/static/sunrpc/h                ** describe me
+lib/static/sunrpc/h/rpc            ** describe me
+mod                                ** describe me
+mod/nemesis                        ** describe me
+mod/nemesis/netcons                ** describe me
+mod/net                            ** describe me
+mod/net/DNS                        ** describe me
+mod/net/arp                        ** describe me
+mod/net/bpf                        ** describe me
+mod/net/flowman                    ** describe me
+mod/net/interfaces                 ** describe me
+mod/net/lmpf                       ** describe me
+mod/net/netif                      ** describe me
+mod/net/protos                     ** describe me
+mod/net/protos/ether               ** describe me
+mod/net/protos/ip                  ** describe me
+mod/net/protos/ipv6                ** describe me
+mod/net/protos/udp                 ** describe me
+mod/net/resolver                   ** describe me
+mod/net/socket                     ** describe me
+mod/net/socket/tcp                 ** describe me
+mod/net/socket/udp                 ** describe me
+mod/net/term                       ** describe me
+mod/net/tftp                       ** describe me
+dev/isa/3c509/3c509.c              ++ describe me
+dev/isa/3c509/3c509.h              ++ describe me
+dev/isa/3c509/3c509_st.h           ++ describe me
+dev/pci/de4x5/de4x5.c              ++ describe me
+dev/pci/de4x5/de4x5.h              ++ describe me
+dev/pci/de4x5/fake.h               ++ describe me
+glue/packages/cnet.py              ++ describe me
+lib/static/socket/Makefile         ++ describe me
+lib/static/socket/socket.c         ++ describe me
+lib/static/sunrpc/Makefile         ++ describe me
+lib/static/sunrpc/auth_none.c      ++ describe me
+lib/static/sunrpc/authunix_prot.c  ++ describe me
+lib/static/sunrpc/clnt_perror.c    ++ describe me
+lib/static/sunrpc/clnt_tcp.c       ++ describe me
+lib/static/sunrpc/clnt_udp.c       ++ describe me
+lib/static/sunrpc/h/Makefile       ++ describe me
+lib/static/sunrpc/h/rpc/Makefile   ++ describe me
+lib/static/sunrpc/h/rpc/auth.h     ++ describe me
+lib/static/sunrpc/h/rpc/auth_unix.h++ describe me
+lib/static/sunrpc/h/rpc/clnt.h     ++ describe me
+lib/static/sunrpc/h/rpc/pmap_clnt.h++ describe me
+lib/static/sunrpc/h/rpc/pmap_prot.h++ describe me
+lib/static/sunrpc/h/rpc/rpc.h      ++ describe me
+lib/static/sunrpc/h/rpc/rpc_msg.h  ++ describe me
+lib/static/sunrpc/h/rpc/svc.h      ++ describe me
+lib/static/sunrpc/h/rpc/svc_auth.h ++ describe me
+lib/static/sunrpc/h/rpc/types.h    ++ describe me
+lib/static/sunrpc/h/rpc/xdr.h      ++ describe me
+lib/static/sunrpc/pmap_clnt.c      ++ describe me
+lib/static/sunrpc/pmap_getport.c   ++ describe me
+lib/static/sunrpc/pmap_prot.c      ++ describe me
+lib/static/sunrpc/rpc_callmsg.c    ++ describe me
+lib/static/sunrpc/rpc_commondata.c ++ describe me
+lib/static/sunrpc/rpc_prot.c       ++ describe me
+lib/static/sunrpc/svc.c            ++ describe me
+lib/static/sunrpc/svc_auth.c       ++ describe me
+lib/static/sunrpc/svc_udp.c        ++ describe me
+lib/static/sunrpc/xdr.c            ++ describe me
+lib/static/sunrpc/xdr_array.c      ++ describe me
+lib/static/sunrpc/xdr_mem.c        ++ describe me
+lib/static/sunrpc/xdr_reference.c  ++ describe me
+mod/nemesis/netcons/RdRedir.if     ++ describe me
+mod/nemesis/netcons/RdRedirMod.if  ++ describe me
+mod/nemesis/netcons/WrRedir.if     ++ describe me
+mod/nemesis/netcons/WrRedirMod.if  ++ describe me
+mod/nemesis/netcons/netcons.c      ++ describe me
+mod/net/DNS/DNS.c                  ++ describe me
+mod/net/DNS/DNS.if                 ++ describe me
+mod/net/DNS/DNSMod.if              ++ describe me
+mod/net/arp/ARP.c                  ++ describe me
+mod/net/bpf/BPF.c                  ++ describe me
+mod/net/flowman/bootp.c            ++ describe me
+mod/net/flowman/ether_input.c      ++ describe me
+mod/net/flowman/ether_output.c     ++ describe me
+mod/net/flowman/ethernet.h         ++ describe me
+mod/net/flowman/flowman.c          ++ describe me
+mod/net/flowman/flowman_st.h       ++ describe me
+mod/net/flowman/fm_constants.h     ++ describe me
+mod/net/flowman/hosts.c            ++ describe me
+mod/net/flowman/icmp.c             ++ describe me
+mod/net/flowman/icmp_var.h         ++ describe me
+mod/net/flowman/if_ether.h         ++ describe me
+mod/net/flowman/in.h               ++ describe me
+mod/net/flowman/ip.h               ++ describe me
+mod/net/flowman/ip_icmp.c          ++ describe me
+mod/net/flowman/ip_icmp.h          ++ describe me
+mod/net/flowman/ip_input.c         ++ describe me
+mod/net/flowman/ip_output.c        ++ describe me
+mod/net/flowman/ip_var.h           ++ describe me
+mod/net/flowman/ipconf.c           ++ describe me
+mod/net/flowman/kill.c             ++ describe me
+mod/net/flowman/kill.h             ++ describe me
+mod/net/flowman/prot_stat.h        ++ describe me
+mod/net/flowman/proto_ip.c         ++ describe me
+mod/net/flowman/proto_ip.h         ++ describe me
+mod/net/flowman/tcp.h              ++ describe me
+mod/net/flowman/tcp_input.c        ++ describe me
+mod/net/flowman/tcp_var.h          ++ describe me
+mod/net/flowman/tcpip.h            ++ describe me
+mod/net/flowman/udp.h              ++ describe me
+mod/net/flowman/udp_input.c        ++ describe me
+mod/net/flowman/udp_var.h          ++ describe me
+mod/net/interfaces/ARPMod.if       ++ describe me
+mod/net/interfaces/BaseProtocol.if ++ describe me
+mod/net/interfaces/Ether.if        ++ describe me
+mod/net/interfaces/EtherMod.if     ++ describe me
+mod/net/interfaces/FlowMan.if      ++ describe me
+mod/net/interfaces/ICMP.if         ++ describe me
+mod/net/interfaces/ICMPMod.if      ++ describe me
+mod/net/interfaces/IP.if           ++ describe me
+mod/net/interfaces/IPConf.if       ++ describe me
+mod/net/interfaces/IPMod.if        ++ describe me
+mod/net/interfaces/InetCtl.if      ++ describe me
+mod/net/interfaces/LMPFCtl.if      ++ describe me
+mod/net/interfaces/LMPFMod.if      ++ describe me
+mod/net/interfaces/Net.if          ++ describe me
+mod/net/interfaces/Netcard.if      ++ describe me
+mod/net/interfaces/Netif.if        ++ describe me
+mod/net/interfaces/NetifMod.if     ++ describe me
+mod/net/interfaces/PF.if           ++ describe me
+mod/net/interfaces/Protocol.if     ++ describe me
+mod/net/interfaces/SimpleIO.if     ++ describe me
+mod/net/interfaces/TFTP.if         ++ describe me
+mod/net/interfaces/TFTPMod.if      ++ describe me
+mod/net/interfaces/UDP.if          ++ describe me
+mod/net/interfaces/UDPMod.if       ++ describe me
+mod/net/lmpf/pf.c                  ++ describe me
+mod/net/netif/FragPool.if          ++ describe me
+mod/net/netif/Makefile             ++ describe me
+mod/net/netif/netif.c              ++ describe me
+mod/net/netif/pool.c               ++ describe me
+mod/net/netif/pool.h               ++ describe me
+mod/net/protos/Makefile            ++ describe me
+mod/net/protos/ether/Makefile      ++ describe me
+mod/net/protos/ether/ether.c       ++ describe me
+mod/net/protos/fakeIO.c            ++ describe me
+mod/net/protos/fakeIO.h            ++ describe me
+mod/net/protos/ip/Makefile         ++ describe me
+mod/net/protos/ip/ip.c             ++ describe me
+mod/net/protos/ipv6/Makefile       ++ describe me
+mod/net/protos/ipv6/ipv6.c         ++ describe me
+mod/net/protos/queuedIO.c          ++ describe me
+mod/net/protos/udp/Makefile        ++ describe me
+mod/net/protos/udp/udp.c           ++ describe me
+mod/net/resolver/Resolver.if       ++ describe me
+mod/net/resolver/ResolverMod.if    ++ describe me
+mod/net/resolver/resolver.c        ++ describe me
+mod/net/socket/tcp/event.h         ++ describe me
+mod/net/socket/tcp/inet.h          ++ describe me
+mod/net/socket/tcp/ip.h            ++ describe me
+mod/net/socket/tcp/ip_var.h        ++ describe me
+mod/net/socket/tcp/tcp_fsm.h       ++ describe me
+mod/net/socket/tcp/tcpip.h         ++ describe me
+mod/net/socket/tcp/tcpu.h          ++ describe me
+mod/net/socket/tcp/tcpu_input.c    ++ describe me
+mod/net/socket/tcp/tcpu_output.c   ++ describe me
+mod/net/socket/tcp/tcpu_seq.h      ++ describe me
+mod/net/socket/tcp/tcpu_subr.c     ++ describe me
+mod/net/socket/tcp/tcpu_timer.c    ++ describe me
+mod/net/socket/tcp/tcpu_timer.h    ++ describe me
+mod/net/socket/tcp/tcpu_usrreq.c   ++ describe me
+mod/net/socket/tcp/tcpu_var.h      ++ describe me
+mod/net/socket/tcp/tcpu_xsum.c     ++ describe me
+mod/net/socket/udp/udp_socket.c    ++ describe me
+mod/net/socket/udp/udp_socket.h    ++ describe me
+mod/net/term/netterm.c             ++ describe me
+mod/net/tftp/Makefile              ++ describe me
+mod/net/tftp/tftp.c                ++ describe me
+

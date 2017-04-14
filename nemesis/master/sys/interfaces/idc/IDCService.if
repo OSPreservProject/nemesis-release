@@ -1,0 +1,40 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      IDC Service
+-- 
+-- DESCRIPTION:
+--
+--      Server Domains's handle on an offered service. 
+-- 
+-- ID : $Id: IDCService.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- 
+-- \chapter{Inter-Domain Communication}
+-- 
+
+-- When a "BinderCallback.Request" comes in to a domain from the binder,
+-- it should dispatched to the relevant "IDCService", typically by an
+-- "ObjectTbl".
+                         
+IDCService : LOCAL INTERFACE =
+  EXTENDS BinderCallback;
+BEGIN
+
+  Destroy : PROC [] RETURNS [];  
+    -- Withdraw the service.
+
+  -- Destroying an "IDCService" probably does \emph{not} remove any bindings
+  -- associated with it.  This method should not be invoked from any
+  -- domain other than the one which created the offer; it will fail
+  -- in some way.  It should probably raise a "Denied" exception.
+
+END.
+

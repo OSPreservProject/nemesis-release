@@ -1,0 +1,45 @@
+/* CLUless */
+/* CLUless compiler front end
+ ***********************************************************************
+ * Copyright 1997 University of Cambridge Computer Laboratory          *
+ * All Rights Reserved                                                 *
+ * Authors: Dickon Reed (Dickon.Reed@cl.cam.ac.uk)                     *
+ *          Richard Mortier (rmm1002@cam.ac.uk)                        *
+ ***********************************************************************/ 
+
+/* list.tab; use with "gentables.py" to generate group lists */
+
+/* Dickon Reed, 1996 */
+/* Richard Mortier, 1997 */
+
+/*
+ * $Id: list.tab 1.1 Thu, 18 Feb 1999 14:20:06 +0000 dr10009 $
+ */
+
+/*
+ * $Log: list.tab,v $
+ * Revision 1.1  1997/06/25 17:07:48  dr10009
+ * Initial revision
+ *
+ * Revision 2.1  1997/04/04 15:35:29  rmm1002
+ * Mass check-in; now have vaguely working compiler, makes on P5 & Alpha
+ *
+ * Revision 1.10  1997/02/04 16:48:50  rmm1002
+ * Finished first look and layout fixup
+ *
+ * Revision 1.1  1997/02/03 16:39:43  rmm1002
+ * Initial revision
+ *
+ */
+
+#BEGIN#
+list,1
+expression,expr,n_expr,expr
+statement,statement,n_statement,statement
+id,id,n_id,id
+spec,spec,n_spec,spec
+proc,proc,n_block,block
+decl,decl,n_decl,decl
+sco,sco,n_sco,sco
+exc_handler,exc handler,n_exc_handler,handler
+type,type,n_type,type

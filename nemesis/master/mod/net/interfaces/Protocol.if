@@ -1,0 +1,91 @@
+------------------------------------------------------------------------------
+--
+-- File:
+-- 
+--	Protocol.if
+--
+-- Description:
+--
+--	Parent of all network protocols
+--
+-- Revision History:
+--
+-- ID :	$Id: Protocol.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+-- 
+-- \chapter{Networks}
+-- 
+
+-- "Protocol.if" is the parent of all network protocols.  It
+-- defines the operations that can be done to network devices. They
+-- are stackable, and self-creating.  Protocols may be simplex or
+-- duplex. Duplex protocols can be made simplex when created by
+-- specifying "NULL" for one of the "IREF IO"'s at the bottom protocol
+-- layer. Receive operations on transmit only simplex protocols will
+-- raise a "Simplex" exception, and vice versa.
+
+Protocol : LOCAL INTERFACE =
+  NEEDS IO;
+BEGIN
+
+  --
+  -- Functions giving access the underlying IO channels:
+  --
+
+  -- "GetTX" and "GetRX" can be used to get an IO interface on which
+  -- non-blocking or time-limited send and receive operations can be
+  -- performed.
+
+  -- Clients using these IO interfaces should abide by some
+  -- conventions. Clients should send and receive IOVecs of length $n$
+  -- "IO.Recs", where:
+  -- \begin{itemize}
+  --   \item $ n >= 3 $
+  --   \item "IO.Rec[0]" is reserved for building headers
+  --   \item "IO.Rec[1]" until "IO.Rec[n-2]" is the client's payload
+  --   \item "IO.Rec[n-1]" is reserved for building trailers
+  -- \end{itemize}
+
+  -- The "Simplex" exception is raised if an attempt is made to access
+  -- the TX io of a receive-only protocol, or the RX io of a
+  -- transmit-only protocol.
+  Simplex: EXCEPTION [];
+
+  -- "GetTX" returns an IO interface reference with send operations
+  -- which encapsulate the data in an apropriate protocol layer, and
+  -- whose receive operations recuperate previously transmitted
+  -- IORecs.
+  GetTX : PROC [] RETURNS [ iotx: IREF IO ]
+	RAISES Simplex;
+
+  -- "GetRX" returns an IO interface reference with receive operations
+  -- which strip protocol headers, and send operations which supply
+  -- empty buffers to be received into.
+  GetRX : PROC [] RETURNS [ iorx: IREF IO ]
+	RAISES Simplex;
+
+  --
+  -- Utility functions:
+  --
+
+  -- "QueryMTU" returns the number of bytes needed to receive a packet
+  -- at this protocol layer. This is fixed for any particular protocol
+  -- stack configuration.
+  QueryMTU : PROC [ ] RETURNS [ mtu: CARDINAL ];
+
+  -- "QueryHeaderSize" returns the number of bytes required for
+  -- headers by this protocol and all the protocols below it.
+  -- Incidentally, it is also the offset within the first IO.Rec at
+  -- which the layer above's headers should start.  On receive, the
+  -- client must supply an "IO.Rec" of this length if it wants its
+  -- payload to be received into "IO.Rec[1]" onwards.  On transmit,
+  -- the client must have at least this length free for header
+  -- building to take place.
+  QueryHeaderSize : PROC [] RETURNS [ bytes: CARDINAL ];
+
+  -- This is similar, but for the trailer.
+  QueryTrailerSize: PROC [] RETURNS [ bytes: CARDINAL ];
+
+  -- "Dispose" get rid of this protocol stack from here downwards.
+  Dispose  : PROC [] RETURNS [];
+
+END.

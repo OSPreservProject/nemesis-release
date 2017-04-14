@@ -1,0 +1,35 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Hash
+-- 
+-- DESCRIPTION:
+--
+--      Manipulate hash functions
+-- 
+-- ID : $Id: Hash.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Hash functions}
+--
+
+-- An instance of the Hash interface is a handle on a hash function. It
+-- allows the hash to be updated with data as it becomes available, and
+-- allows the final value to be retrieved.
+
+Hash : LOCAL INTERFACE =
+BEGIN
+
+  AddBytes : PROC [ bytes : REF OCTET, length : CARDINAL ] RETURNS [];
+
+  Finalise : PROC [ ] RETURNS [ hash : REF OCTET, length : CARDINAL ];
+   -- Finalise frees internal data structures as well as returning the
+   -- hash. Do not call any more methods after calling Finalise.
+
+END.

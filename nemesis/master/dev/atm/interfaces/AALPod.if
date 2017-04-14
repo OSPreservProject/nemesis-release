@@ -1,0 +1,111 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      AAL5Pod.if
+--
+-- Description:
+--
+--      Gross interface for setting up AAL3/4 or 5 connections
+--
+-- ID : $Id: AALPod.if 1.1 Thu, 18 Feb 1999 15:09:21 +0000 dr10009 $
+-- 
+-- \chapter{Networks}
+
+AALPod : LOCAL INTERFACE =
+  NEEDS IDCOffer;
+  NEEDS ATM;
+BEGIN
+
+  InUse : EXCEPTION [];
+
+  -- "InUse" indicates the requested (vpi, vci) is already allocated
+  -- It might also be used if some domain is using the "DirectOppo"
+  -- interface, in which case normal accesses are locked out.  See
+  -- "DirectOppo.if" for more details.
+
+  BadMaster : EXCEPTION [];
+  BadMode : EXCEPTION [];
+
+  -- "BadMaster" indicates that the requested IO channel master
+  -- configuration was not possible --- in particular, Server
+  -- mastering a TX channel is unlikely to be permitted.
+
+  -- "BadMode" indicates that the requested adaptation layer is not
+  -- supported.
+
+
+  NoResources : EXCEPTION [];
+
+  -- "NoResources" indicates that the connection could not be opened
+  -- due to lack of memory or due to requesting too many buffer slots
+
+  Dir : TYPE = { TX, RX };
+
+  Master : TYPE = { Server, Client };	
+
+  Mode : TYPE = { AAL0, AAL34, AAL5_Raw, AAL5 };
+
+  -- Open returns an IDC offer for an IO channel bound to the given
+  -- (vpi, vci). 
+  --
+  -- "dir" determines whether the connection is TX or RX
+  -- "master" indicates who is responsible for allocating the packets
+  -- used in the IO channel. 
+  --
+  -- "mode" determines what format of data will be sent/received:
+  --
+  --	AAL0 : raw 48-byte cells. Packets sent on a TX connection will be
+  --	sent as a sequence of AAL0 cells, with the User-User bit set
+  --	on the last cell. Cells will be built up on an RX connection
+  --	until a cell with the User-User bit set is received, when they
+  --	will be delivered.
+  --
+  --	AAL34 : AAL3/4 cells. On TX, the first word of each cell will
+  --	be interpreted as H1H2T1T2 to be used as header and trailer
+  --	(H1 in MSB, T2 in LSB). On RX, the header and trailer will be
+  --	found in the last word of each cell, in the same format
+  --
+  --    AAL5\_Raw : Raw AAL5 PDUs, in multiples of 48 bytes, including
+  --    padding, control, length and CRC fields. (CRC is calculated
+  --    automatically on TX, and inserted in CRC field).
+  --
+  --    AAL5 : AAL5 PDU payloads, with no need for 48 byte padding -
+  --    padding and length/CRC information will be added after the end
+  --    of TX packets, and stripped from RX packets.
+  --
+  --	"slots" determines the number of slots in the IO channel offer
+  --	returned to the user. Setting this to 0 uses a default value
+
+  Open : PROC    [ dir : Dir;
+		   master : Master;
+		   mode : Mode;
+                   vpi  : ATM.VPI;
+                   vci  : ATM.VCI;
+		   slots: CARDINAL ]
+         RETURNS [ offer  : IREF IDCOffer ]
+         RAISES ATM.BadVCI, ATM.VCIInUse, BadMaster, BadMode, NoResources;
+
+  -- Bind performs a similar function to Open, but instead of
+  -- returning an IDCOffer, accepts one. If the connection setup is
+  -- successful, the driver will bind to the offer and use it for data
+  -- communication.
+
+  Bind : PROC    [ dir : Dir;
+		   master : Master;
+		   mode : Mode;
+		   vpi: ATM.VPI;
+		   vci: ATM.VCI;
+		   offer : IREF IDCOffer ]
+	RETURNS [] 
+	RAISES ATM.BadVCI, ATM.VCIInUse, BadMaster, BadMode, NoResources;
+
+  -- A "(vci, vpi)" is freed by closing the corresponding "IO".
+
+END.

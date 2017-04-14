@@ -1,0 +1,18 @@
+-- RamDisk.if
+-- Matt Holgate - mjh44
+-- $Id: RamDisk.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+
+-- The "RamDisk" interface extends the "Disk" interface to provide
+-- an abstraction of a disk image held in main memory. It can be used
+-- in the same way as a standard "Disk" interface, but provides an
+-- additional method to free up the memory held by the disk.
+
+RamDisk:  LOCAL INTERFACE =
+  EXTENDS Disk;
+BEGIN
+
+  Destroy: PROC [ ] RETURNS [ ];
+
+  -- Deallocates the memory used for an existing Ram Disk.
+
+END.

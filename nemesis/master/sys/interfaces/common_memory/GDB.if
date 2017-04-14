@@ -1,0 +1,43 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      User-level GDB interface.
+-- 
+-- DESCRIPTION:
+--
+--      Allows remote per-thread debugging without hosing the machine.
+-- 
+-- \chapter{Debugging}
+-- 
+
+-- "GDB" is the interface for intitiating user-level debugging.
+
+GDB : LOCAL INTERFACE =
+BEGIN
+
+  Reason : TYPE = { 
+              MEM,    -- bad memory access of some sort 
+              ILL,    -- illegal instruction
+              BPT     -- user-set breakpoint 
+           };   
+
+
+  -- "Debug" starts a debugging session.
+
+  Debug : PROC  [ cx    : ADDRESS, 
+                  why   : Reason        ]
+        RETURNS [ alive : BOOLEAN       ];
+
+    -- Initiate a debugging session for the context dumped at address
+    -- "cx". The reason for debugging this context is given in "why".
+    -- If, after quitting the debugger, the context is resumable,
+    -- returns "True"; otherwise returns "False".
+
+END.

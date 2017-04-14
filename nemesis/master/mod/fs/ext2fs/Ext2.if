@@ -1,0 +1,210 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Ext2.if
+-- 
+-- DESCRIPTION:
+--
+--      Internal Ext2fs interface
+-- 
+-- FILE :       Ext2.if
+-- CREATED :    Wed Apr 23 1997
+-- AUTHOR :     Stephen Early
+-- ID :         $Id: Ext2.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+-- 
+-- \chapter{File Systems}
+-- \section{Linux Extended 2 File System}
+--
+
+Ext2 : LOCAL INTERFACE =
+  NEEDS FSTypes;
+  NEEDS USD;
+  NEEDS IDCOffer;
+  NEEDS FileIO;
+BEGIN
+
+  -- This is a private interface belonging to the Ext2 filesystem server.
+  -- It is not intended for use by clients; they should not be able to
+  -- get hold of a connection to it. Note that this interface is extremely
+  -- broken.
+
+  -- An IDC connection to the ext2 server is a session.
+
+  --
+  -- Types
+  --
+
+  Handle : TYPE = CARDINAL;
+
+  --
+  -- This session
+  --                    
+
+  GetIO : PROC [ ] RETURNS [ io : IREF IDCOffer ];
+    -- Returns the IO channel used to communicate with the USD.
+
+  BlockSize : PROC [ ]
+  RETURNS [ fsblocksize : CARDINAL, diskblocksize : CARDINAL ];
+    -- Returns the blocksize of this ext2 filesystem.
+
+  CurrentQoS : PROC [ ] 
+               RETURNS [ qos : FSTypes.QoS ];
+    -- Return the current QoS parameters of this session.
+
+  AdjustQoS : PROC [ IN OUT qos : FSTypes.QoS ]
+              RETURNS [ ok : BOOLEAN ];
+    -- Specify the desired QoS for this session.  Returns "True" if 
+    -- successful, otherwise returns the (probably lower) "QoS" which
+    -- has been allocated.
+
+  -- 
+  -- Handles
+  -- 
+
+  -- A "Handle" is a reference to filesystem metadata held within
+  -- the server. An example of this is an inode. Handles cannot be
+  -- invented or guessed by the client, they are allocated by the
+  -- server.
+
+  Free : PROC [ handle : Handle, sync : BOOLEAN ] RETURNS [ ok : BOOLEAN ];
+    -- Frees the handle; the filesystem server is then free to discard
+    -- metadata related to the handle. If "sync" is true then the call will
+    -- not return until metadata associated with the handle has been flushed
+    -- to the underlying storage.
+
+  --
+  -- Root Directory
+  --
+
+  Root : PROC [ ] RETURNS [ rc: FSTypes.RC, root : Handle ];
+    -- Obtains a new handle on the root inode.
+
+  --
+  -- Generic Inode Ops
+  --
+    
+  InodeType : PROC [ inode : Handle ] 
+              RETURNS [ itype : FSTypes.InodeType ];
+    -- This allows us to determine which flavour of Inode a handle
+    -- refers to.
+
+  Size : PROC [ inode : Handle ] RETURNS [ size : FileIO.Size ];
+    -- Returns the size of the data in the inode, if appropriate.
+
+  NLinks : PROC [ inode : Handle ] RETURNS [ n : FSTypes.NLinks ];
+
+  ATime : PROC [ inode : Handle ] RETURNS [ atime : FSTypes.Time ];
+  MTime : PROC [ inode : Handle ] RETURNS [ mtime : FSTypes.Time ];
+  CTime : PROC [ inode : Handle ] RETURNS [ ctime : FSTypes.Time ];
+    -- These are separate because "Atime" is a lot harder to 
+    -- determine than "CTime" in a distributed environment \cite{Burrows}.
+
+  --
+  -- File Specific Inode Ops
+  --
+
+  Open : PROC [ file    : Handle,
+                mode    : FSTypes.Mode,
+		options : FSTypes.Options ]
+         RETURNS [ rc     : FSTypes.RC, 
+                   handle : Handle,
+	           id     : USD.RequestID ];
+    -- Opens the specified inode. Returns a Handle that refers to the open
+    -- file. The file is closed when the handle is freed.
+
+  Create : PROC [ dir     : Handle,
+		  name    : FSTypes.Name,
+		  options : FSTypes.Options ]
+	RETURNS [ rc      : FSTypes.RC,
+		  handle  : Handle ];
+    -- Creates a file of the specified name, read/write, and returns a handle
+    -- corresponding to the newly-created file. The handle is \emph{not} open.
+
+  Translate : PROC [ handle    : Handle,
+		     fileblock : FileIO.Block,
+		     allocate  : BOOLEAN ]
+	     RETURNS [ rc      : FSTypes.RC,
+		       fsblock : FileIO.Block,
+		       runlength : CARDINAL ];
+    -- Translate a block number in an open file to a block number in the
+    -- filesystem. If "allocate" is True and the file is writable then
+    -- a new block will be allocated if necessary. Otherwise, "FAILURE"
+    -- will be returned if a block does not exist.
+    -- If a run of contiguous blocks exists in the file then the length
+    -- will be returned; this can help prevent large numbers of calls to
+    -- Translate for mostly-contiguous files. This should be useful for
+    -- ext2, given the block allocation policy.
+
+  SetLength : PROC [ handle : Handle,
+		     length : FileIO.Size ]
+	   RETURNS [ rc     : FSTypes.RC ];
+    -- Sets the length of an open file, truncating if necessary.
+
+  --
+  -- Directory specific Inode Ops
+  --
+  Lookup : PROC [ dir : Handle, path : FSTypes.Name, follow : BOOLEAN ] 
+           RETURNS [ rc : FSTypes.RC, inode : Handle ];
+    -- Look up the pathname "path" in this directory to return a handle
+    -- for an inode.
+
+  Link : PROC [ dir  : Handle,
+                name : FSTypes.Name, 
+                i    : Handle ]
+         RETURNS [ rc : FSTypes.RC ];
+
+  Unlink : PROC [ dir  : Handle, 
+                  name : FSTypes.Name ] 
+           RETURNS [ rc : FSTypes.RC ];
+
+  MkDir : PROC [ dir : Handle, path : FSTypes.Name ]
+          RETURNS [ rc : FSTypes.RC ];
+    -- Creates a new directory.
+
+  RmDir : PROC [ dir : Handle, path : FSTypes.Name ]
+          RETURNS [ rc : FSTypes.RC ];
+
+  Rename : PROC [ fromdir  : Handle,
+                  fromname : FSTypes.Name, 
+		  todir    : Handle,
+                  toname   : FSTypes.Name ]
+           RETURNS [ rc : FSTypes.RC ];
+
+  ReadDir : PROC    [ dir : Handle ] 
+              RETURNS [ rc : FSTypes.RC,
+			entries : FSTypes.DirentSeq ];
+    -- Returns a section of a directory.
+
+  --
+  -- Symlink specific operations
+  --
+
+  Symlink : PROC [ dir  : Handle,
+                   name : FSTypes.Name, 
+                   path : FSTypes.Name ]
+           RETURNS [ rc : FSTypes.RC ];
+    -- Creates a symlink
+
+  Readlink : PROC [ link : Handle ]
+          RETURNS [ rc       : FSTypes.RC,
+		     contents : FSTypes.Name ];
+
+  --
+  -- Game Over
+  --
+
+  Unmount : PROC [ force : BOOLEAN ]
+  	RETURNS [ rc : FSTypes.RC ];
+    -- The Unmount call is used to unmount the \emph{whole} filesystem.
+    -- "force" determines whether currently-open files will be kept open
+    -- until they are closed, or closed forcibly.
+
+
+END.

@@ -1,0 +1,55 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      DomainMgrMod
+-- 
+-- DESCRIPTION:
+--
+--      Creates a domain manager
+-- 
+-- ID : $Id: DomainMgrMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Low-Level Interfaces}
+-- 
+
+-- The "DomainMgrMod" interface is used at system startup to create
+-- the state necessary for a "DomainMgr" to function. Initialisation
+-- occurs in two stages: firstly "New" is called. This creates enough
+-- of the Domain Manager to create an initial domain for the
+-- system. Then, once this domain has built enough run-time state for
+-- the rest of the Manager to function, "Done" is called to finish the
+-- process and enable creation of further domains.
+
+DomainMgrMod : LOCAL INTERFACE =
+  NEEDS StretchAllocatorF;
+  NEEDS Time;
+  NEEDS DomainMgr;
+  NEEDS FramesF;
+  NEEDS LongCardTblMod;
+  NEEDS MMU;
+  NEEDS VP;
+BEGIN
+
+  New : PROC    [ sallocF : IREF StretchAllocatorF,
+		  lctm    : IREF LongCardTblMod,
+		  framesF : IREF FramesF,
+		  mmu     : IREF MMU,
+		  vp      : IREF VP,
+	          tp      : IREF Time,
+		  k       : ADDRESS                ]
+        RETURNS [ d       : IREF DomainMgr         ];
+    -- Instantiate a domain manager.
+    -- k is a pointer to the kernel state record.
+
+  Done : PROC [ d : IREF DomainMgr ] RETURNS [];
+    -- Complete initialisation of the domain manager and enable the
+    -- creation of further domains.
+
+END.

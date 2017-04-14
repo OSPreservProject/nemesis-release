@@ -1,0 +1,1131 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--Converted with LaTeX2HTML 98.1p1 release (March 2nd, 1998)
+originally by Nikos Drakos (nikos@cbl.leeds.ac.uk), CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Nemesis Release Notes 6th edition1</TITLE>
+<META NAME="description" CONTENT="Nemesis Release Notes 6th edition1">
+<META NAME="keywords" CONTENT="release-notes">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<LINK REL="STYLESHEET" HREF="release-notes.css">
+</HEAD>
+<BODY >
+<!--Navigation Panel-->
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="http://www.cl.cam.ac.uk/latex2html-icons//next_motif_gr.gif"> 
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="http://www.cl.cam.ac.uk/latex2html-icons//up_motif_gr.gif"> 
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="http://www.cl.cam.ac.uk/latex2html-icons//previous_motif_gr.gif">   
+<BR>
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<P>
+<H1 ALIGN="CENTER">Nemesis Release Notes
+<BR>
+6th edition<A NAME="tex2html1"
+ HREF="#foot26"><SUP>1</SUP></A></H1>
+<P ALIGN="CENTER"><STRONG>Dickon Reed</STRONG></P>
+<P ALIGN="CENTER"><STRONG>January 1999<A NAME="tex2html2"
+ HREF="#foot27"><SUP>2</SUP></A></STRONG></P>
+<P ALIGN="LEFT"></P>
+<BR>
+
+<H2><A NAME="SECTION00010000000000000000">
+Contents</A>
+</H2>
+<!--Table of Contents-->
+<UL>
+<LI><A NAME="tex2html3"
+ HREF="release-notes.html">Contents</A>
+<LI><A NAME="tex2html4"
+ HREF="release-notes.html#SECTION00020000000000000000">The Nemesis Free License</A>
+<LI><A NAME="tex2html5"
+ HREF="release-notes.html#SECTION00030000000000000000">Overview</A>
+<LI><A NAME="tex2html6"
+ HREF="release-notes.html#SECTION00040000000000000000">Quickstart</A>
+<LI><A NAME="tex2html7"
+ HREF="release-notes.html#SECTION00050000000000000000">Obtaining a Nemesis source code repository</A>
+<LI><A NAME="tex2html8"
+ HREF="release-notes.html#SECTION00060000000000000000">Working with Nemesis via a PRCS archive</A>
+<LI><A NAME="tex2html9"
+ HREF="release-notes.html#SECTION00070000000000000000">Contributing your work back to us</A>
+<LI><A NAME="tex2html10"
+ HREF="release-notes.html#SECTION00080000000000000000">Making a new package</A>
+<LI><A NAME="tex2html11"
+ HREF="release-notes.html#SECTION00090000000000000000">Known problems</A>
+</UL>
+<!--End of Table of Contents-->
+
+<P>
+<BODY BGCOLOR="#FFFFFF">
+Welcome to Nemesis. This document describes the licensing of Nemesis
+and the procedures for obtaining it, working with it and contributing
+back to it that have been developed for the Nemesis release.
+
+<P>
+<a href="http://www.cl.cam.ac.uk/Research/SRG/netos/nemesis/"> Look
+at the Nemesis home page for news, new versions and
+documentation. </a>
+
+<H1><A NAME="SECTION00020000000000000000">
+The Nemesis Free License</A>
+</H1>
+
+<P>
+The intent of this document is to state the conditions under which a
+Package may be copied, such that the Copyright Holder maintains some
+semblance of artistic control over the development of the package,
+while giving the users of the package the right to use and distribute
+the Package in a more-or-less customary fashion, plus the right to make
+reasonable modifications.
+
+<P>
+
+<H3><A NAME="SECTION00020100000000000000">
+Definitions</A>
+</H3>
+
+<P>
+<DL>
+<DT><STRONG>``Package''</STRONG>
+<DD>refers to the collection of files distributed by the
+Copyright Holder, and derivatives of that collection of files
+        created through textual modification.
+
+<P>
+<DT><STRONG>``Standard Version''</STRONG>
+<DD>refers to such a Package if it has not been
+        modified, or has been modified in accordance with the wishes
+        of the Copyright Holder as specified below.
+
+<P>
+<DT><STRONG>``Copyright Holder''</STRONG>
+<DD>is whoever is named in the copyright or
+        copyrights for the package.
+
+<P>
+<DT><STRONG>``You''</STRONG>
+<DD>is you, if you're thinking about copying or distributing
+        this Package.
+
+<P>
+<DT><STRONG>``Reasonable copying fee''</STRONG>
+<DD>is whatever you can justify on the
+        basis of media cost, duplication charges, time of people involved,
+        and so on.  (You will not be required to justify it to the
+        Copyright Holder, but only to the computing community at large
+        as a market that must bear the fee.)
+
+<P>
+<DT><STRONG>``Freely Available''</STRONG>
+<DD>means that no fee is charged for the item
+        itself, though there may be fees involved in handling the item.
+        It also means that recipients of the item may redistribute it
+        under the same conditions they received it.
+</DL>
+<P>
+<DL COMPACT>
+<DT>1.
+<DD>You may make and give away verbatim copies of the source form of the
+Standard Version of this Package without restriction, provided that you
+duplicate all of the original copyright notices and associated disclaimers.
+<P>
+<DT>2.
+<DD>You may apply bug fixes, portability fixes and other modifications
+derived from the Public Domain or from the Copyright Holder.  A Package
+modified in such a way shall still be considered the Standard Version.
+
+<P>
+<DT>3.
+<DD>You may otherwise modify your copy of this Package in any way, provided
+that you insert a prominent notice in each changed file stating how and
+when you changed that file, and provided that you do at least ONE of the
+following:
+<DL COMPACT>
+<DD>
+<DT>(a)
+<DD>place your modifications in the Public Domain or otherwise make them
+Freely Available, such as by posting said modifications to Usenet or
+    an equivalent medium, or placing the modifications on a major archive
+    site such as uunet.uu.net, or by allowing the Copyright Holder to include
+    your modifications in the Standard Version of the Package.
+
+<P>
+<DT>(b)
+<DD>use the modified Package only within your corporation 
+      or organization.
+ 
+    <DT>(c)
+<DD>rename any non-standard executables so the names do not conflict
+    with standard executables, which must also be provided, and provide
+    a separate manual page for each non-standard executable that clearly
+    documents how it differs from the Standard Version.
+
+<P>
+<DT>(d)
+<DD>make other distribution arrangements with the Copyright Holder.
+</DL>
+<P>
+<DT>4.
+<DD>You may distribute the programs of this Package in object code or
+executable form, provided that you do at least ONE of the following:
+<DL COMPACT>
+<DD>
+<DT>(a)
+<DD>distribute a Standard Version of the executables and library files,
+together with instructions (in the manual page or equivalent) on where
+    to get the Standard Version.
+
+<P>
+<DT>(b)
+<DD>accompany the distribution with the machine-readable source of
+    the Package with your modifications.
+
+<P>
+<DT>(c)
+<DD>give non-standard executables non-standard names, and clearly
+    document the differences in manual pages (or equivalent), together
+    with instructions on where to get the Standard Version.
+
+<P>
+<DT>(d)
+<DD>make other distribution arrangements with the Copyright Holder.
+</DL>
+<P>
+<DT>5.
+<DD>You may charge a reasonable copying fee for any distribution of this
+Package.  You may charge any fee you choose for support of this
+Package.  You may not charge a fee for this Package itself.  However,
+you may distribute this Package in aggregate with other (possibly
+commercial) programs as part of a larger (possibly commercial) software
+distribution provided that you do not advertise this Package as a
+product of your own.
+
+<P>
+<DT>6.
+<DD>Aggregation of this Package with a commercial distribution is always
+permitted provided that the use of this Package is embedded; that is,
+when no overt attempt is made to make this Package's interfaces visible
+to the end user of the commercial distribution.  Such use shall not be
+construed as a distribution of this Package.
+
+<P>
+<DT>7.
+<DD>The name of the Copyright Holder may not be used to endorse or promote
+products derived from this software without specific prior written permission.
+
+<P>
+<DT>8.
+<DD>This package is provided ``as is'' and without any express or
+implied warranties, including, without limitation, the implied
+warranties of merchantibility and fitness for a particular purpose.
+
+<P>
+</DL>
+<P>
+
+<H1><A NAME="SECTION00030000000000000000">
+Overview</A>
+</H1>
+
+<P>
+Nemesis is managed as a set of packages. Each package consists of a
+set of branches. Some branches of some packages are publicly
+available and some have more restricted availabilities for a variety
+of reasons. Each package, by convention, has a branch called live,
+where the main thrust of active development takes place. Other
+branches may exist as bug fixes to stable points in the live
+development, or when the direction a package is taking branches.
+
+<P>
+Several versions of Nemesis are built daily and (if they compile!), then
+tarballs are made available. The most common of these is available as the
+quickstart tar ball; see the section below on Quickstart to see how to
+obtain and use it.
+
+<P>
+We use a custom designed system called dpatch to make changes to
+Nemesis. See the section on Contributing your work back to us for
+details. We use PRCS as a back end for dpatch. You may wish to set
+yourself up with a Nemesis source code repository; this will make it
+possible for you to submit patches back to us easily, and will make it
+easier for you to upgrade to new versions of the Nemesis packages when
+you wish. Some sites may already have a Nemesis source code repository
+set up, and if so then you may be able to use it saving the time of
+setting up your own. See the instructions below on obtaining a source
+code repository.
+
+<P>
+The standard, publicly available Nemesis packages are currently:
+
+<P>
+<DL>
+<DT><STRONG>ccore</STRONG>
+<DD>contains the Heart Of Nemesis; the low level code, IDC
+system, startup, build system and so on. You always have to have a
+version of this. 
+<P>
+<DT><STRONG>tgtx86</STRONG>
+<DD>contains x86 support. 
+
+<P>
+<DT><STRONG>cnet</STRONG>
+<DD>contains networking support. 
+
+<P>
+<DT><STRONG>cws</STRONG>
+<DD>contains windowing system support. 
+
+<P>
+<DT><STRONG>catm</STRONG>
+<DD>contains ATM support. 
+
+<P>
+<DT><STRONG>caudio</STRONG>
+<DD>contains audio support. 
+
+<P>
+<DT><STRONG>dpatch</STRONG>
+<DD>contains the source code management scripts we use for
+Nemesis.
+
+<P>
+<DT><STRONG>nemtools</STRONG>
+<DD>contains the new tools necessary to build Nemesis,
+such as fancy linkers and IDL compilers.
+
+<P>
+<DT><STRONG>releasemisc</STRONG>
+<DD>contains the skeleton of the quickstart tar ball.
+
+<P>
+</DL>
+<P>
+The following packages may become available in the future:
+
+<P>
+<DL>
+<DT><STRONG>tgtarm</STRONG>
+<DD>contains ARM support. This package is not publically
+available yet, pending a copyright review.
+<P>
+<DT><STRONG>tgtalpha</STRONG>
+<DD>contains Alpha support. This package is not publically
+available yet, pending a copyright review.
+
+<P>
+<DT><STRONG>snet</STRONG>
+<DD>will contain extended networking support from SICS.
+
+<P>
+<DT><STRONG>gnemx</STRONG>
+<DD>will contain X11 support for the windowing system in cws
+from Glasgow..
+
+<P>
+<DT><STRONG>gxopen</STRONG>
+<DD>will contain X/Open support from Glasgow.
+
+<P>
+</DL>
+<P>
+
+<H1><A NAME="SECTION00040000000000000000">
+Quickstart</A>
+</H1>
+
+<P>
+We've put together a fast track mechanism for you to build and
+evaluate Nemesis. It just involves downloading one file, using tar to
+extract it and then building it. It includes everything you need to
+get started.
+
+<P>
+<DL COMPACT>
+<DD><P>
+<DT>1.
+<DD>Download the quickstart tar ball:
+<a href="http://www.cl.cam.ac.uk/Research/SRG/netos/nemesis/quickstart.tar.gz">
+located here </a>
+
+<P>
+<DT>2.
+<DD>Extract the quickstart tar ball in to a scratch directory. If
+you want to use the bootfloppy mechanism (recommended for first-time
+users) then you should ensure that the scratch directory is in an ext2
+filesystem on a primary partition of an IDE disk. The quickstart tar
+ball contains many files. They are:
+
+<P>
+<DL>
+<DT><STRONG>master/</STRONG>
+<DD>which contains some READMEs (including a copy of this
+document in HTML), and a makefile and script to allow you to easily
+build things without becoming familiar with the details of our
+innovative build system.
+<P>
+<DT><STRONG>master/nemesis/master</STRONG>
+<DD>which contains the source code for
+Nemesis. You can edit it to modify Nemesis.
+
+<P>
+<DT><STRONG>master/nemesis</STRONG>
+<DD>which apart from the source code also contains
+logs of what has changed in the source code. Furthermore, if you type
+<TT>make</TT> in the top level directory, extra directories will
+appear which are called ``build trees''. They contain symbolic links
+to the source code directory master/nemesis/master and also
+Nemesis binaries, as they are built. The convetion is that a build
+tree for a particular Nemesis target like intel will apppear in
+master/nemesis/build_intel.
+
+<P>
+<DT><STRONG>master/tools/source/master</STRONG>
+<DD>contains the source code for the
+tools necessary to build nemesis.
+
+<P>
+<DT><STRONG>master/tools/install</STRONG>
+<DD>is where the installed copies of the
+Nemesis tools will go when you build them. Nemesis developers will
+normally have these tools on their binary path.
+
+<P>
+<DT><STRONG>master/docs</STRONG>
+<DD>contains source code for various Nemesis documents.
+
+<P>
+<DT><STRONG>master/dpatch/master</STRONG>
+<DD>contains source code for <TT>dpatch</TT>,
+the source code management system developed for Nemesis. It isn't part
+of Nemesis and is written in python so it doesn't need to compile. You
+may like to copy master/dpatch/master/ddiff.py and
+master/dpatch/master/dcheckin.py on to your path.
+
+<P>
+<DT><STRONG>master/misc</STRONG>
+<DD>contains things that don't fit anywhere else. 
+
+<P>
+<DT><STRONG>master/misc/scripts</STRONG>
+<DD>contains a few scripts that you may 
+find  useful when working with Nemesis.
+
+<P>
+<DT><STRONG>master/misc/syslinux</STRONG>
+<DD>contains a compressed intel boot floppy,
+used to build Nemesis bootloaders.
+
+<P>
+<DT><STRONG>master/misc/bootfloppy</STRONG>
+<DD>is used during the creation of Intel
+Nemesis bootloaders.
+</DL>
+<P>
+<DT>3.
+<DD>Change in to that directory. If you are not running on a
+standard Linux system or do not wish to build an intel version of
+Nemesis, edit the start of the Makefile in the top level directory to
+change the options you want to build.
+
+<P>
+<DT>4.
+<DD>Type <TT>make</TT> and take a break while the Nemesis tools and
+a Nemesis image are built for you.
+
+<P>
+<DT>5.
+<DD>In the subdirectory:
+
+<P>
+<PRE>
+nemesis/build_intel/links
+</PRE>
+<P>
+you should find a Nemesis image and some support files.
+
+<P>
+<DT>6.
+<DD>Format a standard HD floppy and leave it in
+/dev/fd0. Type <TT>make bootfloppy</TT>; a build tree for the
+Nemesis bootloader will be created, and the bootloader will be
+installed on the floppy.
+
+<P>
+<DT>7.
+<DD>The file SYSLINUX.CFG on the floppy contains a line
+which tells the bootloader how to find the
+master/nemesis/build_intel/links directory. If you move your build
+tree, or want to use a new one, your should edit this file
+appropriately; instructions for this are in help.txt on the
+floppy.
+
+<P>
+<DT>8.
+<DD>When the floppy is booted you will end up running the Nemesis
+bootloader. To boot the image generated when you typed <TT>make</TT>,
+enter the command <TT>boot</TT>.
+
+<P>
+<DT>9.
+<DD>If you wish to continue working with Nemesis, you should arrange
+to place the Nemesis tools on your path. They have been built as part
+of the above process for you. You need to do something like:
+
+<P>
+<PRE>
+PATH=/local/scratch/dr10009/release/master/tools/install/ix86_linux_rh5.1/bin:$PATH
+export PATH
+</PRE>
+
+<P>
+<DT>10.
+<DD>If you want to boot Nemesis using LILO or another bootloader, or
+mount something other than a local ext2fs at boot time, you should
+read the Nemesis tutorial.
+
+<P>
+<DT>11.
+<DD>Read the Nemesis documentation, available as postscript or HTML
+from our web site or in the quickstart tar ball.
+
+<P>
+<DT>12.
+<DD>When you want to configure Nemesis, look at (eg)
+<PRE>
+nemesis/build_intel/choices
+</PRE>and modify that file.
+
+<P>
+<DT>13.
+<DD>When you want to modify Nemesis, you have two choices:
+
+<P>
+<DL COMPACT>
+<DT>(a)
+<DD>You may modify the contents of nemesis/source/master or
+tools/source/master directly. Don't edit the build
+ directories (nemesis/build_*), apart from the choices file. The build
+ trees consist of symlinks to the master trees.
+
+<P>
+<DT>(b)
+<DD>You may use a sparse source tree. This means that files in a new
+tree you create will override files in the quickstart tar ball. It is
+called sparse because it does not need to contain every file; in fact,
+it is best if you just copy files in to it when you intend to change
+them. This is more complicated, but saves you having to back up your
+extracted quickstart tar balls. It is also much easier when you
+abandon the quickstart tarball and use checkoutandgo.py
+instead. checkoutandgo.py is located in misc/scripts of the
+quickstart tarball and releasemisc package, along with some example
+scripts. The idea is that you add a line to a file called choices in
+each build tree. This tells the build system to, whenever creating
+symlinks, check another directory tree for files and symlink to those
+in preference to the ones in the master tree. For example, if you add
+to nemesis/build_intel/choices a line like:
+
+<P><PRE>
+add_source_tree('/usr/groups/pegasus/users/dr10009/experimentalsparsetree')
+</PRE>
+
+<P>
+then type <TT>make grow</TT> in nemesis/build_intel, all files in
+/usr/groups/pegasus/users/dr10009/experimentalsparsetree will
+override the master tree files. You can then copy files there, modify
+them, and just back up the sparsetree directory instead of the whole
+of the quickstart tar ball.
+
+<P>
+</DL>
+<P>
+</DL>
+<P>
+Frequently asked questions about the quickstart process:
+
+<P>
+<UL>
+<LI>Why do your scripts invoke gnumake?
+
+<P>
+Nemesis builds on multiple Unix systems that have GNU make
+installed. However, GNU make is sometimes installed as
+<TT>gnumake</TT> (for example on OSF) and sometimes as <TT>make</TT>
+(for example on Linux). Most of the time, we handle such issues with
+platform specific make files, but you need to arrange that invoking
+gnumake runs a proper GNU make. Any recent version of GNU make should
+do. We use version 3.76.1.
+
+<P>
+</UL>
+<P>
+
+<H1><A NAME="SECTION00050000000000000000">
+Obtaining a Nemesis source code repository</A>
+</H1>
+
+<P>
+The quickstart tar ball is usually updated every day, so you can just
+download new versions of that. However, it may be much more convenient
+to set yourself up with a local Nemesis source code repository. Then,
+you will be able to work with whichever version of Nemesis you like,
+and with whichever combination of packages you like. Furthermore, you
+will be able to use PRCS to help manage your source code.
+
+<P>
+You may already have access to a Nemesis source code repository on
+your site. In the Computer Laboratory of the University of Cambridge,
+where Nemesis was developed, a PRCS archive is currently available at
+/local/scratch/dr10009/nemesis/PRCS on all normal build
+machines. If you already have access to such a PRCS, skip this section
+and proceed to the next section on working with this PRCS archive.
+
+<P>
+Obtaining a source code repository will let you work with custom
+versions of Nemesis, and will save on download times.  We recommend
+you keep source code repositories on each machine you will build on;
+this really speeds up creating new build trees.
+
+<P>
+A Nemesis source code repository consists of two parts; a set of
+patches in a special format called the patch archive, and a PRCS
+archive to make it easy and efficient to check out particular versions
+of Nemesis packages. The PRCS repository just provides the data for an
+easy way to check out particular version of Nemesis; it is generates
+from the patch archive.  The repository you will end up with on your
+filesystem will of course just be copies of the offical patch archives
+in Cambridge and other places. But it will enable you to retrieve any
+combination of any version of any Nemesis package.
+
+<P>
+<DL COMPACT>
+<DT>1.
+<DD>Install PRCS if you do not already have it.
+<DT>2.
+<DD>You will find a script called dcheckin.py in directory master/dpatch/master of
+any Nemesis release. It handles the Nemesis source code
+repository. As well as checking in as the names would suggest, it can
+also perform several other operations on a Nemesis patch archive. Make sure it is executable and available to you.
+<DT>3.
+<DD>Configure dcheckin.py by writing a .dcheckinrc file in your home
+directory. Here is an example:
+<P>
+<PRE>
+{
+  'patch tree' : '/home/fred/nemesis/patches',
+  'prcs repository' : '/home/fred/PRCS',
+  'description map' : {
+     'project' : 'The Nemesis Project at OurSiteName'
+  }
+}
+</PRE>
+<P>
+Change the directory names tagged patch tree and prcs repository to
+suit your needs. The prcs repository does not need to be backed
+up. The patch tree only needs to be backed up if you start exporting
+your own packages.
+
+<P>
+<DT>4.
+<DD>Download the patch repository from Cambridge by executing:
+
+<P><PRE>
+dcheckin.py webimport http://www.cl.cam.ac.uk/Research/SRG/netos/nemesis/patches.html
+</PRE>
+
+<P>
+(If you believe you have access to some of the non-public branches,
+you will need to find out the alternative command for you to obtain
+the extra material).
+
+<P>
+You may like to run this command from a CRON job. It works
+incrementally; it will just download new patches.
+
+<P>
+(At any stage, you may destroy your patch tree and PRCS
+repository, and start again from scratch. That is unless you are
+exporting a package in the way suggested below).
+
+<P>
+</DL>Install PRCS if you do not already have it.
+You will find a script called dcheckin.py in directory master/dpatch/master of
+any Nemesis release. It handles the Nemesis source code
+repository. As well as checking in as the names would suggest, it can
+also perform several other operations on a Nemesis patch archive. Make sure it is executable and available to you.
+Configure dcheckin.py by writing a .dcheckinrc file in your home
+directory. Here is an example:
+
+<P>
+<PRE>
+{
+  'patch tree' : '/home/fred/nemesis/patches',
+  'prcs repository' : '/home/fred/PRCS',
+  'description map' : {
+     'project' : 'The Nemesis Project at OurSiteName'
+  }
+}
+</PRE>
+<P>
+Change the directory names tagged patch tree and prcs repository to
+suit your needs. The prcs repository does not need to be backed
+up. The patch tree only needs to be backed up if you start exporting
+your own packages.
+
+<P>
+Download the patch repository from Cambridge by executing:
+
+<P><PRE>
+dcheckin.py webimport http://www.cl.cam.ac.uk/Research/SRG/netos/nemesis/patches.html
+</PRE>
+
+<P>
+(If you believe you have access to some of the non-public branches,
+you will need to find out the alternative command for you to obtain
+the extra material).
+
+<P>
+You may like to run this command from a CRON job. It works
+incrementally; it will just download new patches.
+
+<P>
+(At any stage, you may destroy your patch tree and PRCS
+repository, and start again from scratch. That is unless you are
+exporting a package in the way suggested below).
+
+<P>
+
+<H1><A NAME="SECTION00060000000000000000">
+Working with Nemesis via a PRCS archive</A>
+</H1>
+
+<P>
+You should by now have access to Nemesis in a PRCS archive. We only
+use prcs for checking versions of Nemesis out. To contribute back to
+Nemesis, see the section below. 
+
+<P>
+A tool called checkoutandgo.py provides a useful way to checkout
+  multiple PRCS packages and build them.  It is located in the
+  quickstart tar ball as master/misc/scripts/checkoutandgo.py
+  but we suggest you copy it somewhere else and keep it on your
+  path. It used by us to generate the quickstart tar ball, for
+  instance. See the build system users guide for more details, or the
+  start of the source code of checkoutandgo.py where you'll
+  find an explanation of what it does and how it works. 
+
+<P>
+For example, suppose you want to build Nemesis in a directory called
+  /anfs/scratch/hornet/dr10009/autobuild/cuttingedge. You've got a PRCS
+  repository in /local/scratch/dr10009/nemesis/PRCS and <TT>prcs</TT> is
+  on your path, as are built Nemesis tools. You also don't need ATM
+  support. You'd write a configuration file called
+  nemesis_test.coag, in your home directory for instance,
+  containing:
+
+<P>
+<PRE>
+{
+  'packages' : [
+     ('prcs', 'releasemisc:live.@', '/..'),
+     ('prcs', 'ccore:live.@', '/nemesis'),
+     ('prcs', 'cnet:live.@', '/nemesis'),
+     ('prcs', 'cws:live.@', '/nemesis'),
+     ('prcs', 'caudio:live.@', '/nemesis'),
+     ('prcs', 'cfs:live.@', '/nemesis'),
+     ('prcs', 'tgtx86:live.@', '/nemesis'),
+   ],
+  'basepath' : '/anfs/scratch/hornet/dr10009/autobuild/cuttingedge',
+  'actions' : """
+python quickbuild.py establish-intel ix86_linux
+echo "include('/homes/dr10009/u/mychoicesfile')" &gt;&gt; nemesis/build_intel/choices
+cd nemesis/build_intel
+make
+""",
+  'prcsrepo' : '/local/scratch/dr10009/nemesis/PRCS',
+  'postfix' : 'master'
+}
+</PRE>
+<P>
+Then, invoke (from any directory):
+
+<P>
+<PRE>
+checkoutandgo.py ~/coag/nemesis_test.coag
+</PRE>
+<P>
+(specifying the path to your checkoutandgo script as the argument to
+checkoutandgo.py, of course, and the path to your local PRCS
+repository instead of the example given above in the line defining
+<TT>prcsrepo</TT>).
+
+<P>
+checkoutandgo.py will empty your build tree (specified by the
+<TT>basepath</TT> line if it exists, create the directory if it does
+not already exist, and then check out the versions you asked for of
+the packages you want, and invoke the <TT>actions</TT>
+script. <TT>releasemisc</TT> forms the framework for your build tree
+so you will always need that. <TT>core, cfs</TT> and a target package
+such as <TT>tgtx86</TT> are usually required. All other packages are
+optional bolt on extras.  In the example above, this then sets up a
+intel build tree, makes it use the choices file in
+/homes/dr10009/u/mychoicesfile and then builds the tree. See
+the build system users guide for an explanation of choices files.  The
+idea is that you keep the choices file, the checkoutandgo
+script and any of your own source code safe on backed up filespace. At
+any stage, you can repeat the checkoutandgo.py command to
+destroy the build tree and start again, should the non backed up
+filespace become damaged or the build tree become confused. The
+actions line contains the commands necessary to create the Nemesis
+build tree. We work by picking configuration files close to what we
+need, and modifying them for new build trees.
+
+<P>
+You may use PRCS directly to checkout, merge or diff packages of
+course. See the PRCS documentation for details. If you want to see
+exactly what versions of files you need, then look at the
+CONTENTS file in the directory created by
+checkoutandgo. It gives the PRCS versions of each file.  You
+may want to inspect the contents of the patch repository to see what
+has changed; see the dpatch manual for details.
+
+<P>
+When you wish to upgrade one of the packages in a checked out
+tree, you can use prcs merge or prcs
+checkout. prcs checkout is simpler; it will merely write the
+new package on top of what you have at that time. prcs merge will
+interactively reconcile your changes with what have gone
+before. Alternatively, you can just reinvoke <TT>checkoutandgo.py</TT>
+which is event easier but means the entire tree will be recreated
+which may take some time.
+
+<P>
+
+<P>
+
+<H1><A NAME="SECTION00070000000000000000">
+Contributing your work back to us</A>
+</H1>
+
+<P>
+All changes to Nemesis must be submitted to us in dpatch format, using
+the patchman web interface (see the Nemesis home page). There are many
+ways to generate patch files.  First of all, however, make sure you
+are working with the latest versions of the Nemesis packages you want
+changed. The more out of date your versions, the less likely it is
+your patch will still be valid and will be accepted. Alternatively,
+you may try to write your patches by hand. 
+See the <a
+href="http://www.cl.cam.ac.uk/Research/SRG/netos/nemesis/dpatch/">
+dpatch manual for details</a>.
+If you are modifying the contents of a Nemesis quickstart tar ball
+master directory directly:
+
+<P>
+<DL COMPACT>
+<DD><P>
+<DT>1.
+<DD>Use prcs populate to inform prcs of any new files you have
+created. Make sure they go in to the .prj file in the Nemesis
+directory, corresponding to the package they should end up in. Hint;
+tell PRCS explicitly what files to add to the prj file, or it may
+become confused and try to add the contents of all the other packages
+to your file.
+
+<P>
+<DT>2.
+<DD>Invoke:
+<PRE>
+ddiff.py prcsdiff packagename &gt; mypatch_to_packagename
+</PRE>
+<P>
+in the nemesis directory, where packagename is the name of one of the
+.prj files in that directory.
+
+<P>
+If you modify the nemtools or dpatch, you need to run it in the
+directory containing the relevant .prj file.
+
+<P>
+</DL>
+<P>
+If you are working with a private tree (sparse or with symlinks), for
+each package you want to change:
+
+<P>
+<DL COMPACT>
+<DD><P>
+<DT>1.
+<DD>In an empty directory, check out a fresh copy of the package.
+
+<P>
+<DT>2.
+<DD>Copy the files from your sparse tree you want to go in to this
+package on top of your newly checked out copy of the file.
+
+<P>
+<DT>3.
+<DD>If you have created new files in the previous step, run
+<PRE>
+prcs populate
+</PRE>to let PRCS update your .prj file.
+
+<P>
+<DT>4.
+<DD>Invoke:
+
+<P>
+<PRE>
+ddiff.py prcsdiff &gt; mypatch_to_packagename
+</PRE>
+<P>
+</DL>
+<P>
+See the dpatch manual for more ways to use ddiff.
+
+<P>
+Now, review your patch files and upload them to us using the web interface.
+
+<P>
+
+<H1><A NAME="SECTION00080000000000000000">
+Making a new package</A>
+</H1>
+<EM>
+Warning; I haven't checked this section is up to date for a while;
+mail me if you find any problems, and of course make sure you keep
+your own copies of the patch files!
+</EM>
+
+<P>
+If you have some code which is new, rather than an enhancement of an
+existing package, or you wish to maintain it yourself, or you cannot
+persuade us to take on your changes, then you should make a new
+package. First perform step 1 of ``Contributing your work back to
+us'' to set up your patch tree. Your package will go in the same patch
+tree as the patches you import from us. Then:
+
+<P>
+<DL COMPACT>
+<DT>1.
+<DD>Read about the Nemesis build system.
+<DT>2.
+<DD>Decide on a name for your package. For example, I'll assume it
+  is called <TT>gnemx</TT>. (So where you see <TT>gnemx</TT> insert
+  the name of your new package).
+  
+<DT>3.
+<DD>Create a new directory, containing
+  <TT>glue/packages/gnemx.py</TT>. This file should contain the
+  blueprint items for your pacakge. You might want to look at the
+  corresponding files in other packages for inspiration.
+  
+<DT>4.
+<DD>Before you go any further, test your package. It should be the
+  case that if you copy the entire contents of your package directory
+  on top of a release tree, your package builds and works as you
+  intend.
+  
+<DT>5.
+<DD>Back in the directory containing just the contents of your new
+  package, execute:
+
+<P>
+<PRE>
+ddiff.py create &gt; ~/initial_gnemx_patch
+</PRE>  
+<DT>6.
+<DD>Now you need to create a package and branch in your patch tree.
+  By convention, the main development and initial branch is called
+  <TT>live</TT>. So execute:
+
+<P>
+<PRE>
+dcheckin.py create gnemx live
+</PRE>
+<P>
+You'll need a .dcheckinrc file in your home directory to let
+dcheckin know where to write to; an example is given above. Now you've
+got a new package, you should add a description of your package to
+your .dcheckinrc. Mine looks like:
+
+<P>
+<PRE>
+{
+    'patch tree' : '/usr/groups/pegasus/nemesis/patches',
+    'prcs repository': '/usr/groups/pegasus/nemesis/PRCS',
+    'description map': {
+        'project' : 'The Nemesis Project\n',
+        'ccore' : 'The Cambridge Nemesis Core\n',
+        'dpatch' : 'The dpatch Project\n',
+        'catm' : 'The Cambridge Nemesis ATM subsystem\n',
+        'caudio' : 'The Cambridge Nemesis Audio subsystem\n',
+        'cnet' : 'The Cambridge Nemesis Network subsystem\n',
+        'cfs' : 'The Cambridge Nemesis filing subsystem\n',
+        'cws' : 'The Cambridge Nemesis windowing subsystem\n',
+        'nemtools' : 'The Nemesis build tools\n'
+     }
+}
+</PRE>
+<P>
+At this point, you have created your package and branch, but there
+isn't any code in the package yet.
+
+<P>
+<DT>7.
+<DD>You should now checkin the patch you created above. Type:
+
+<P>
+<PRE>
+dcheckin.py commit gnemx live ~/initial_gnemx_patch
+</PRE>
+<P>
+Make sure you give an absolute path to the name of your patch.
+
+<P>
+At this point, you have a package with one branch and one patch. You
+can check that everything is working by inspecting the files
+<TT>metaupdates</TT> and <TT>allupdates</TT> in the patch tree, or you
+can type:
+
+<P>
+<PRE>
+prcs info gnemx
+</PRE>
+<P>
+You should see that there has been one patch in the updates file, and
+there are now two PRCS versions of your packages (the first one is
+empty).
+
+<P>
+<DT>8.
+<DD>Next you should publish your package. Choose a directory for
+your patches index HTML file to appear in, and build it by typing:
+
+<P>
+<PRE>
+dcheckin.py publish ~/public_html/nemesis/patches.html
+</PRE>
+<P>
+In order for the patch index to work, in the directory that you have
+built the HTML file you will need to create a symlink to your patch
+tree called patches. You can test this by making sure that
+you can follow the link on your patch index web page to your patch,
+using HTTP.
+
+<P>
+If you wish, mail me <TT>Dickon.Reed@cl.cam.ac.uk</TT> with the
+URL of your patch archive web index. I can then arrange for it to be
+indexed off the master patch index in Cambridge.
+
+<P>
+<DT>9.
+<DD>Whenever people make changes to your package they wish your
+package repository to carry, they will need to have their patches
+applied. When a patch is submitted to you, check it for semantics,
+then apply it using:
+
+<P>
+<PRE>
+dcheckin.py commit gnemx live ~/another_patch
+</PRE>
+<P>
+The patch will first of all be tested, and if it cannot be applied to
+the package and branch you specify then you will be told and you will
+need to edit the patch or ask whoever wrote it to regenerate it
+against the latest release. If the patch has been accepted then
+remember to reexecute:
+
+<P>
+<PRE>
+dcheckin.py publish ~/public_html/nemesis/patches.html
+</PRE>
+<P>
+in order to expose your patch to the world.
+
+<P>
+</DL>
+<P>
+See the dpatch manual for more details on how dpatch works.
+
+<P>
+Your patch tree contains the canonical copy of your package and its
+branches. You should make sure that at least the subdirectory
+containing your package in your patch tree is regularly backed up. The
+other directories in your tree will continue to be filled from
+Cambridge every time you run <TT>dcheckin webimport</TT>.
+
+<P>
+
+<H1><A NAME="SECTION00090000000000000000">
+Known problems</A>
+</H1>
+
+<P>
+<UL>
+<LI>Need comments about booting
+<LI>We still need to integrate documentation.
+<LI>The other packages of Nemesis need to be mentioned somewhere, as
+they become available.
+<LI>There aren't many platform makefiles in tools/source/master/mk
+<LI>tools/source/master/Makefile is problematic; not all targets
+have proper SUBDIRS line.
+<LI>The platform makefiles in the main tree are not named the same
+as the ones in the tool trees. Workaround; specify a platform in the
+main tool tree as an extra argument to quickbuild.py
+</UL>
+<P>
+
+<H1><A NAME="SECTION000100000000000000000">
+  About this document ... </A>
+</H1> 
+ <STRONG>Nemesis Release Notes
+<BR>
+6th edition<A NAME="tex2html1"
+ HREF="#foot26"><SUP>1</SUP></A></STRONG><P>
+This document was generated using the
+<A HREF="http://www-dsed.llnl.gov/files/programs/unix/latex2html/manual/"><STRONG>LaTeX</STRONG>2<tt>HTML</tt></A> translator Version 98.1p1 release (March 2nd, 1998)
+<P>
+Copyright &#169; 1993, 1994, 1995, 1996, 1997,
+<A HREF="http://cbl.leeds.ac.uk/nikos/personal.html">Nikos Drakos</A>, 
+Computer Based Learning Unit, University of Leeds.
+<P>
+The command line arguments were: <BR>
+ <STRONG>latex2html</STRONG> <tt>-split 0 -toc_depth 3 release-notes</tt>.
+<P>
+The translation was initiated by Dickon Reed on 1999-06-10
+<BR><HR><H4>Footnotes</H4>
+<DL>
+<DT><A NAME="foot26">... edition</A><A NAME="foot26"
+ HREF="release-notes.html#tex2html1"><SUP>1</SUP></A>
+<DD>Revision date 1999/03/12, last checkin
+    r,  by
+
+<DT><A NAME="foot27">... 1999</A><A NAME="foot27"
+ HREF="release-notes.html#tex2html2"><SUP>2</SUP></A>
+<DD>Processed June 10, 1999
+
+</DL><HR>
+<!--Navigation Panel-->
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="http://www.cl.cam.ac.uk/latex2html-icons//next_motif_gr.gif"> 
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="http://www.cl.cam.ac.uk/latex2html-icons//up_motif_gr.gif"> 
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="http://www.cl.cam.ac.uk/latex2html-icons//previous_motif_gr.gif">   
+<BR>
+<!--End of Navigation Panel-->
+<ADDRESS>
+<I>Dickon Reed</I>
+<BR><I>1999-06-10</I>
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,9 @@
+-- "Friend" interface for the Test INTERFACE.
+
+TestMgmt : INTERFACE =
+  NEEDS Test;
+BEGIN
+
+  TurboCharge : PROC [ t: IREF Test; speed : CARDINAL ] RETURNS [] ;
+
+END .

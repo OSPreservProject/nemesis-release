@@ -1,0 +1,64 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1999, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+
+
+-- "RSSMonitor" is a module that can be used to measure to sample the
+-- proportion of pages in a stretch that are touched in a given time.
+
+RSSMonitor : LOCAL INTERFACE = 
+  NEEDS Stretch;
+
+BEGIN
+
+  StretchSequence : TYPE = SEQUENCE OF IREF Stretch;
+  LongCardinalSequence : TYPE = SEQUENCE OF CARDINAL;  
+
+  Action : TYPE = {
+      SAMPLE,
+      SAMPLE_AND_RESET,
+      SIZE,
+      BASE,
+      RESET };
+
+  -- SAMPLE reads the number of hit pages in a stretch
+  -- SAMPLE_AND_RESET reads the number of hits pages in a stretch and
+  -- resets the count
+  -- SIZE reads the size of each stretch
+  -- BASE reads the base of each stretch
+  -- RESET just resets the hit count of the stretch
+
+  AddStretch : PROC     [ stretch : IREF Stretch ]
+               RETURNS  [ success : BOOLEAN ]; 
+
+  RemoveStretch : PROC     [ stretch : IREF Stretch ]
+	          RETURNS  [ success : BOOLEAN ];
+
+  -- Return a sequence of all stretches registered, returning a
+  -- pointer for each stretch.
+
+  ListStretches : PROC     [ ]  
+                  RETURNS  [ stretches: StretchSequence ];
+
+  -- Measurement operation on a single stretch; return values for each
+  -- stretch. Action defines what is done to each stretch.
+
+  Sample : PROC  [ stretch : IREF Stretch, mode : Action ]
+           RETURNS [ param : LONG CARDINAL, success : BOOLEAN ];
+
+  -- Perform the sample operation on all stretches registered, in the
+  -- order in which they were registered.
+
+  SampleAll : PROC [ mode : Action ]
+              RETURNS [ param : LongCardinalSequence ];
+ 
+  -- Stop monitoring
+
+  Destroy : PROC [] RETURNS [];
+
+END.
+  

@@ -1,0 +1,1 @@
+../../../../tools/source/master/mk/linux_for_arm.mk

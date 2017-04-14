@@ -1,0 +1,112 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Pervasives
+--
+-- DESCRIPTION:
+--
+--      Common definition of the type of a pervasive closure record.
+--
+-- ID : $Id: Pervasives.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+--
+-- \chapter{Pervasive Interfaces}
+--
+
+-- The use of the pervasives pointer in Nemesis is entirely a matter
+-- of convention at the user level. There is no reason not to have
+-- different domains with different pervasive interfaces, or indeed
+-- threads within a single domain having different pervasive interface
+-- types. However, one needs to be careful about interfaces which
+-- assume particular fields of the pervasives pointer when calling
+-- them. This interface specification defines one type of record,
+-- particularly useful with a conventional threads package in
+-- an environment a bit like Unix/C.
+
+-- For the moment, this record is quite full. In due course, it should
+-- become clear which components are really needed here and which can
+-- be passed as explicit arguments or looked up from the name space at
+-- run time.
+
+Pervasives : LOCAL INTERFACE =
+  NEEDS VP;
+  NEEDS Heap;
+  NEEDS TypeSystem;
+  NEEDS Context;
+  NEEDS ExnSupport;
+
+  NEEDS Time;
+  NEEDS ActivationF;
+  NEEDS Events;
+  NEEDS Thread;
+  NEEDS Threads;
+  -- NOT "ThreadF", to avoid circular dependency via "ThreadHooks".
+  NEEDS SRCThread;
+
+  NEEDS Rd;
+  NEEDS Wr;
+
+  NEEDS Binder;
+  NEEDS ObjectTbl; 
+  NEEDS StretchAllocator;
+  NEEDS StretchDriver;
+  NEEDS Gatekeeper;
+  NEEDS Entry;
+BEGIN
+
+  Rec : TYPE = RECORD [
+
+    vp        : IREF VP,                 -- Virtual processor
+    heap      : IREF Heap,               -- Default heap
+    types     : IREF TypeSystem,         -- Runtime typing
+    root      : IREF Context,            -- Root name space
+    exns      : IREF ExnSupport,         -- Exception handling
+
+    time      : IREF Time,               -- Time
+    actf      : IREF ActivationF,        -- Event \& Timeout demux (XXX)
+    evs       : IREF Events,             -- Event counts and sequencers
+    thd       : IREF Thread,             -- Current thread
+    thds      : IREF Threads,            -- Thread Scheduler
+    srcth     : IREF SRCThread,          -- SRC Thread synchronisation
+
+    in        : IREF Rd,                 -- Standard input reader
+    out       : IREF Wr,                 -- Standard output writer
+    err       : IREF Wr,                 -- Standard error writer
+    console   : IREF Wr,                 -- Console output writer
+
+    bndr      : IREF Binder,             -- Binder
+    objs      : IREF ObjectTbl,          -- Object Table
+    salloc    : IREF StretchAllocator,   -- Stretch Allocator
+    sdriver   : IREF StretchDriver,      -- Default Stretch Driver
+    gkpr      : IREF Gatekeeper,         -- Gatekeeper
+    entry     : IREF Entry,              -- Default Entry
+
+    -- Library jumptables:
+    libc      : ADDRESS,                 -- Pointer to op table
+    pers      : ADDRESS                  -- used for personality vectors
+  ];
+
+  -- Most elements of a pervasive record will be acquired by the
+  -- domain after it starts up by querying some name context. However,
+  -- a few basic interfaces need to be passed in when the domain is
+  -- created as part of the initial state record of the domain's
+  -- initial activation vector. The following type represents a loose
+  -- convention as the minimum required; it is of course entirely up
+  -- the domain which calls the "DomainMgr" what the state record
+  -- actually is. The record is actually allocated on the supplied heap.
+
+  Init : TYPE = RECORD [
+    vp    : IREF VP,                     -- Virtual processor
+    heap  : IREF Heap,                   -- Initial heap
+    types : IREF TypeSystem,             -- For narrowing types
+    root  : IREF Context                 -- Name space
+  ];
+
+END.
+

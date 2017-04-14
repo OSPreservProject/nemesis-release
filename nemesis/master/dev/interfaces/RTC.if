@@ -1,0 +1,37 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Glasgow                                   -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      RTC
+-- 
+-- DESCRIPTION:
+--
+--			Device driver for Motorolla mc146818
+-- 
+--
+-- CREATED : January 1998
+-- AUTHOR :  Ian McDonald <ian@dcs.gla.ac.uk>
+--
+-- ID : $Id: RTC.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- 
+ 
+
+RTC : LOCAL INTERFACE =
+NEEDS WTime;
+BEGIN
+				
+   GetCMOSTime : PROC[]
+       RETURNS [time : WTime.Time_T];
+   -- reads the CMOS clock
+   SetCMOSTime : PROC[IN tmptr : WTime.TM]
+       RETURNS[];
+   -- sets the CMOS clock
+
+END.

@@ -1,0 +1,101 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      FileIO.if
+-- 
+-- DESCRIPTION:
+--
+--      Low level interface for reading and writing the blocks of a file.
+-- 
+-- FILE :	FileIO.if
+-- CREATED :	Wed Apr 23 1997
+-- AUTHOR :	Stephen Early
+-- ID : 	$Id: FileIO.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{File Systems}
+-- \section{API}
+--
+
+-- The "FileIO" interface provides a means to read blocks of a file.
+-- It accepts file-relative block numbers and if necessary translates them
+-- for use by the underlying block device.  As with IO, it
+-- is completely asynchronous.
+--
+-- Disk partitions, whole disks, etc. may also be accessed through this
+-- interface.
+
+FileIO : LOCAL INTERFACE =
+  EXTENDS IO;
+BEGIN
+
+  Op : TYPE = { Read, Write, Sync };
+  -- Operations that may be performed on an open file. "Read" is a request
+  -- to read some blocks from the file. "Write" is a request to write
+  -- some blocks of the file. "Sync" does not access the file, but prevents
+  -- requests from being re-ordered across the operation.
+
+  RC : TYPE = { OK, DENIED, FAILURE, TRUNCATED };
+  -- Result codes that are returned from operations on a file. The
+  -- meanings are:
+  -- \begin{description}
+  -- \item{OK} the operation completed successfully
+  -- \item{DENIED} the operation was not permitted by policy
+  -- \item{FAILURE} an internal error occurred, possibly a medium error
+  -- \item{TRUNCATED} the request was partially completed. "nblocks" will be
+  --   updated to indicate how many blocks were transferred.
+  -- \end{description}
+
+  RCDetail : TYPE = { OK, ReadOnly, MediumError, MediumOverrun };
+
+  Block : TYPE = LONG CARDINAL;
+
+  Size : TYPE = LONG CARDINAL;
+  -- The size of a file, in bytes. Not necessarily an integral number
+  -- of blocks.
+
+  Request : TYPE = RECORD [ blockno : Block,
+                            nblocks : CARDINAL,
+                            op      : Op,
+			    user1   : LONG CARDINAL,
+			    user2   : LONG CARDINAL,
+			    rc      : RC,
+		            detail  : RCDetail ];
+
+  -- The first "IO.Rec" shall point to a "FileIO.Request" structure.
+  -- The remaining "IO.Rec"s are used in the conventional manner.
+  --
+  -- "blockno" may pass through zero or more stages of translation
+  -- before it is presented to the underlying device.
+  --
+  -- "user1" and "user2" are fields that may be used by the caller.
+  --
+  -- "rc" is filled in with a result code for the operation. "nblocks" may
+  -- be overwritten with the number of blocks actually transferred. All
+  -- other fields are untouched.
+
+  BlockSize : PROC [ ]
+	RETURNS [ blocksize : CARDINAL ];
+  -- Returns the number of bytes in a block. All access to the file
+  -- is done in blocks of this size.
+
+  GetLength : PROC [ ] RETURNS [ length : Size ];
+
+  SetLength : PROC [ length : Size ]
+	RETURNS [ rc : RC ];
+  -- Sets the length of the file. "length" does not have to be a multiple
+  -- of the blocksize; any length is permitted. If the length of a file
+  -- is reduced then blocks beyond the end of the file will be freed.
+  -- If the length of a file is increased then blocks may not actually
+  -- be allocated until they are written.
+  --
+  -- This call is not valid for all open files; if the file is a disk
+  -- partition, for example, this call will return "FAILURE".
+
+END.

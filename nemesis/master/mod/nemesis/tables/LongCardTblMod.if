@@ -1,0 +1,33 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      LongCardTblMod.if
+-- 
+-- DESCRIPTION:
+--
+--      Hash table mapping LongCards to ADDRESS
+-- 
+-- ID : $Id: LongCardTblMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Tables}
+-- \section{LongCard}
+
+-- The "LongCardTbl" interface is implmented by "LongCardTblMod".
+
+LongCardTblMod : LOCAL INTERFACE =
+  NEEDS LongCardTbl;
+  NEEDS Heap;
+BEGIN
+
+  New : PROC [ h: IREF Heap] RETURNS [ t: IREF LongCardTbl ]
+          RAISES Heap.NoMemory;
+    -- Return a "LongCardTbl" allocated in "h".
+
+END.

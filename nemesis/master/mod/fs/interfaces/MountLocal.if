@@ -1,0 +1,63 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      MountLocal
+-- 
+-- DESCRIPTION:
+--
+--      Mounts local filesystems
+-- 
+-- ID : $Id: MountLocal.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+-- 
+-- \chapter{Filesystems}
+--
+
+-- This interface allows servers to be started for local filesystems.
+
+MountLocal : LOCAL INTERFACE =
+  NEEDS IDCOffer;
+  NEEDS Context;
+BEGIN
+
+  Option : TYPE = { ReadOnly, Debug, MountUnclean };
+
+  Options : TYPE = SET OF Option;
+
+  Problem : TYPE = { BadSuperblock, BadRoot, BadMetadata, Unclean };
+
+  BadFS : EXCEPTION [ reason : Problem ];
+
+  Failure : EXCEPTION [ ];
+    -- Used if some failure occurs which is not a problem with the non-volatile
+    -- FS data, eg. memory allocation.
+
+  Mount : PROC [ drive     : IREF IDCOffer, -- Offer for a USDDrive.
+                 partition : CARDINAL,      -- The partition on that USDDrive.
+                 options   : Options,       -- Mount options.
+                 settings  : IREF Context ] -- Additional options.
+	RETURNS [ fs : IREF IDCOffer ]
+	RAISES BadFS, Failure;
+
+    -- "partition" is an IDCOffer for an interface that allows the filesystem
+    -- to access the block device. Local filesystems must support being
+    -- passed either an IREF USDDrive, and may optionally support being passed
+    -- an IREF FileIO as well.
+    -- "settings" is used for arbitrary name/value pairs, for example
+    -- superblock=8193, resuid=1001, resgid=1001, etc.
+    -- "fs" is an IDCOffer for a FSClient.
+
+  SimpleMount : PROC [ drive     : IREF IDCOffer, -- Offer for a USDDrive.
+                       partition : CARDINAL ]     -- The partition.
+	RETURNS [ fs : IREF IDCOffer ]
+	RAISES BadFS, Failure;
+    -- Someone should fix Clanger to allow sets to be constructed.
+
+
+END.

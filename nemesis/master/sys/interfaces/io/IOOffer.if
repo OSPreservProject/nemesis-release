@@ -1,0 +1,56 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      IO Offer
+-- 
+-- DESCRIPTION:
+--
+--      Operations on an IO offer. 
+-- 
+-- ID : $Id: IOOffer.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+-- 
+
+-- To offer a streamed IO connection to other domains, an application 
+-- must create an "IOOffer".  This is the closure whose reference is
+-- posted in a naming context; it encapsulates the state required to
+-- create a binding to the IO.
+
+IOOffer : LOCAL INTERFACE =
+  EXTENDS IDCOffer;
+  NEEDS IOData;
+BEGIN
+
+  -- The "ExtBind" method attempts to create an IO channel (of some
+  -- implementation) to the service offered by the "IOOffer". The 
+  -- "data" parameter specifies the caller's requirements on the IO 
+  -- channel shared data area, while the "gk" is provided in order 
+  -- to allocate memory for the binding if this is required by the 
+  -- offerer's data requirements. 
+
+  ExtBind : PROC    [ IN data  : IOData.Shm, 
+	   	      IN gk    : IREF Gatekeeper,
+                      OUT cl   : Type.Any              ]
+            RETURNS [ control  : IREF IDCClientBinding ]
+            RAISES Binder.Error, Gatekeeper.Failure, IDCOffer.UnknownIOR;
+
+
+  -- The "QueryShm" method allows clients to find out what the server
+  -- which created this offer suggests as good parameters for the data
+  -- area of the IO channel.  It is typically used by clients before
+  -- "ExtBind"ing, in order to take account of a server's suggested
+  -- parameters in an application-specific manner.  Note that the
+  -- returned "shm" value is a reference to internal offer state: it
+  -- should not be modified.
+  QueryShm : PROC [ ]
+	     RETURNS [ shm : REF IOData.Shm ];
+
+END.

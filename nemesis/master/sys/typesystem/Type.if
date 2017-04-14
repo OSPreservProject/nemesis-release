@@ -1,0 +1,70 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1993, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Type
+-- 
+-- DESCRIPTION:
+--
+--      Type definitions relating to how types are managed inside
+--      Nemesis (mainly by trading entities and the like).
+-- 
+-- ID : $Id: Type.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Runtime Type System}
+-- 
+-- 
+
+-- Nemesis contains a runtime dynamic type system.  It is used mainly
+-- by traders and suchlike things.  The "Type" interface gives the
+-- basic definitions on which the runtime type system is built.
+
+Type : INTERFACE =
+BEGIN
+
+  -- A type may be identified by a string "Type.Name".  All types
+  -- are uniquely identified within a single instance of the
+  -- type system by a "Type.Code".
+
+  Name : TYPE = STRING;  
+  Code : TYPE = LONG CARDINAL;
+
+  -- It is often useful to deal with objects tagged with their
+  -- type.  An "Any" pairs a value "val" with its type code.
+
+  Val : TYPE = LONG CARDINAL;
+
+  Any : TYPE = RECORD [
+    type : Code,
+    val  : Val
+  ];
+
+  AnySeq : TYPE = SEQUENCE OF Any;
+
+  -- An AnyI is an Any that is initialisable. On sensible
+  -- architectures, it is exactly the same as any Any. On
+  -- architectures with broken build tools, such as Intel, where 64
+  -- bit valus can not be initilaised with 32 bit macros, AnyI
+  -- magically acquire 32 bit pay loads and 32 bit pads. 
+
+  -- In either case, macros "TYPE_ANYI_READ" and "TYPE_ANYI_WRITE" should
+  -- be used when accessing 64 bit values in macros.
+
+  AnyI : TYPE = RECORD [
+    type : Code,
+    val  : Val
+  ];
+
+  -- If the "type" of an "Any" is a "REF" type, an "IREF" type,
+  -- or any other type whose values will fit in a "Val", the
+  -- corresponding value is directly in the "Any"'s "val" field.
+  -- Otherwise, the "val" field contains a "REF" to a value of the
+  -- indicated type.
+
+END.

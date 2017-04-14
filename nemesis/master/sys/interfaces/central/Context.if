@@ -1,0 +1,151 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+-- 
+-- INTERFACE:
+--
+--      Context
+-- 
+-- DESCRIPTION:
+-- 
+--      Provides a mapping from names to objects.
+-- 
+-- ID : $Id: Context.if 1.2 Tue, 27 Apr 1999 15:22:18 +0100 dr10009 $
+-- 
+-- \chapter{Naming Contexts}
+-- 
+-- 
+
+-- Several parts of a Nemesis system need to associate string names
+-- with objects in some context.  Trading, file directory services,
+-- local name space management, and environments for machine booting
+-- and domain initialisation are all examples.  The "Context" interface
+-- provides a general abstraction for this purpose.
+
+Context : LOCAL INTERFACE =   
+  NEEDS Heap;
+  NEEDS Type;
+  NEEDS WordTbl;
+BEGIN
+
+  -- A "Context" is a partial map "map" from \emph{arc-names} to "Type.Any"s
+  -- (arbitrary values tagged with their type codes. An arc-name is a non-empty
+  -- string which does not contain either of the separator characters defined
+  -- below.
+  -- 
+  -- A naming network of arbitrary topology can be built by registering
+  -- one "Context" in another.  For convenience, the procedures in the
+  -- "Context" interface interpret \emph{pathnames}.  Pathnames have the
+  -- syntax:
+  -- 
+  --|    Pathname  = ArcName { Separator ArcName }
+  --|    Separator = '>'
+  --|    ArcName   = [^>] { [^>] }
+
+  -- 
+  -- Exceptions
+  -- 
+
+  -- "Context" operations may raise various exceptions:
+
+  NotFound   : EXCEPTION [ name : REF CHAR ];
+    -- May be raised when no binding for an arc-name exists.
+
+  NotContext : EXCEPTION [];
+    -- Raised when mapping an arc in a pathname produces a non-"Context"
+    -- result.
+
+  Exists     : EXCEPTION [];
+    -- Raised when a binding for an arc-name already exists.
+
+  Denied     : EXCEPTION [];
+    -- Raised when the requested access to a context is denied.
+
+  -- 
+  -- Operations
+  -- 
+
+  -- The following type is used for listing names in a context:
+
+  Names : TYPE = SEQUENCE OF STRING;
+
+  -- "List" returns all the names bound in the context.
+
+  List : PROC [] RETURNS [ nl: Names ] RAISES Heap.NoMemory;
+
+  -- "Get" maps pathnames to objects relative to the current context.
+
+  Get : PROC    [ name: STRING; OUT obj: Type.Any ] 
+        RETURNS [ present: BOOLEAN ]
+        RAISES NotContext, Denied;
+
+  -- Let "arc" be the first arc-name in "name".  If "arc" is not bound
+  -- in the current context, return "False".  Otherwise, if "arc" and
+  -- "name" are equal,  set "obj := map[name]" and return "True".
+  -- 
+  -- Otherwise, "name" is a pathname and "arc" should be bound to a
+  -- "Context".  Let "next_cx" be "map[arc]".  If "next_cx" is not a
+  -- "Type.Any" for a "Context", raise the "NotContext" exception.
+  -- Otherwise, let "rest" be the result of removing the first arc-name
+  -- and separator from "name", and return the result of invoking
+  -- "Get(rest, obj)" on "next_cx".
+
+  -- "Add" binds an object to a pathname relative to the current context.
+
+  Add : PROC [ name: STRING; IN obj: Type.Any ]
+          RETURNS [] RAISES Exists, NotContext, NotFound, Denied;
+
+  -- If "name" is a pure arc-name, then if it is not bound in the
+  -- current context, set "map[name]" to "obj" and return.  If it is
+  -- bound, raise "Exists".
+  -- 
+  -- Otherwise, "name" is a pathname; in this case, recursively call
+  -- "Add(rest, obj)" on "next_cx" after checking that the first "arc"
+  -- of "name" is bound to a "Type.Any" for a "Context", as for "Get".
+  -- If "arc" is not bound to anything, raise "NotFound". If "arc" is
+  -- bound but not to a context, raise "NotContext".
+
+
+  -- "Remove" deletes the binding for a pathname relative to the current
+  -- context.
+
+  Remove : PROC [ name: STRING ] RETURNS []
+             RAISES NotContext, NotFound, Denied;
+
+  -- If "name" is a pure arc-name, and is bound in this context then
+  -- remove the binding for "map[name]".  If "name" is pure and is not
+  -- bound then raise "NotFound". Otherwise, recurse as for "Add".
+
+
+  -- Although the semantics of "Get", "Add" and "Remove" for the case
+  -- of pathnames have been defined recursively, implementations may
+  -- choose to interpret more than one arc-name in each call.  This
+  -- potentially avoids the creation of "Context"s for internal nodes
+  -- in a naming graph, but raises the question of what happens when
+  -- a name denoting such an internal context is presented to be
+  -- resolved.
+
+  -- "Dup" duplicates the context graph rooted at the current context
+  -- in the "Heap" "h", applying the translations "xl".
+
+  Dup : PROC    [ h    : IREF Heap,
+                  xl   : IREF WordTbl ]
+        RETURNS [ copy : IREF Context ]
+        RAISES Heap.NoMemory, Denied;
+
+  -- Each "(name, val)" binding in the current context is copied to
+  -- the new context as "(name, xl [val])".  If "xl" is "NULL" or
+  -- "val" $\not\in$ "dom(xl)", the original binding is copied unchanged
+  -- except that subcontexts are recursively duplicated and "STRING"s
+  -- are copied to "h".  In the future, a different copying policy for large
+  -- values may be employed.
+
+  -- Finally, "Destroy" disposes of the current context.
+
+  Destroy : PROC [] RETURNS [] RAISES Denied;
+
+END.

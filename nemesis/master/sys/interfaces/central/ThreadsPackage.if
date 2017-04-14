@@ -1,0 +1,66 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      ThreadsPackage
+-- 
+-- DESCRIPTION:
+--
+--      Allows creation of a user level thread scheduler.
+-- 
+-- ID : $Id: ThreadsPackage.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{User Level Schedulers}
+-- 
+
+-- A thread scheduler can be created by using an instance of the
+-- "ThreadsPackage" interface. Various implementations of thread
+-- schedulers may have differing scheduling policies. 
+
+ThreadsPackage : LOCAL INTERFACE =
+  NEEDS ActivationF;
+  NEEDS Pervasives;
+  NEEDS Stretch;
+  NEEDS ThreadF;
+BEGIN
+
+  Stack : TYPE = RECORD [
+	guard   : IREF Stretch,
+	stretch : IREF Stretch
+  ];
+
+  -- "New" creates a thread scheduler. The client is expected to
+  -- supply the default stack and heap sizes, main thread "entry"
+  -- and "data", and a template "Pervasives" record. It must also
+  -- supply a stack for start-of-day, and a stretch to be used to
+  -- create the initial heap. The scheduler can be specified as being
+  -- "preemptive" or not.
+  -- 
+  -- In "prec", the "vp", "heap", "types", "root" and "exns" fields must be
+  -- valid.  They will be used to acquire the other resources required.
+  -- 
+  -- If "New" returns "True", the following additional fields of the
+  -- main thread's pervasives have been initialised: "time", "evs", "thd",
+  -- "thds", "srcth", and "bndr".  Also, "vp"'s activation vector has
+  -- been set so that the main thread will run when the domain is next
+  -- activated, and "vp"'s current save slot is its current resume slot.
+  -- The main thread can be entered by enabling activations and yielding
+  -- the processor.
+
+  New : PROC    [ entry         : ADDRESS,
+                  data          : ADDRESS,
+		  protoStack    : Stack,
+                  userStretch   : IREF Stretch,
+		  defStackBytes : CARDINAL,
+             IN   prec          : Pervasives.Init  ]
+        RETURNS [ thdf          : IREF ThreadF, 
+		  actf          : IREF ActivationF ]
+        RAISES Threads.NoResources;
+
+END.

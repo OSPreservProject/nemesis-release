@@ -1,0 +1,28 @@
+-----------------------------------------------------------------------------
+-----------------------------------------------------------------------------
+-- 
+-- INTERFACE:
+-- 
+-- 	WrRedir.if
+-- 
+-- DESCRIPTION:
+-- 
+-- 	SRC Writers
+-- 
+-- ID : $Id: WrRedir.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+--
+-- \chapter{Readers and Writers}
+--
+
+-- The "WrRedir" interface is an extended "Wr" interface which
+-- supports one extra method to set the destination writer.
+
+WrRedir : LOCAL INTERFACE = 
+  EXTENDS Wr;
+BEGIN
+
+  -- Makes "wr" the writer to which writes on "self" will be passed
+  -- through to.
+  SetWr : PROC [ wr : IREF Wr ] RETURNS [];
+
+END.

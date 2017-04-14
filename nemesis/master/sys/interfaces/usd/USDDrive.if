@@ -1,0 +1,62 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      USDDrive
+-- 
+-- DESCRIPTION:
+--
+--      Interface to a user-safe disk drive
+-- 
+-- ID : $Id: USDDrive.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+-- 
+-- \chapter{Devices}
+-- \section{Disks}
+
+--    This provides an method of discovering information about USDs
+-- and for getting USDCtl offers for partitions.
+
+USDDrive : LOCAL INTERFACE =
+  NEEDS IDCOffer;
+  NEEDS USDCallback;
+  NEEDS USD;
+BEGIN
+  -- USDDrives are obtained by calls to USDMod\$New.
+
+  GetDiskInfo : PROC [ OUT info : USD.DiskInfo ]
+	RETURNS [ success : BOOLEAN ];
+    -- Returns information about the USD.
+
+
+  GetPartitionInfo : PROC [ partition : CARDINAL,
+ OUT                        info      : USD.PartitionInfo ]
+	RETURNS [ success : BOOLEAN ];
+    -- Returns information about a partition on a USD. Unlike other
+    -- operating systems partitions are numbered from zero. This returns
+    -- false if the partition number is invalid.
+
+  GetWholeDisk : PROC [ callbacks : IREF USDCallback ]
+	RETURNS [ success : BOOLEAN, ctl : IREF IDCOffer ];
+    -- This returns an offer for a USDCtl. Any streams that this is used
+    -- to create have their access verified by the USDCallback that is
+    -- passed to the call. This could be an interface to a TLB of
+    -- recently translated extents, with callbacks to the person calling
+    -- this function.
+  
+  GetPartition : PROC [ partition : CARDINAL,
+                        callbacks : IREF USDCallback ]
+	RETURNS [ success : BOOLEAN, ctl : IREF IDCOffer ];
+    -- Returns a USDCtl offer as above. Only one person may bind to a
+    -- partition at once. Fails if the partition number is bad.
+
+  RescanPartitions : PROC [ ]
+	RETURNS [ success : BOOLEAN ];
+    -- Rescan the partition table. Returns true if this succeeds. Will fail
+    -- if any of the partitions are in use.
+END.

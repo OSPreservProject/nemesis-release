@@ -1,0 +1,57 @@
+/* CLUless compiler front end
+ ***********************************************************************
+ * Copyright 1997 University of Cambridge Computer Laboratory          *
+ * All Rights Reserved                                                 *
+ * Authors: Dickon Reed (Dickon.Reed@cl.cam.ac.uk)                     *
+ *          Richard Mortier (rmm1002@cam.ac.uk)                        *
+ ***********************************************************************/ 
+/* CLUless */
+
+/* group.tab; for use with "gentables.py" */
+
+/* Dickon Reed, 1996 */
+/* Richard Mortier, 1997 */
+
+/*
+ * $Id: group.tab 1.1 Thu, 18 Feb 1999 14:20:06 +0000 dr10009 $
+ */
+
+/*
+ * $Log: group.tab,v $
+ * Revision 1.1  1997/06/25 17:07:48  dr10009
+ * Initial revision
+ *
+ * Revision 2.1  1997/04/04 15:35:26  rmm1002
+ * Mass check-in; now have vaguely working compiler, makes on P5 & Alpha
+ *
+ * Revision 1.10  1997/02/04 16:48:48  rmm1002
+ * Finished first look and layout fixup
+ *
+ * Revision 1.1  1997/02/03 16:39:41  rmm1002
+ * Initial revision
+ *
+ */
+
+#include "expr.h"
+#include "list.h"
+#include "type.h"
+#include "spec.h"
+#include "decl.h"
+#include "statement.h"
+
+#BEGIN#
+group,5,struct table_format *
+expression,expr,n_generic,g1,n_generic,g2,n_type,type,n_type,ltype,&t_expr
+identifier,id,n_cptr,string,0
+sco,sco,n_id,scope,n_id,name,n_cptr,oname,0  
+list,list,n_generic,g1,n_list,next,&t_list
+statement,statement,n_generic,g1,n_generic,g2,n_generic,g3,&t_statement
+type,type,n_generic,g1,n_generic,g2,n_generic,g3,n_cptr,oname,&t_type
+spec,spec,n_generic,extends,n_generic,needs,n_id,name,n_list,body,&t_spec
+decl,decl,n_generic,g1,n_generic,g2,n_generic,g3,n_id,name,n_type,type,&t_decl
+exch,exch,n_sco,sco,n_statement,handle,0
+proc,proc,n_decl,decl,n_statement,statement,0
+shortcut,shortcut,0
+string,string,0
+integer,integer,0
+real,real,0

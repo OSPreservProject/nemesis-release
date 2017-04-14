@@ -1,0 +1,5 @@
+BadRecurse2 : INTERFACE =
+  NEEDS BadRecurse;
+BEGIN
+  Bar : PROC [ f: BadRecurse.Foo ] NEVER RETURNS;
+END.

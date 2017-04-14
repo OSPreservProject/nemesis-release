@@ -1,0 +1,44 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      ExnSystem.if
+-- 
+-- DESCRIPTION:
+--
+--      Module closure for exception handling
+-- 
+-- ID : $Id: ExnSystem.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter {Exceptions}
+-- 
+
+-- "ExnSystem" is the interface type of a module which creates
+-- exception support interfaces ("ExnSupport").  Right now, it actually
+-- creates the subtype "ExnSetjmp", since that is the only available
+-- implementation. 
+
+ExnSystem : LOCAL INTERFACE =
+  NEEDS ExnSetjmp;
+BEGIN
+
+  -- "New" creates a new "ExnSupport" interface. This is really a
+  -- holder for the exception handler chain. The result of this call
+  -- should really be placed in a "Pervasives" record for it to be
+  -- useful.
+
+  New : PROC    []
+      	RETURNS [ exc  : IREF ExnSetjmp ]
+      	RAISES Heap.NoMemory;
+
+    -- Create an exception environment using the pervasive
+    -- "Heap". This heap will also be used by the environment during
+    -- the handling of exceptions. 
+
+END.

@@ -1,0 +1,66 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Custom Stub IDC Transport
+-- 
+-- DESCRIPTION:
+--
+--      Allows custom client stubs for IDC
+-- 
+-- ID : $Id: CSIDCTransport.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- 
+-- \chapter{Inter-Domain Communication}
+-- 
+
+CSIDCTransport : LOCAL INTERFACE =
+  NEEDS Type;
+  NEEDS Heap;
+  NEEDS Gatekeeper;
+  NEEDS Entry;
+  NEEDS IDCOffer;
+  NEEDS IDCCallback;
+  NEEDS IDCService;
+  NEEDS CSClientStubMod;
+BEGIN
+
+  -- Create an "IDCOffer". The server can be any closure, passed as a
+  -- "Type.Any". The type information is used by the "IDCTransport" to
+  -- select an approriate pair of client and server stubs. The closure
+  -- may be supplied later, provided that an "IDCCallback" is supplied.
+
+  -- The server can pass in an "IDCCallback" which is upcalled as a 
+  -- result of a connection request, successful binding and when a
+  -- binding is destroyed.  
+
+  -- The "Heap" is used to create storage for the state and closure;
+  -- it should therefore be in a stretch readable by any domains which
+  -- might get hold of this offer.  The "Gatekeeper" "gk" will be used
+  -- to allocate per-connection shared memory, and the "entry" will be
+  -- used to schedule servicing of events on connections once they
+  -- have been established.
+
+  -- "cstype" is the type of the client stubs, and may be any closure.
+  -- "csmod" is an interface that is called to instantiate the custom
+  -- client stubs. It returns a "Type.Any", which must be
+  -- able to narrow to "cstype".
+
+  Offer : PROC    [ server : Type.Any,
+                    cstype : Type.Code,
+		     csmod : IREF CSClientStubMod,
+		       scb : IREF IDCCallback,
+      	              heap : IREF Heap,
+      	      	        gk : IREF Gatekeeper,
+                     entry : IREF Entry       ]
+      	  RETURNS [  offer : IREF IDCOffer,
+                   service : IREF IDCService  ]
+      	  RAISES Heap.NoMemory;
+  
+END.

@@ -1,0 +1,83 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      QoSCtl 
+-- 
+-- DESCRIPTION:
+--
+--      Interface to get, set and monitor QoS parameters. 
+--      Currently these must be of the form { period, slice, latency,
+--      xtra }, though subtypes of this interface may support different
+--      quality of service models.
+--
+--      This interface is exported by resource allocators, to allow
+--      their quality of service provisions to their clients to be
+--      queried and (optionally) modified.
+--
+
+QoSCtl : LOCAL INTERFACE = 
+  NEEDS Time;
+  NEEDS Domain;
+BEGIN
+
+  Handle : TYPE = DANGEROUS WORD; -- opaque
+
+  Client : TYPE = RECORD [
+             hdl  : Handle,
+             name : STRING,
+             did  : Domain.ID
+           ];
+ 
+  ClientSeq : TYPE = SEQUENCE OF Client;
+
+  -- Get the Quality Of Service guarantees that the resource allocator
+  -- is currently making for client with handle hdl. May optionally
+  -- raise InvalidHandle or ClientIsDead.
+
+  GetQoS : PROC    [ hdl     : Handle ]
+           RETURNS [       x : BOOLEAN, 
+                     p, s, l : Time.T ];
+
+  -- Set Quality of Service guarantees for handle hdl. If this is not
+  -- possible, return false else return true. Servers may
+  -- optionally raise AdmissionDenied or ClientIsDead to provide
+  -- more information to the client about why the quality of service
+  -- guarantee could not be made to the client.
+
+  SetQoS : PROC    [ hdl : Handle, 
+                     p   : Time.T, 
+                     s   : Time.T, 
+                     l   : Time.T, 
+                     x   : BOOLEAN ]
+           RETURNS [ ok  : BOOLEAN ];
+
+  Query : PROC    [ hdl     : Handle ]
+          RETURNS [ ok, tg, sg, tx, sx : Time.T ]; 
+
+-- New Query interface returns:
+--  tg : total guaranteed time the domain received between its
+--         creation and the time mentioned in sg
+--  tx : total extra time the domain received between its
+--         creation and the time mentioned in sx
+--  sg : The system time the last sample of guaranteed time was taken
+--         (usually the end of a domain's period)
+--  sx : The system time the last sample of extra time was taken
+--         (this will often be time Now)
+   
+
+  -- Find out the current number of clients, whether this number has
+  -- changed, and the details of each client.
+
+  ListClients : PROC [] 
+                RETURNS [ change   : BOOLEAN, 
+                          clients  : REF Client,
+                          nclients : CARDINAL ];
+
+END.

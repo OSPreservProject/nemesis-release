@@ -1,0 +1,40 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      ObjectTblMod
+-- 
+-- DESCRIPTION:
+--
+--      Module for Object Table implementation
+-- 
+-- ID : $Id: ObjectTblMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+-- 
+
+-- "ObjectTbl"s can be instantiated by calling an "ObjectTblMod". 
+
+ObjectTblMod : LOCAL INTERFACE =
+  NEEDS Heap;
+  NEEDS Binder;
+  NEEDS BinderCallback;
+  NEEDS ObjectTbl;
+BEGIN
+
+  -- "New" creates a new "ObjectTbl" "o" and an instance "cb" of the
+  -- "BinderCallback" interface.  The callback will be registered with
+  -- the "binder" during the first export via "o".  Callbacks are then
+  -- serviced by the "Pervasives" "entry".
+
+  New : PROC    [ h : IREF Heap, binder: IREF Binder ]
+      	RETURNS [ o : IREF ObjectTbl, cb: IREF BinderCallback  ]
+      	RAISES Heap.NoMemory;
+
+END.

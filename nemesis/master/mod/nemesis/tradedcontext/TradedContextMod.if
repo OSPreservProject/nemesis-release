@@ -1,0 +1,42 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      TradedContextMod
+-- 
+-- DESCRIPTION:
+--
+--      Creates TradedContexts
+-- 
+-- ID : $Id: TradedContextMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Naming Contexts}
+--
+
+-- 
+
+TradedContextMod : LOCAL INTERFACE =
+  NEEDS Heap;
+  NEEDS TypeSystem;
+  NEEDS IDCOffer;
+  NEEDS Security;
+  NEEDS Entry;
+  NEEDS ContextMod;
+BEGIN
+
+  New : PROC [ cm : IREF ContextMod, h : IREF Heap, ts : IREF TypeSystem, 
+	       entry : IREF Entry, owner : Security.Tag ]
+	RETURNS [ c : IREF IDCOffer ]
+	RAISES Heap.NoMemory;
+
+  -- There's also a possibility of a NewFromLocal call, which will
+  -- take a standard Context and turn it into a TradedContext with
+  -- all the entries owned by a particular Security.Tag.
+
+END.

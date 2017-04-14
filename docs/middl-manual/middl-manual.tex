@@ -1,0 +1,717 @@
+\documentstyle[a4,11pt,alltt,fancybox]{report}
+%\usepackage{parskip}
+\title{The Revised Middl Manual}
+\author{Timothy Roscoe and Dickon Reed}
+\date{1st Edition - April 1999}
+
+\input psfig
+\def\MIDDL{{\sc Middl}}
+
+\newcommand{\idltabbing}[1] {
+\begin{tabbing}
+\=xxxxx \=xxxxx \=xxxxxxxxxxxxx \=xxxx \=xxxxxxxxxxxxx \=x
+\kill #1 \\
+\end{tabbing} }
+
+\newcommand{\idlfragment}[1] {{\tt \idltabbing{#1}}}
+\newcommand{\idlliteral}[1] {{\em $<$#1$>$}}
+\newcommand{\idloptliteral}[1] {{\em [$<$#1$>$]}}
+\newcommand{\idlfield}[3]{\> \> \> #1 \> #2 \> #3 }
+\newcommand{\Middlc}{{\tt Middlc1} }
+
+\begin{document}
+\maketitle
+\begin{abstract}
+
+The syntax, type system and facilities of the \MIDDL{} interface
+definition language (based loosely on ANSAware IDL) are described.
+A set of tools for processing the language has been produced and are
+described. A short tutorial on the language is included. \MIDDL{} is also
+compared with OMG IDL as used by CORBA.
+
+\end{abstract}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ This document describes the \MIDDL{} interface definition language used
+in the Nemesis operating system being developed as part of the Pegasus
+project and related projects at the University of Cambridge.
+
+\MIDDL{} started as an attempt to add sufficient functionality to ANSA
+IDL for it to be useful in the Nemesis operating system and also the
+MSRPC2 remote procedure call system. Unlike most
+IDLs it is not based on C or C++, and avoids
+implementation issues (the only implementation directive was inherited
+from ANSA IDL and has now been removed). The language does not support
+constant declarations, but 
+power sets of enumerations have been added as an abstraction of
+bit-masks.  
+
+\section{Differences from OMG IDL}
+
+The CORBA specification specifies an IDL (the OMG IDL) which may be
+familiar to a number of readers. The key differences are:
+
+\begin{itemize}
+\item The syntax is derived more from the ALGOL language family than
+from C.
+\item \MIDDL{} is not preprocessed. 
+\item \MIDDL{} has a much more tightly defined mechanism for relating one
+interface to another; \MIDDL{} interfaces may either {\tt EXTEND} or {\tt
+NEED} other interfaces. 
+\item All \MIDDL{} interface names exist notionally in the same namespace. There is no notion of a module in \MIDDL{}.
+\item A keyword ({\tt IREF}) is necessary to turn an interface name in
+to a type in \MIDDL{}. In OMG IDL interface names may be used
+directly as type names.
+\item All \MIDDL{} interfaces are required to be (i.e. should be) documented.
+\end{itemize}
+
+%\section{Differences from ANSA IDL}
+%
+%The IDL itself was originally based on the ANSA IDL from ANSAware 4.1.
+%The following modifications have been made to date:
+%\begin{itemize}
+%\item The syntax for invocations and subtyping have been shortened.
+%\item Concrete data type for machine addresses and words have been added.
+%\item The power set and reference type constructors have been included.
+%\item Exceptions are supported for interrogation operations.
+%\item Arguments and results can be declared mutable or immutable.
+%\item The ANSA inheritance syntax and {\tt FROM} keyword are not allowed.
+%\item Interface references are syntactically type specifiers and not
+%  type constructors.
+%\item Multiple supertypes are not allowed.
+%\item Nemesis module specfications are supported.
+%\item Type names are scoped.
+%\end{itemize}
+
+%\section{Differences from June 1993 \MIDDL{}}
+%
+%\MIDDL{} has changed somewhat since the first \MIDDL{} manual (June 1993).
+%The important changes are:
+%\begin{itemize}
+%\item Different reserved words for subtyping and operations.
+%\item Concrete data type for machine addresses and words have been added.
+%\item Exceptions are now included from {\tt NEED}ed interfaces.
+%\item The ANSA inheritance syntax and {\tt FROM} keyword are no longer
+%  accepted.
+%\item Interface references are syntactically type specifiers and not
+%  type constructors.
+%\item Results of interrogations can now be mutable or immutable.
+%\item There is a reference type constructor.
+%\item Nemesis module specfications are supported.
+%\item Type names are scoped.
+%\item The compiler has been completely rewritten, consequently most
+%  of the command line options have changed.
+%\end{itemize}
+
+%\section{Differences from January 1994 \MIDDL{}}
+%
+%The important changes are:
+%\begin{itemize}
+%\item A concrete data type for natural machine words.
+%\item Identifiers for exceptions and types are now scoped.
+%\item There is a reference type constructor.
+%\item Module parameters are specified with a different syntax. In
+%  particular, {\tt PARAMETERS} is no longer a reserved word.
+%\item The {\tt LOCAL} keyword identifies modules which can use unsafe
+%  constructions.
+%\item The compiler has (again) been completely rewritten, consequently most
+%  of the command line options have changed.
+%\end{itemize}
+
+\chapter{Language Tutorial}
+
+Here is an example \MIDDL{} interface, with line numbers. (The line
+numbers are not part of the interface).
+
+\begin{verbatim}
+
+01 -----------------------------------------------------------------------------
+02 --                                                                          -
+03 --  Copyright 1996, University of Cambridge Computer Laboratory             -
+04 --                                                                          -
+05 --  All Rights Reserved.					            -
+06 --                                                                          -
+07 -----------------------------------------------------------------------------
+08 --
+09 -- INTERFACE:
+10 --
+11 --      Directory.if
+12 -- 
+13 -- DESCRIPTION:
+14 --
+15 --      Interface for filesystem directories
+16 -- 
+17 -- ID : $Id: middl-manual.tex 1.2 Tue, 13 Apr 1999 17:01:06 +0100 dr10009 $
+18 -- 
+19 -- \chapter{Files}
+20 --
+21 
+22 -- A Directory is an extension of the Context interface which maps
+23 -- UNIX-like filenames to File objects. It differs from Context in
+24 -- that it provides the additional methods to open/create entries in
+25 -- a Directory with options. 
+26 
+27 Directory : LOCAL INTERFACE =
+28  EXTENDS Context;
+29  NEEDS File;
+30 BEGIN
+31	-- "List" does what you would expect: returns a list of
+32	-- all of the names in this directory.
+33
+34	-- "Get" looks up a name in the directory to obtain an
+35	-- "File.Attributes" record.  i.e. the equivalent of "stat"
+36
+37	-- Open options which may be specified
+38	OpenOption: TYPE = {ReadOnly, WriteOnly, ReadWrite, Create, Append};
+39	OpenOptions: TYPE = SET OF OpenOption;
+40
+41	Open: PROC [ name: STRING,
+42                   options: OpenOptions]
+43	      RETURNS [ file: IREF File ]
+44            RAISES Context.NotFound, Context.Exists, Context.Denied;
+45
+46      -- "Open" looks up "name" in the directory and, if it is a 
+47      -- regular file, creates a "File" object which may be 
+48	-- used to access the file.
+49
+50	OpenDir: PROC [ name: STRING ]
+51	      RETURNS [ file: IREF Directory ]
+52            RAISES Context.NotFound, Context.Denied;
+53
+54      -- "OpenDir" looks up "name" in the directory and, if it is another 
+55      -- directory, creates a new "Directory" object.
+56
+57
+58	SimpleOpen: PROC [ name : STRING ]
+59	      RETURNS [ file: IREF File ]
+60            RAISES Context.NotFound, Context.Exists, Context.Denied;
+61
+62	-- Same as "Open", but without options. Defaults to "ReadOnly".
+63
+64 END.
+\end{verbatim}
+
+Lines 1 to 20 are merely comments. Comments in \MIDDL{} begin with two
+dashes are proceed to the end of the line. We recommend that
+interfaces begin with any copyright notices, followed by the interface
+name and a brief one line description. This makes browsing interfaces
+easier.
+
+Line 21 is blank; blank lines are permitted at any stage and have no
+meaning to the language. However, the \MIDDL{} documentation system
+ignores all comments up to a blank line.
+
+Lines 22 to 25 are again comments. By convention, we describe the
+functionality of the interface here. Some interfaces may have long
+multiple paragraph descriptions, with comment lines with no text used
+to separate them.
+
+All interfaces begin with a line like line 27. {\tt Directory} is the
+name of the interface. The keyword {\tt LOCAL} is optional. It enables
+certain language features (most noticeably reference types, addresses and machine words) which cannot be marshaled between
+machines. 
+
+Lines 28 and 29 define how the {\tt Directory} interface relates to
+other interfaces. The {\tt NEEDS} keyword means that types and
+exceptions of the {\tt File} interface may be used in this
+interface. The use of {\tt IREF File} in lines 43 and 59 would not be
+possible unless the {\tt File} interface had been mentioned in these
+lines. 
+
+The {\tt EXTENDS} keyword means that this interface subtypes
+another. In this case, line 28 means that all operations of the {\tt
+Context} interface will be implemented by all objects exporting a {\tt
+Directory} interface. It also has the same effect as writing {\tt
+NEEDS Context;}. That is, all the types and exceptions of {\tt
+Context} may be used in this interface.
+
+The interface itself begins at line 30, with the {\tt BEGIN}
+keyword. A \MIDDL{} interface consists of a number of declarations. On
+line 38, we find a declaration of a new type called {\tt
+OpenOption}. It is an enumeration; a value of type {\tt OpenOption}
+may be one of {\tt ReadOnly, WriteOnly, ReadWrite, Create} or {\tt
+Append}. Line 39 declares a second type; a set of {\tt OpenOption}s. A
+value of type {\tt OpenOptions} is any subset of all the enumeration
+values of {\tt OpenOption}.
+
+On line 41, we find an operation declaration. {\tt Open} will be the
+first new operation of {\tt Directory}. Remember that this interface
+extends {\tt Context} so any operations of {\tt Context} will also be
+operations of {\tt Directory} anyway. {\tt Open} is a procedure; it
+takes a string and a {\tt OpenOptions} as arguments and if successful
+returns an {\tt IREF} to a file interface. An {\tt IREF} is a
+reference to an invocation point which is a (i.e. has type of) {\tt
+File}. In practice, this means that the caller is given back a pointer to a
+closure which the caller may use to invoke the operations of the {\tt
+File} interface. Finally, line 44 specifies what happens when the
+operation fails; three exceptions may be raised; {\tt
+Context.NotFound, Context.Exists} and {\tt Context.Denied}. In the
+{\tt Context} interface, the {\tt NotFound} exception was declared
+like this:
+
+\begin{verbatim}
+   NotFound   : EXCEPTION [ name : REF CHAR ];
+\end{verbatim}
+
+So, if {\tt Open} fails with a {\tt NotFound} exception, the caller
+will be able to access a pointer to a character. As with a lot of
+things about \MIDDL{}, how this can be done is a property of the language
+mapping used. In fact, this is the whole point of \MIDDL{}. By separating
+it from C, for instance, developers are less likely to suffer
+preconceived notions of how things like exceptions work. Other
+documents describe the mapping from \MIDDL{} to C, for instance, or to
+Clanger.
+
+The best way to learn \MIDDL{} is to inspect the corpus of interfaces
+written in \MIDDL{}. The Nemesis distribution ships with more than 200
+of them which together use practically all language facilities of
+Nemesis. Refer to the Nemesis interface manual (\cite{XXX}) for
+further details. The rest of this manual will describe \MIDDL{} in
+detail for reference purposes.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Concrete Types}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This chapter describes concrete types in \MIDDL{} (as opposed
+to the types of interfaces themselves, which are abstract types).
+Concrete types are those whose representation is reasonably explicit.
+They do include interface references (see below).
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % 
+\section{Primitive Types}
+% % % % % % % % % % % % % % % % % % % % % % % % % % 
+
+%  \MIDDL{} provides the same 11 primitive types as ANSA IDL. The only
+%real differences are that {\tt LONG INTEGER} and {\tt LONG CARDINAL}
+%types really are 64 bits in \MIDDL{}, and  there are types for
+%machine addresses and words. 
+
+The types are:
+
+\begin{tabbing}
+\= xxxxxxxxxxxxxxxxxxxxxxxxxx \= x \kill \\
+\> {\tt BOOLEAN}: \> A boolean quantity with values {\tt TRUE} or {\tt
+FALSE}. \\
+\> {\tt SHORT CARDINAL}: \> A 16-bit unsigned integer. \\
+\> {\tt CARDINAL}: \> A 32-bit unsigned integer.\\
+\> {\tt LONG CARDINAL}: \> A 64-bit unsigned integer.\\
+\> {\tt SHORT INTEGER}: \> A 16-bit signed integer.\\
+\> {\tt INTEGER}: \> A 32-bit signed integer.\\
+\> {\tt LONG INTEGER}: \> A 64-bit signed integer.\\
+\> {\tt REAL}: \> A 32-bit IEEE single precision floating point number.\\
+\> {\tt LONG REAL}: \> A 64-bit IEEE double precision floating point number.\\
+\> {\tt OCTET}: \> An 8-bit quantity.\\
+\> {\tt CHAR}: \> A 7-bit ASCII character.\\
+\> {\tt STRING}: \> A variable-length character string. \\
+\> {\tt DANGEROUS ADDRESS}: \> A machine address. \\
+\> {\tt DANGEROUS WORD}: \> A natural machine word.
+\end{tabbing}
+
+Use of the data type {\tt DANGEROUS ADDRESS} is strongly discouraged
+unless absolutely necessary. Compilers may refuse to generate
+marshalling code for this type. Similarly, {\tt DANGEROUS WORD} will
+have different representations on different architectures, and should
+be used as little as possible. Both types may only be used in
+interfaces declared {\tt LOCAL}. Note that the {\tt DANGEROUS} keyword
+is optional.
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % 
+\section{Type Constructors}
+% % % % % % % % % % % % % % % % % % % % % % % % % % 
+
+New types are defined by a declaration of the form:
+
+\idltabbing{
+\idlliteral{new type}
+{\tt : TYPE =}
+\idlliteral{type constructor} }
+
+Thereafter, the new type can be refered to just as \idlliteral{new
+  type} within its defining interface, or as
+\idlliteral{intf}.\idlliteral{new type} in some other interface which
+{\tt EXTEND}s or {\tt NEED}s the one in which the type is defined.
+
+It is also possible to declare anonymous constructed types as
+arguments or results in invocations or components of other types. The 8 type
+constructors are as follows; note that the comma is used as a
+component separator, not as a terminator:
+
+\subsection{Alias}
+
+Defines a new type as the same as an existing type. The syntax of the
+constructor is just the name of the base type. For example:
+\idlfragment{Wombat : TYPE = Bat;}
+
+\subsection{Enumeration}
+
+An enumeration is a set of symbols usually mapped onto integer values
+in a representation-dependent manner. For example:
+\idlfragment{Beer : TYPE = \{ \\
+\> \> \> IPA, \\
+\> \> \> Abbott, \\
+\> \> \> Grolsch \}; }
+
+\subsection{Arrays}
+
+An array is a fixed-size sequence of elements of some base type. For
+example:
+\idlfragment{MSNLSap : TYPE = ARRAY 8 OF OCTET;}
+
+\subsection{Sequence}
+
+A sequence is a variable-sized sequence of elements of some base type.
+For example:
+\idlfragment{MachNames : TYPE = SEQUENCE OF STRING;}
+
+\subsection{Record}
+
+A record is a grouping of elements of different base types. For
+example: 
+\idlfragment {MSRPCInterfaceRef : TYPE = RECORD [ \\
+\idlfield{id}{:}{MSRPCInterfaceID,} \\
+\idlfield{attrs}{:}{MSRPCAttributes,}\\
+\idlfield{hint}{:}{MSRPCAddressHint}]; }
+
+\subsection{Choice}
+
+A choice is a discriminated union. The discriminator must be an
+enumeration type. For example:
+
+\idlfragment{MSRPCProtocol : TYPE = \{ \\
+\> \> \> MSNL, \\
+\> \> \> TCP, \\
+\> \> \> SDOM \}; \\
+\\
+MSRPCAddressHint : TYPE = CHOICE MSRPCProtocol OF \{ \\
+\idlfield{MSNL}{=>}{MSNLAddressHint,}\\
+\idlfield{TCP}{=>}{TCPAddressHint,}\\
+\idlfield{SDOM}{=>}{SDomAddressHint}\}; }
+
+\subsection{Power Set}
+
+A power set is a type whose values are subsets of an enumeration type.
+For example:
+\idlfragment{BarSelection : TYPE = SET OF Beer;}
+
+\subsection{References}
+
+The {\tt REF} construct defines a type whose values are pointers to
+instances of some base type. For example:
+\idlfragment{BoatHouse : TYPE = REF BarSelection;}
+
+References may only be used in interface types declared to be {\tt
+  LOCAL}.
+
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % 
+\section{Interface References}
+% % % % % % % % % % % % % % % % % % % % % % % % % % 
+
+The type expression:
+\idlfragment{IREF BeerInterface}
+always stands for the unique data type whose values are references to
+an interface of type {\tt BeerInterface}. Data types of this kind are
+never constructed explicitly, but are created implicitly when a new
+interface type specification is parsed. Thus the \MIDDL{} fragment:
+\idlfragment{BeerRef : TYPE = IREF BeerInterface}
+actually defines an {\em alias} type to the already defined interface
+reference type. Note that this discussion is about the {\tt IREF}
+type, not values of an interface reference type.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{\MIDDL{} Interface Syntax}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  An interface definition file in \MIDDL{} has  this structure:
+
+
+\begin{tabbing}
+\= xxxxxxx \=xxxxxxxxxxxxxxxxx \kill \\
+\> \idlliteral{interface name} {\tt :} \idloptliteral{\tt LOCAL} {\tt INTERFACE =} \\
+\> \> \idloptliteral{supertype} \\
+\> \> \idloptliteral{type imports} \\
+\> {\tt BEGIN} \\
+\> \> \idloptliteral{type definitions} \\
+\> \> \idloptliteral{operation signatures} \\
+\>{\tt END.} \\
+\end{tabbing}
+
+The {\tt LOCAL} keyword asserts that interfaces of this type will
+never be exported outside an address space. This enables use of the
+type constructor {\tt REF}, as well as the two concrete types {\tt
+  DANGEROUS ADDRESS} and {\tt DANGEROUS WORD}. It is a compile time
+error to use these in any imported interface if the top-level
+interface has not been declared to be {\tt LOCAL}.
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % 
+\section{Supertype Specification}
+% % % % % % % % % % % % % % % % % % % % % % % % % % 
+
+A supertype specification looks like:
+
+\idltabbing{
+{\tt EXTENDS}
+\idlliteral{base interface}
+{\tt ;} }
+
+It asserts that this interface type is a subtype of the given base
+interface. That is to say, all composite type definitions, attribute
+declarations and exception and operation signatures in the base
+interface are automatically included in this interface; only
+additional types, attributes and operations are defined in this
+specification. 
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % 
+\section{Type Imports}
+% % % % % % % % % % % % % % % % % % % % % % % % % % 
+
+A line in a \MIDDL{} file of the form:
+
+\idltabbing{ {\tt NEEDS}
+\idlliteral{other interface}
+{\tt ;} }
+
+declares that all type definitions and exception declarations in
+the other interface are to be 
+made available in this interface, including interface references. Note
+that in the previous version of \MIDDL{}, exceptions were not included
+from {\tt NEED}ed interfaces.
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % 
+\chapter{Operation Declarations}
+% % % % % % % % % % % % % % % % % % % % % % % % % % 
+
+There are two kinds of operations supported in \MIDDL{}:
+Procedures and Announcements.
+
+\section{Procedures}
+
+Procedures are conventional remote procedure calls. They take
+a bunch of arguments, return a bunch of results, and might raise one of
+a bunch of exceptions. The general syntax is:
+\idltabbing{
+\idlliteral{operation}
+{\tt : PROC [}
+\idlliteral{arguments}
+{\tt ]} \\
+\> \> {\tt RETURNS [}
+\idlliteral{results}
+{\tt ]} \\
+\> \> [
+{\tt RAISES }
+\idlliteral{exceptions}
+]
+{\tt ;} }
+
+  The arguments and results are given as semicolon-separated lists of
+declarations. Each declaration is a comma-separated list of
+identifiers, followed by a colon and the type specifier. The
+declaration can optionally be preceded by one of the keywords {\tt IN}
+or {\tt OUT} or both
+({\tt IN OUT}).
+(see below).
+
+The exceptions are simply a comma-separated list of scoped exception
+identifiers. 
+Each exception must be defined in the interface (in which case a
+simple identifier is used), or in an interface that this one {\tt
+  EXTENDS} or {\tt NEEDS}. In the latter cases the name must be
+qualified with the interface defining the exception, i.e.
+\idlliteral{exc intf}.\idlliteral{exc. name}.
+
+  Here is an example of a fairly full-featured procedure
+signature: 
+
+\idlfragment{
+\> BuyRound : PROC [ \\
+\idlfield{Beers}{:}{BarSelection;}\\
+\idlfield{Cider, Lager}{:}{CARDINAL;}\\
+\idlfield{MUTABLE Cash}{:}{REAL ]}\\
+\> \> RETURNS [ \\
+\idlfield{PintsBought}{:}{CARDINAL,}\\
+\idlfield{NameOfBarman}{:}{STRING}] \\
+\> \> RAISES TimeCalled, Brewery.BeerOff ; 
+}
+
+In some cases it may be the case that procedures are never expected to
+return, so specifying the return type of he procedure is
+meaningless. In such cases, this syntax may be used:
+
+\idltabbing{
+\idlliteral{operation}
+{\tt : PROC [}
+\idlliteral{arguments}
+{\tt ]} \\
+\> \> {\tt NEVER RETURNS}
+{\tt RAISES }
+\idlliteral{exceptions}
+]
+{\tt ;} }
+
+\subsection{Announcements}
+
+  Announcements are a bit like messages; you generate an announcement
+and then never hear from it again regardless 
+An announcement is declared as:
+\idltabbing{
+\idlliteral{operation}
+{\tt : ANNOUNCEMENT [}
+\idlliteral{arguments}
+{\tt ] ;} }
+
+  Note that an announcement returns no results and can raise no
+explicit exceptions. An example of an
+announcement might be:
+\idlfragment{
+\> CallTime : ANNOUNCEMENT [ \\
+\idlfield{Time}{:}{AMOrPM}; \\
+\idlfield{LockIn}{:}{BOOLEAN}]; 
+}
+
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % 
+\section{Exception Declarations}
+% % % % % % % % % % % % % % % % % % % % % % % % % % 
+
+  Exceptions can be raised by procedures as described above.
+Exceptions have arguments (to indicate the nature of what went wrong)
+and are declared in a similar way to announcements:
+\idltabbing{
+\idlliteral{operation}
+{\tt : EXCEPTION [}
+\idlliteral{arguments}
+{\tt ] ;} }
+
+  An exception must be declared before any procedure which can
+raise it. By their nature they cannot return any results, nor can
+they raise exceptions themselves. In addition to the exception list in
+an procedure declaration, here may be implicit exceptions which
+can be raised by any operation. For example, any operation in MSRPC2
+({\em including} announcements) can raise the following exception:
+\idlfragment{
+\> InternalError : EXCEPTION [ \\
+\idlfield{Status}{:}{CARDINAL}; \\
+\idlfield{err\_no}{:}{INTEGER}]; 
+}
+
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % 
+\section{Argument passing modes}
+% % % % % % % % % % % % % % % % % % % % % % % % % % 
+
+
+Arguments to {\tt PROC}s can optionally be declared as {\tt IN, OUT,}
+or {\tt IN OUT}. The exact meaning of these words is defined by the
+programming language mapping but generally:
+
+\begin{itemize}
+\item {\tt IN} declares an argument to be passed in by value. The
+server takes a copy of the argument.
+
+\item {\tt OUT} declares an argument to be assigned to by the
+server. This is different from operation results, since the storage
+for an {\tt OUT} argument has been allocated in advance by the
+client. Storage for the results must be allocated by the server.
+
+\item {\tt IN OUT} arguments should be considered as being passed by
+value-return: the value is copied into the server, modified, then
+written back. This may be implemented by call-by-reference.
+\end{itemize}
+
+Note that {\tt IN} is the default.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+\chapter{Lexical Symbols}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The following strings are reserved words in \MIDDL{}:
+\begin{verbatim}
+
+ADDRESS ANNOUNCEMENT ARRAY BEGIN BOOLEAN CARDINAL CHAR CHOICE
+DANGEROUS END EXCEPTION EXPORTS EXTENDS IMMUTABLE IMPORTS INTEGER
+INTERFACE IREF LOCAL LONG MODULE MUTABLE NEEDS NEVER OCTET OF PROC RAISES
+REAL RECORD REF RETURNS SEQUENCE SET SHORT STRING TYPE
+
+\end{verbatim}
+
+The following punctuation symbols have a special meaning:
+\begin{verbatim}
+:  =  ;  [  ]  .  {  }  ,  =>  --
+\end{verbatim}
+
+Tokens are separated by whitespace, which consists of spaces, tabs,
+newlines and comments. Comments start with ``{\tt --}'' and end
+with a newline.
+
+Numbers are only composed of the digits 0-9.
+
+Identifiers are sequences of alphanumeric characters or ``{\tt \_}''.
+They may not start with a digit.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{BNF Grammar}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\VerbatimInput{NewGrammar}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{\MIDDL{} Tools and Resources}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{description}
+
+\item[cl/astgen] is the compiler used to build a number of products
+including C header files, Nemesis typesystem records, stubs and
+skeleton closure implementations from \MIDDL{} files. It was written by
+Dickon Reed initially as an undergraduate project and developed
+further by Richard Mortier. It also includes partial support for a
+very experimental systems programming language called CLUless. 
+
+The front end, cl, parses \MIDDL{} interfaces and generates {\tt .ast}
+files which contain a bytecode form of the interface. The back end,
+astgen, reads multiple {\tt .ast} files and output specifications and
+executes the output specifications to generate products. astgen is
+designed to make writing new output specifications
+straightforward. Output specifications are python classes, in files
+prefixed with {\tt gen} and postfixed with {\tt .py}. 
+
+The Nemesis build system includes support for invoking cl and astgen
+efficiently. It is sometimes useful to invoke these tools manually. To
+parse a file, try something like:
+
+\begin{verbatim}
+cl Foo.if
+\end{verbatim}
+
+To generate a skeleton C file that implements a closure of type
+{\tt Foo}, execute:
+
+\begin{verbatim}
+cl -A Foo.if
+astgen c Foo.ast
+\end{verbatim}
+
+\item[\MIDDL{}c] is the compiler written by Timothy Roscoe. It is similar
+in many ways to cl/astgen, but is generally simpler and is more self
+contained. It is kept around mostly for reference purposes.
+
+\item[ifrefmanualgen.py] is a script to convert a number of interfaces
+to a \LaTeX file. It recursively finds all interfaces (i.e. files
+ending in {\tt .if}) in the current directory and below and produces a
+single LaTeX file on stdout.
+
+\item[The Nemesis Interface Manual] is the output of {\tt ifrefmanualgen}
+on all Nemesis interfaces. It is a useful source of examples of \MIDDL{}.
+
+\item[The Nemesis C programmers Manual] describes the \MIDDL{} to C mapping.
+
+\end{description}
+
+\end{document}
+

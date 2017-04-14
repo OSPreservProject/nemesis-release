@@ -1,0 +1,37 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1996, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--	Netcard.if
+--
+-- DESCRIPTION:
+--
+--	Low level interface to network cards
+--
+-- ID : $Id: Netcard.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+--
+-- \chapter{Devices}
+-- \section{Network}
+--
+
+-- "Netcard" is the low-level interface between the top of the network card
+-- specific code and the bottom of "Netif": its operations are only
+-- used by "Netif".  It is a private interface internal to Ethernet
+-- card device driver domains.
+
+Netcard : LOCAL INTERFACE =
+  NEEDS IO;
+  NEEDS IDCOffer; 
+BEGIN
+
+  -- Methods to control the card's tranceiver:
+  Up : PROC [ ] RETURNS [ ok : BOOLEAN ];   -- turn tranceiver on
+  Down : PROC [ ] RETURNS [ ok : BOOLEAN ]; -- turn tranceiver off
+
+END.

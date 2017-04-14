@@ -1,0 +1,74 @@
+------------------------------------------------------------------------------
+--
+-- File:
+-- 
+--	CallPriv.if
+--
+-- Description:
+--
+--	Allocation interface for device privileged sections
+--
+-- Revision History:
+--
+-- ID :	$Id: CallPriv.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Low-Level Interfaces}
+--
+
+-- Device privileged sections are a way for device drivers to register
+-- atomic routines that can be executed by a client within the device
+-- driver's pdom
+
+CallPriv : LOCAL INTERFACE = 
+BEGIN
+
+	AllocCode : TYPE = {Ok, NoFreeVectors, NotAllowed};
+
+	-- Return type for the "Allocate" procedure
+	--   "Ok" means the vector was successfully allocated
+	--   "NoFreeVectors" means all available callpriv slots have
+	--      been allocated
+	--   "NotAllowed" means the caller does not have permission to
+	--      allocate privileged sections
+
+	FreeCode : TYPE= {Ok, NotOwner, NoStub, InvalidVector};
+
+	-- Return type for the "Free" procedure:
+	--   "Ok" means the vector was successfully removed
+	--   "NotOwner" means some other domain owns the given vector
+	--   "NoStub" means the given  vector is not allocated
+	--   "InvalidVector" means that the given vector was out of range
+
+	Vector : TYPE = CARDINAL;
+
+	-- allocated privileged sections are identified by "Vector"s
+
+	StateT : TYPE = ADDRESS;
+
+	-- a "StateT" is a pointer to state used by a privileged
+	-- section
+
+	Section : TYPE = ADDRESS;
+
+	-- a "Section" is a pointer to the function executing the
+	-- privileged section
+
+	Allocate : PROC [ section:Section, state:StateT ]
+		RETURNS [ ret:AllocCode, vector:Vector];
+
+	-- Requests that a free vector be allocated to this domain. 
+	-- If successful, "ret" is set to "Ok", and "vector" contains
+	-- the callpriv vector for clients to use.  
+	
+	-- A call to "ntsc\_callpriv(vector, arg1, arg2, arg3)" will
+	-- result in a call to "section(state, rop, arg1, arg2, arg3)"
+	-- with interrupts disabled, running in the allocating 
+	-- domain's pdom, where "rop" is a pointer to the client's dcb\_ro\_t
+
+	Free : PROC [vector:Vector] RETURNS [ ret:FreeCode];
+
+	-- Requests that the privileged section described by "vector"
+	-- be released.
+
+END.
+

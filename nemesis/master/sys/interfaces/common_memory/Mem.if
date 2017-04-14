@@ -1,0 +1,166 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1996, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Mem
+-- 
+-- DESCRIPTION:
+--
+--      Type definitions for the various kinds of memory descriptors.
+-- 
+-- \chapter{Memory}
+-- 
+
+Mem : LOCAL INTERFACE =
+BEGIN
+
+    Failure : EXCEPTION [];
+      -- Something went horribly wrong.
+
+
+
+    Attr  : TYPE = { 
+		Nailed,  
+		NonMemory,
+		NoCache, 
+		DMA, 
+		ReadOnly  
+	};
+ 
+     -- Memory may have various attributes; some of which apply only 
+     -- to either physical memory or virtual memory, some which may
+     -- apply to either. 
+     -- The currently defined set is:
+     -- \begin{description}
+     --
+     --   \item[Nailed]    --- a region of the virtual address space 
+     --                        which is not pageable.
+     --
+     --   \item[NonMemory] --- a region of the physical address
+     --                        space which has non-memory-like 
+     --                        properties (e.g. IO space)
+     --
+     --   \item[NoCache]   --- a region of the physical address space
+     --                        which is not cached.    
+     --
+     --   \item[DMA]       --- a region of the physical address space
+     --                        to which or from where DMA may take place.
+     --
+     --   \item[ReadOnly]  --- a piece of virt/phys memory which is
+     --                        now and always shall be read-only. 
+     --                        E.g. ROM, NTSC stuff.
+     --
+     -- \end{description}
+     -- 
+
+    Attrs : TYPE = SET OF Attr;
+
+    PMemDesc : TYPE = RECORD [
+        start_addr : ADDRESS, 
+        nframes    : WORD,
+        frame_width: CARDINAL,
+	attr       : Attrs
+    ];
+      -- A region of physical memory is described by a PMemDesc
+
+    PMem : TYPE = REF PMemDesc;
+      -- The type "PMem" is generally really going to point to the  
+      -- start of a (variable) length array of PMemDesc's. The array
+      -- will be accompanied by a size param, or be terminated by
+      -- a 'zero' element of some sort.
+
+    VMemDesc : TYPE = RECORD [
+        start_addr : ADDRESS,
+        npages     : WORD,
+        page_width : CARDINAL,
+	attr       : Attrs 
+    ];
+      -- A region of the virtual address space is described by a
+      -- VMemDesc.
+
+
+    VMem : TYPE = REF VMemDesc;
+      -- A set of regions is held in a variable of type VMem
+      -- As for PMem, the type really represents an array in general.
+
+
+    Mapping : TYPE = RECORD [
+         vaddr       : ADDRESS,
+	 paddr       : ADDRESS,
+	 nframes     : WORD,
+	 frame_width : CARDINAL,
+	 mode        : CARDINAL
+    ];	
+     -- A particular contiguous mapping from virtual address "vaddr"
+     -- to physical address "paddr". The mapping extends over "npages"
+     -- pages each of width "page_width". 
+     -- The "mode" represents some machine-specific information (such
+     -- as protection, buffering or caching info).
+
+    Map : TYPE = REF Mapping;
+      -- A set of mappings is held in a variable of type Map.
+      -- As for PMem and VMem, the type generally represents an array.
+
+
+
+    Fault : TYPE = {
+	TNV,		-- Translation Not Valid
+	UNA,		-- Unaligned Access 
+	ACV,		-- Access Violation
+	INST,		-- Instruction Fault.
+	FOE,		-- Fault on Execution
+	FOW,		-- Fault on Write
+	FOR,		-- Fault on Read 
+	PAGE,		-- Page Fault
+	BPT		-- Breakpoint
+    };
+
+     -- Various sorts of faults may occur when a domain accesses (or
+     -- attempts to access) memory. The above is intended to be a
+     -- comprehensive list; it is not expected that every type of
+     -- fault will be present on every architecture. 
+     -- The meanings of the various types are as follows:
+     -- \begin{description}
+     --
+     --  \item{TNV} : the translation of a VA to a PA failed because there 
+     --               is no valid information about the mapping. 
+     --               Generally this occurs when a bogus VA is used.
+     --	
+     --  \item{UNA} : an unaligned access was attempted. This may be
+     --               simply a bad VA, or may be a true unaligned attempt.
+     --	
+     --  \item{ACV} : an attempt to access some VA failed due to
+     --               insufficient privilige (i.e. a protection fault).
+     --	
+     -- \item{INST} : an illegal (or just bogus) instruction was attempted
+     --               at a particular address. 
+     --	
+     --  \item{FOE} : an I-stream fetch was attempted from a non-executable
+     --               page. 
+     --	
+     --  \item{FOW} : a write access was attempted to a page marked fault 
+     --               on write. This may be used to impl copy on write
+     --               should we decide we need it.
+     --	
+     --  \item{FOR} : a read access was attempted on a page marked as 
+     --               fault on read. This may be used to collect access
+     --               pattern statistics, or as a hook for persistance etc.
+     --	
+     -- \item{PAGE} : the page to which an access was attempted is not 
+     --               resident in memory. 
+     --	
+     --  \item{BPT} : a (probably) user-initiated fault.
+     --	
+     -- \end{description}
+     -- 
+     -- The priorities of the faults are as listed; i.e. a domain will 
+     -- not take a page fault on a page to which it has no access, nor
+     -- will it be able to take a fault on write on an unaligned address.
+	
+END.

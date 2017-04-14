@@ -1,0 +1,101 @@
+#! /usr/bin/env python
+
+"""
+a simple command line interface to patchman. Nicer than using the web
+interface?
+
+"""
+
+import httplib, os, urllib, sys, string
+
+def urlencode(dict):
+    l = []
+    for key in dict.keys():
+        l.append( key + '=' + urllib.quote_plus(dict[key]) )
+    return string.join(l, '&')
+
+upload_directory = '/usr/groups/pegasus/users/dr10009/patchman/Upload'
+
+def error(str):
+    sys.stderr.write('ERROR: '+str)
+    sys.exit(1)
+
+if len(sys.argv) == 1:
+    error("""
+usage.
+
+patchmancli pending
+patchmancli upload branch [filename]
+List pending patches
+""")
+
+
+if not os.environ.has_key('AUTH_PATCHMAN'):
+    error('You must define the environment variable AUTH_PATCHMAN')
+
+baseurl = os.environ['AUTH_PATCHMAN']
+
+#print 'Patchman environment variable found'
+
+args = sys.argv
+if len(args) == 2 and sys.argv[1] in  ['pending', 'poll_pending']:
+    o = urllib.urlopen(baseurl + '/pending', 'r')
+    data = o.read()
+    o.close()
+    changeables, branches, under_validation, dcheckin_active, branchcontents, branchvalidations, patchlevel = eval(data)
+
+
+    for branch in patchlevel.keys():
+        patches = filter(lambda x: (':' in x and not string.find(branch, ':buildlog')==-1), branchcontents[branch])
+        if len(patches) != 0:
+            print 'Branch ', branch, ' patch level ', patchlevel[branch], ' contents ', patches
+    sys.exit(0)
+    
+if len(args) >= 3 and sys.argv[1] == 'upload':
+    o = sys.stdin
+    if len(args) == 4:
+        if os.path.isfile(args[3]):
+            # this will throw an exception if it fails
+            o = open(args[3], 'r')
+        else:
+            sys.stderr.write('Filename '+args[3]+' not found\n')
+            sys.exit(1)
+    data = o.read()
+    # closing stdin considered bad form
+    if len(args) == 4:
+        o.close()
+    print 'Read '+`len(data)`+' bytes'
+    # now we write it to the uploads directory
+    o = os.popen('whoami', 'r')
+    whoami = o.readline()[:-1]
+    o.close()
+    i = 0
+
+    # search for a file
+    while 1:
+        filename = '%s_%d' % (whoami, i)
+        if not os.path.isfile(upload_directory+'/'+filename):
+            break
+        i = i + 1
+    # race condition here...
+    print 'Using working filename '+filename+' in patchman upload directory '+upload_directory
+
+    # raise exception if we can't write
+    try:
+        o = open(upload_directory+'/'+filename, 'w')
+        o.write(data)
+        o.close()
+    except IOError, s:
+        sys.stderr.write('You do not have write permission to the patchman upload directory '+ upload_directory+' so you cannot use file passing mode.\n')
+        sys.exit(1)
+    os.system('ls -l '+upload_directory+'/'+filename)
+    url = baseurl + '/submitfilename?'+ urlencode( {'filename': filename, 'branch': args[2], 'notes' : 'auto'})
+
+    o = os.popen('lynx -dump "'+url+'"', 'r')
+    data = o.read()
+    result = o.close()
+    print data
+    print 'Result ',result
+    sys.exit(0)
+
+

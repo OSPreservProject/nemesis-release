@@ -1,0 +1,54 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1996, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      ICMPMod
+-- 
+-- DESCRIPTION:
+--
+--      Create an ICMP protocol instance
+-- 
+-- ID : $Id: ICMPMod.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+-- 
+-- \chapter{Networks}
+-- \section{Protocols}
+--
+
+ICMPMod : LOCAL INTERFACE =
+  NEEDS Net; 
+  NEEDS Heap;
+  NEEDS IO;
+  NEEDS ICMP;
+BEGIN
+
+  New : PROC    [ rxio        : IREF IO,
+                  txio        : IREF IO, 
+                  rxheap      : IREF Heap, 
+                  txheap      : IREF Heap,
+                  myipaddr    : Net.IPHostAddr,
+                  myetheraddr : Net.EtherAddr, 
+                  ifname      : STRING          ]
+	RETURNS [ icmp        : IREF ICMP       ];
+    
+    -- Create a new ICMP interface. The given "tx" and "rx" are offers 
+    -- for an underlying ethernet device and (once bound) are used to 
+    -- transmit and receive ARP packets to and from the network. Buffer
+    -- space for the "IO" channels should be allocated from "rxheap" 
+    -- and "txheap" respectively. Packets are constructed using the 
+    -- information "myipaddr" and "myetheraddr". 
+    -- \textbf{Note}: 
+    -- \begin{itemize} 
+    --	  \item we should really pass in "IOData.Shm" or similar 
+    --          to this rather than heaps, and pre-bound "IO"s 
+    --          rather than offers. 
+    --	  \item "myipaddr" is in host endianness.
+    -- \end{itemize} 
+    -- 
+
+END.

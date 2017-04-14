@@ -1,0 +1,19 @@
+{
+  'packages' : [
+     ('link', '/usr/groups/pegasus/nemesis/releasemisc', ''),
+     ('prcs', 'ccore:live.@', '/nemesis'),
+     ('prcs', 'cnet:live.@', '/nemesis'),
+     ('prcs', 'cfs:live.@', '/nemesis'),
+     ('prcs', 'tgtx86:live.@', '/nemesis'),
+     ('prcs', 'nemtools:live.@', '/tools/source'),
+     ('prcs', 'dpatch:live.@', '/dpatch'), 
+   ],
+  'basepath' : '/local/scratch/dr10009/autobuild/bootloader',
+  'actions' : """
+make bootfloppy
+""",
+  'prcsrepo' : '/local/scratch/dr10009/nemesis/PRCS',
+  'prcspath' : '/homes/dr10009/bin/ix86_linux/prcs',
+  'patchdir' : '/usr/groups/pegasus/nemesis/patches'
+}
+

@@ -1,0 +1,168 @@
+Wishlist for middlc-3.0
+-----------------------
+
+See also /usr/groups/pegasus/tools/updates
+
+
+1. BOOLEANs should be enums so that CHOICE BOOLEAN OF works
+ -- tick
+
+2. CHOICE BOOLEAN OF { TRUE => OptionalThing } should work
+   ie. back ends should get enough info to allow them to handle
+   absent selectors.  The intention being to generate marshalling
+   code which checks that the selector is valid but doesn't marshal
+   anything else in the absent cases.
+ -- tick
+
+3. void *st, not caddr_t st, in _cl's (opaque pointer).
+ -- tick
+
+4. stateless interfaces
+
+5. reduce mess surrounding MODULEs
+
+6. The interface ~rjb17/middl/Bug.middl
+
+   Buggy2 : PROC [
+		   a : MIDDL_Integer; b : MIDDL_Integer; c : MIDDL_Integer ]
+	    RETURNS [
+		   a : MIDDL_Integer; b : MIDDL_Integer; c : MIDDL_Integer ]
+	     ;
+
+
+   generates the follwing messages
+
+   TypeSystem: couldn't find 'MIDDL_Integer'
+   TypeSystem: couldn't find 'MIDDL_Integer'
+   TypeSystem: couldn't find 'MIDDL_Integer'
+   TypeSystem: couldn't find 'MIDDL_Integer'
+   TypeSystem: couldn't find 'MIDDL_Integer'
+   TypeSystem: couldn't find 'MIDDL_Integer'
+
+   but generates a zero return code and an output file where the arguments have
+   been assumed to be of type "MUTABLE SMALL MIDDL Boolean"
+
+   This seems slightly peculiar?
+
+   R.
+
+-- fixed
+
+7. Is this condidered legal middl?
+
+   Buggy2 : PROC [
+		   a : INTEGER; b : INTEGER; c : INTEGER ]
+	    RETURNS [
+		   a : INTEGER; b : INTEGER; c : INTEGER ]
+	     ;
+
+   Because none of the back ends to date will generate legal C for such an
+   interface
+
+   R.
+
+-- fixed
+
+8. REF, DANGEROUS ADDRESS and DANGEROUS WORD should only work in
+   LOCAL interfaces, and non-LOCAL shouldn't be able to import LOCAL
+
+-- tick
+
+9.
+
+fawn--scot/usr24/rjb17/src/fawn/lib $ make depend
+/homes/rjb17/tools/mips_ultrix_4.3/middlc-3.0/middlc  -h Namespace.if
++ /homes/rjb17/tools/mips_ultrix_4.3/middlc-3.0/front/middlc3 Namespace.if 
+./Namespace.if:10: can't find interface 'Namer'
+./Namespace.if:14: No scope called 'Bra'
+./Namespace.if:14: 'Bra.ObjRef' is undefined
+/homes/rjb17/tools/mips_ultrix_4.3/middlc-3.0/middlc: 13821 Memory fault
+ - core dumped
+
+-- tick
+
+10.
+
+Bug2 : INTERFACE =
+BEGIN
+
+  Bogus : TYPE = RECORD [
+    ohDear: CARDINAL			 -- no comma
+    oops  : CARDINAL
+  ];
+
+  Op : PROC [ b: REF Bogus ] RETURNS [ ];
+
+END.
+
+argos:test> ../middlc3 Bug2.if 
+./Bug2.if:6: parse error
+./Bug2.if:9: 'Bogus' is undefined
+Segmentation fault (core dumped)
+
+9 and 10 probably fixable by having name lookups return special
+"undefined" objects (types, interfaces etc) instead of NIL.
+
+-- tick
+
+11.
+
+AB EXTENDS A, AB.h should include typedefs for A_Op_fn (AB_cl *self,...)
+ick.  No.
+
+-- closed
+
+12.
+
+Recursive types (with REF).
+
+
+13.
+
+  Fields  : PROC [ a, b: CARDINAL ] RETURNS [ c, d: CARDINAL ];
+
+should work.
+
+-- tick
+
+14.
+
+If I have two mutually 'NEED'ing interface specs, the compiler barfs
+with a file stack overflow. If we could register the interface as we
+open the file, would it be possible to get round this?
+
+Two things here:
+
+ 14.a) should we disallow circular NEEDS?  middlc-2 allowed them.
+
+ 14.b) if we allow them, we could do 12 (full recursive types), or just
+       allow circular IREF chains.
+
+
+-- for now, circular IREF chains only are allowed.
+
+15.
+
+Generic IREF (any) type.  Not clear whether this is a cookie or a
+closure; closure is my intuition, but that conflicts with RJB's desire
+to expose connection setup to the user.  Another example is a trader - 
+doesn't want to make IDC connections to all the server objects which
+have been registered in it.
+
+
+16.
+
+NEVER RETURNS
+
+-- tick
+
+17.
+
+<n> BITS, 32 BITS or NETWORK CARDINAL or whatever.
+
+
+18.
+
+Always return first result by value if it's small, even if there are
+other results which need to be returned by VAR OUT.
+

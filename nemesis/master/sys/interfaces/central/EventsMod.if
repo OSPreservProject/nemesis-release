@@ -1,0 +1,42 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      EventsMod.if
+-- 
+-- DESCRIPTION:
+--
+--      Used to create an Events interface to run over a particular VP.
+-- 
+-- FILE :	EventsMod.if
+-- CREATED :	Fri Apr 25 1997
+-- AUTHOR :	Steven Hand (Steven.Hand@cl.cam.ac.uk)
+-- ID : 	$Id: EventsMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{User Level Schedulers}
+--
+
+-- The "EventsMod" interface is used to create an instance of an
+-- "Events.if" to run over a particular VP, and for the use of a user
+-- level scheduler. 
+
+EventsMod : LOCAL INTERFACE =
+  NEEDS ActivationF;
+  NEEDS Events;
+  NEEDS ThreadF;
+  NEEDS VP;
+BEGIN
+ 
+  New : PROC    [ vpp    : IREF VP,
+                  actf   : IREF ActivationF,
+		  heap   : IREF Heap,
+		  tf     : IREF ThreadF ]
+	RETURNS [ events : IREF Events  ];
+
+END.

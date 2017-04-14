@@ -1,0 +1,86 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      IDCOfferMod
+-- 
+-- DESCRIPTION:
+--
+--      Provides various operations required for manipulating
+--      "IDCOffer"s and "IDCOffer.IOR"s
+-- 
+-- ID : $Id: IDCOfferMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Inter-Domain Communication}
+-- 
+IDCOfferMod : LOCAL INTERFACE = 
+NEEDS IDCOffer;
+NEEDS Heap;
+BEGIN
+
+  CantExtract : EXCEPTION [];
+
+  ListProblem : TYPE = { Empty, MixedTypes };
+  BadList : EXCEPTION [ reason : ListProblem ];
+
+  OfferSeq : TYPE = SEQUENCE OF IREF IDCOffer;
+
+  -- "NewLocalIOR" returns an "IOR" for an offer that will only be
+  -- valid on the local machine. It should be used by transports
+  -- capable of communicating using shared memory. 
+
+  NewLocalIOR : PROC [ offer : IREF IDCOffer, OUT ior : IDCOffer.IOR ]
+                RETURNS []; 
+
+  -- "Localise", given a list of "IDCOffer.IOR"s for a service, will  
+  -- attempt to convert it to an abstract "IDCOffer" closure by using
+  -- "IORConverter"s available in the namespace.
+
+  Localise : PROC    [ iorlist : IDCOffer.IORList,
+                            tc : Type.Code ]
+             RETURNS [ offer   : IREF IDCOffer ];
+
+  -- "NewOffer" creates a surrogate "IDCOffer" with the given list of
+  -- "IDCOffer.IOR"s. 
+
+  NewOffer : PROC    [ iorlist : IDCOffer.IORList,
+                            tc : Type.Code ]
+             RETURNS [ offer   : IREF IDCOffer ]
+             RAISES Heap.NoMemory; 
+
+  -- "NewMerged" returns an IDCOffer which conbines the services
+  -- supported by the passed sequence of "IDCOffer"s, listed in order
+  -- of preference. The "IDCOffer"s must all have the same type, and
+  -- the list must be non-empty.
+
+  NewMerged : PROC    [ offers : OfferSeq ]
+              RETURNS [ res : IREF IDCOffer ]
+              RAISES Heap.NoMemory, BadList;
+
+  -- "EncapsulateIORs" takes a list of "IDCOffer.IOR"s and packs them
+  -- into an "IDCOffer.IORInfo". This can be used to allow "IOR"s for
+  -- offers to contain other "IOR"s within them. 
+
+  EncapsulateIORs : PROC    [ iorlist  : IDCOffer.IORList, 
+                              OUT info : IDCOffer.IORInfo ] 
+                    RETURNS [ ]
+                    RAISES Heap.NoMemory;
+
+  -- "ExtractIORs" unpacks an "IDCOffer.IORInfo" previously packed
+  -- with "EncapsulateIORs" into a list of "IDCOffer.IOR"s.
+
+  ExtractIORs : PROC    [ info    : IDCOffer.IORInfo ]
+                RETURNS [ iorlist : IDCOffer.IORList ]
+                RAISES CantExtract;
+
+  DupIORs : PROC [ list : IDCOffer.IORList ] 
+            RETURNS [ newlist : IDCOffer.IORList ];
+
+END.
+ 

@@ -1,0 +1,150 @@
+ The Cambridge Nemesis Audio subsystem
+======================================
+
+#00004 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu May  6 17:16:08 1999
+--------------------------------------------------------------------------
+
+glue/packages/caudio.py            -- add missing items
+app/amp/nemstuff.c                 -- delete old buildfs
+app/amp/audioIO_aubuf.c            -- dont work async
+app/amp/audio.c                    -- null change
+app/amp/amp.h                      -- enable GUI
+h/aumod_internals.h                ++ missing file
+app/amp/amp.ppm                    ++ missing file
+
+#00003 dr10009 pp Dickon Reed (Dickon.Reed@cl.cam.ac.uk) Fri Apr 30 12:18:59 1999
+---------------------------------------------------------------------------------
+XXX no description
+
+h                                  ** NEW DIRECTORY
+h/intel                            ** NEW DIRECTORY
+h/intel/dma.h                      ++ for lksound. copied from live tree
+
+#00002 dr10009 pp Tim Harris (tim.harris@cl.cam.ac.uk) Thu Feb  4 11:23:14 1999
+-------------------------------------------------------------------------------
+Remove swearing.
+app/amp/misc2.c                    -- Remove swearing.
+
+#00001 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Tue Jan 12 12:50:06 1999
+--------------------------------------------------------------------------
+no overview
+
+                                   ** describe me
+app                                ** describe me
+app/amp                            ** describe me
+app/timidity                       ** describe me
+dev                                ** describe me
+dev/isa                            ** describe me
+dev/isa/lksound                    ** describe me
+glue                               ** describe me
+glue/packages                      ** describe me
+mod                                ** describe me
+mod/au                             ** describe me
+app/amp/amp.h                      ++ describe me
+app/amp/args.c                     ++ describe me
+app/amp/audio.c                    ++ describe me
+app/amp/audio.h                    ++ describe me
+app/amp/audioIO.c                  ++ describe me
+app/amp/audioIO.h                  ++ describe me
+app/amp/audioIO_aubuf.c            ++ describe me
+app/amp/controldata.h              ++ describe me
+app/amp/dump.c                     ++ describe me
+app/amp/dump.h                     ++ describe me
+app/amp/formats.c                  ++ describe me
+app/amp/formats.h                  ++ describe me
+app/amp/getbits.c                  ++ describe me
+app/amp/getbits.h                  ++ describe me
+app/amp/getdata.c                  ++ describe me
+app/amp/getdata.h                  ++ describe me
+app/amp/getopt.c                   ++ describe me
+app/amp/getopt.h                   ++ describe me
+app/amp/getopt1.c                  ++ describe me
+app/amp/guicontrol.c               ++ describe me
+app/amp/guicontrol.h               ++ describe me
+app/amp/huffman.c                  ++ describe me
+app/amp/huffman.h                  ++ describe me
+app/amp/layer2.c                   ++ describe me
+app/amp/layer2.h                   ++ describe me
+app/amp/layer3.c                   ++ describe me
+app/amp/layer3.h                   ++ describe me
+app/amp/misc2.c                    ++ describe me
+app/amp/misc2.h                    ++ describe me
+app/amp/nemstuff.c                 ++ describe me
+app/amp/position.c                 ++ describe me
+app/amp/position.h                 ++ describe me
+app/amp/proto.h                    ++ describe me
+app/amp/readppm.c                  ++ describe me
+app/amp/rtbuf.c                    ++ describe me
+app/amp/rtbuf.h                    ++ describe me
+app/amp/transform.c                ++ describe me
+app/amp/transform.h                ++ describe me
+app/amp/util.c                     ++ describe me
+app/timidity/COPYING               ++ describe me
+app/timidity/Makefile              ++ describe me
+app/timidity/README                ++ describe me
+app/timidity/common.c              ++ describe me
+app/timidity/common.h              ++ describe me
+app/timidity/config.h              ++ describe me
+app/timidity/controls.c            ++ describe me
+app/timidity/controls.h            ++ describe me
+app/timidity/filter.c              ++ describe me
+app/timidity/filter.h              ++ describe me
+app/timidity/instrum.c             ++ describe me
+app/timidity/instrum.h             ++ describe me
+app/timidity/misc.tcl              ++ describe me
+app/timidity/mix.c                 ++ describe me
+app/timidity/mix.h                 ++ describe me
+app/timidity/nemesis_a.c           ++ describe me
+app/timidity/nemesis_c.c           ++ describe me
+app/timidity/nemmain.c             ++ describe me
+app/timidity/output.c              ++ describe me
+app/timidity/output.h              ++ describe me
+app/timidity/playmidi.c            ++ describe me
+app/timidity/playmidi.h            ++ describe me
+app/timidity/readmidi.c            ++ describe me
+app/timidity/readmidi.h            ++ describe me
+app/timidity/readppm.c             ++ describe me
+app/timidity/resample.c            ++ describe me
+app/timidity/resample.h            ++ describe me
+app/timidity/tables.c              ++ describe me
+app/timidity/tables.h              ++ describe me
+app/timidity/timidity.c            ++ describe me
+app/timidity/timidity.obj          ++ describe me
+dev/isa/lksound/ad1848_mixer.h     ++ describe me
+dev/isa/lksound/aubuf.h            ++ describe me
+dev/isa/lksound/coproc.h           ++ describe me
+dev/isa/lksound/dev_table.c        ++ describe me
+dev/isa/lksound/dev_table.h        ++ describe me
+dev/isa/lksound/dmasound.h         ++ describe me
+dev/isa/lksound/finetune.h         ++ describe me
+dev/isa/lksound/gus_hw.h           ++ describe me
+dev/isa/lksound/gus_linearvol.h    ++ describe me
+dev/isa/lksound/iwmem.h            ++ describe me
+dev/isa/lksound/lksound.c          ++ describe me
+dev/isa/lksound/lksound.h          ++ describe me
+dev/isa/lksound/midi_ctrl.h        ++ describe me
+dev/isa/lksound/midi_synth.h       ++ describe me
+dev/isa/lksound/opl3.h             ++ describe me
+dev/isa/lksound/os.h               ++ describe me
+dev/isa/lksound/sb.h               ++ describe me
+dev/isa/lksound/sb_audio.c         ++ describe me
+dev/isa/lksound/sb_common.c        ++ describe me
+dev/isa/lksound/sb_midi.c          ++ describe me
+dev/isa/lksound/sb_mixer.c         ++ describe me
+dev/isa/lksound/sb_mixer.h         ++ describe me
+dev/isa/lksound/softoss.h          ++ describe me
+dev/isa/lksound/sound_calls.h      ++ describe me
+dev/isa/lksound/sound_config.h     ++ describe me
+dev/isa/lksound/sound_firmware.h   ++ describe me
+dev/isa/lksound/soundmodule.h      ++ describe me
+dev/isa/lksound/soundvers.h        ++ describe me
+dev/isa/lksound/tuning.h           ++ describe me
+dev/isa/lksound/ulaw.h             ++ describe me
+dev/isa/lksound/v_midi.h           ++ describe me
+dev/isa/lksound/vidc.h             ++ describe me
+glue/packages/caudio.py            ++ describe me
+mod/au/AsyncAuPlaybackWriter.c     ++ describe me
+mod/au/AuMod.c                     ++ describe me
+mod/au/AuPlaybackWriter.c          ++ describe me
+mod/au/AuPlaybackWriter_st.h       ++ describe me
+

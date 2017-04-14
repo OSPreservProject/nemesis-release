@@ -1,0 +1,36 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      WMMod
+-- 
+-- 
+-- ID : $Id: WMMod.if 1.1 Thu, 18 Feb 1999 14:18:52 +0000 dr10009 $
+-- 
+-- \chapter{Window System}
+-- 
+
+-- "WMMod" is used to create new instances of a window manager.
+
+WMMod : LOCAL INTERFACE = 
+  NEEDS WM;
+  NEEDS WSF;
+BEGIN
+
+  Failure : EXCEPTION [];
+
+  New : PROC [ ws : IREF WSF ] RETURNS [ wm : IREF WM ] RAISES Failure;
+
+  -- The Window Server calls "New" passing in a "WSF" that should be
+  -- used by the window manager for creating its own windows (i.e. any
+  -- windows that are not directly associated with a particular
+  -- client). It should return a new "WM" to which the Window Server can
+  -- pass new client requests.
+
+END.

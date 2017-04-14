@@ -1,0 +1,62 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      TFTP.if
+-- 
+-- DESCRIPTION:
+--
+--      TFTP
+-- 
+-- ID : $Id: TFTP.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+-- 
+-- \chapter{Networks}
+-- \section{Protocols}
+-- 
+
+-- The "TFTP" interface implements the trivial file transfer protocol
+-- described in RFC 1350.  TFTP's "octet" mode is used for all
+-- transfers.
+
+TFTP : LOCAL INTERFACE =
+  NEEDS Heap;
+  NEEDS Rd;
+  NEEDS Wr;
+BEGIN
+
+  -- Failed TFTP transfers raise the "Failed" exception, giving
+  -- the TFTP error code and the number of bytes transferred before
+  -- the error occurred.
+
+  Error : TYPE = { Other, FileNotFound, AccessViolation, NoSpace,
+                   IllegalOp, UnknownTfrID, FileExists, NoSuchUser };
+
+  Failed : EXCEPTION [ code: Error, bytes : CARDINAL ];
+
+  -- "Get" attempts to transfer a file named "file" from the host
+  -- with DNS name "host", writing its contents on the writer "wr".
+  -- If it succeeds, it returns the number of bytes of "file" received.
+
+  Get : PROC    [ host  : STRING, 
+                  file  : STRING,
+                  wr    : IREF Wr  ]
+        RETURNS [ bytes : CARDINAL ]
+        RAISES Failed, Wr.Failure;
+
+  -- "Put" attempts to transfer the contents of a reader "rd" to
+  -- a file named "file" at the host with DNS name "host".
+  -- If it succeeds, it returns the number of bytes transmitted.
+
+  Put : PROC    [ host  : STRING, 
+                  file  : STRING,
+                  rd    : IREF Rd  ]
+        RETURNS [ bytes : CARDINAL ]
+        RAISES Failed, Rd.Failure;
+
+END.

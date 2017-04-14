@@ -1,0 +1,247 @@
+ The Nemesis build tools
+========================
+
+#00007 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu May 20 12:28:54 1999
+--------------------------------------------------------------------------
+
+mk/rules.mk                        -- allow INSTDIR to be overriden,
+automatically create install directories
+README                             ++ describe how to build the tools.
+
+#00006 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu May 20 11:39:31 1999
+--------------------------------------------------------------------------
+
+astgen/asthandle.py                -- better error handling
+recursively build .AST files from .if files on demand
+astgen/astgen.py                   -- better usage message
+compile .if files on demand
+astgen/BE.py                       -- RJB's enum fix
+astgen/astcompile.py               ++ handle .if compilation
+
+#00005 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Mon May 10 12:21:55 1999
+--------------------------------------------------------------------------
+
+genoffsets/genoffsets              -- use env for python invocation
+astgen/asthandle.py                -- use env for python invocation
+astgen/astgen.py                   -- use env for python invocation
+
+#00004 dr10009 pp Rolf Neugebauer (neugebar@dcs.gla.ac.uk) Tue Apr 13 17:29:39 1999
+-----------------------------------------------------------------------------------
+make compile under alpha osf. Initially patched by Matt Holgate
+mkfs.simplefs/parseargs.c          -- compile under osf. holgate@dcs
+mkfs.simplefs/mkfs.c               -- compile under osf. holgate@dcs
+
+#00003 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Feb 18 15:01:03 GMT 1999
+------------------------------------------------------------------------------
+
+cl/gentables.py                    !! +x
+
+#00002 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Thu Jan 14 00:05:56 1999
+--------------------------------------------------------------------------
+a few fix ups for release
+Makefile                           -- add rh5.1 line
+cl/Makefile                        -- dont assume exec permissions
+
+#00001 dr10009 pp Dickon Reed (dr10009@cam.ac.uk) Wed Jan 13 15:39:18 1999
+--------------------------------------------------------------------------
+no overview
+                                   ** describe me
+alphabuild                         ** describe me
+astgen                             ** describe me
+cl                                 ** describe me
+genoffsets                         ** describe me
+intelbuild                         ** describe me
+middl2tex                          ** describe me
+middlc                             ** describe me
+middlc/front                       ** describe me
+middlc/front/test                  ** describe me
+middlc/python                      ** describe me
+mk                                 ** describe me
+mkfs.simplefs                      ** describe me
+multiboot-fixup                    ** describe me
+nembuild                           ** describe me
+nmerge                             ** describe me
+nsplitd                            ** describe me
+udptelnet                          ** describe me
+undefarm                           ** describe me
+Makefile                           ++ describe me
+alphabuild/Makefile                ++ describe me
+alphabuild/alphabuild.c            ++ describe me
+alphabuild/alphabuild.h            ++ describe me
+astgen/BE.py                       ++ describe me
+astgen/Makefile                    ++ describe me
+astgen/astgen                      ++ describe me
+astgen/astgen.py                   ++ describe me
+astgen/asthandle.py                ++ describe me
+astgen/decl.py                     ++ describe me
+astgen/expr.py                     ++ describe me
+astgen/genc.py                     ++ describe me
+astgen/gendef.py                   ++ describe me
+astgen/genidc.py                   ++ describe me
+astgen/genifd.py                   ++ describe me
+astgen/genih.py                    ++ describe me
+astgen/genmandump.py               ++ describe me
+astgen/gentsi.py                   ++ describe me
+astgen/group.py                    ++ describe me
+astgen/list.py                     ++ describe me
+astgen/output.py                   ++ describe me
+astgen/spec.py                     ++ describe me
+astgen/statement.py                ++ describe me
+astgen/type.py                     ++ describe me
+cl/Makefile                        ++ describe me
+cl/brokenprintf.c                  ++ describe me
+cl/cl.l                            ++ describe me
+cl/cl.y                            ++ describe me
+cl/cluless.c                       ++ describe me
+cl/cluless.h                       ++ describe me
+cl/dast.c                          ++ describe me
+cl/dast.h                          ++ describe me
+cl/decl.tab                        ++ describe me
+cl/dpdecl.c                        ++ describe me
+cl/dpexpr.c                        ++ describe me
+cl/dpspec.c                        ++ describe me
+cl/dptype.c                        ++ describe me
+cl/dpython.c                       ++ describe me
+cl/dpython.h                       ++ describe me
+cl/dtree.c                         ++ describe me
+cl/dtree.h                         ++ describe me
+cl/expr.tab                        ++ describe me
+cl/genlist.c                       ++ describe me
+cl/gentables.py                    ++ describe me
+cl/group.tab                       ++ describe me
+cl/list.tab                        ++ describe me
+cl/md5.c                           ++ describe me
+cl/md5.h                           ++ describe me
+cl/output.tab                      ++ describe me
+cl/parsupport.c                    ++ describe me
+cl/parsupport.h                    ++ describe me
+cl/spec.tab                        ++ describe me
+cl/stackobj.h                      ++ describe me
+cl/statement.tab                   ++ describe me
+cl/symtab.c                        ++ describe me
+cl/symtab.h                        ++ describe me
+cl/tables.h                        ++ describe me
+cl/tex.c                           ++ describe me
+cl/tree.l                          ++ describe me
+cl/type.tab                        ++ describe me
+cl/typesupport.c                   ++ describe me
+cl/typesupport.h                   ++ describe me
+genoffsets/Makefile                ++ describe me
+genoffsets/genoffsets              ++ describe me
+intelbuild/Makefile                ++ describe me
+intelbuild/boot.h                  ++ describe me
+intelbuild/intelbuild.c            ++ describe me
+middl2tex/Makefile                 ++ describe me
+middl2tex/middl2manual             ++ describe me
+middl2tex/middl2tex                ++ describe me
+middlc/Makefile                    ++ describe me
+middlc/fp_reduce.c                 ++ describe me
+middlc/front/Args.c                ++ describe me
+middlc/front/Args.h                ++ describe me
+middlc/front/Candidates.c          ++ describe me
+middlc/front/Candidates.h          ++ describe me
+middlc/front/Decls.c               ++ describe me
+middlc/front/Decls.h               ++ describe me
+middlc/front/Errors.c              ++ describe me
+middlc/front/Errors.h              ++ describe me
+middlc/front/Exceptions.c          ++ describe me
+middlc/front/Exceptions.h          ++ describe me
+middlc/front/Fields.c              ++ describe me
+middlc/front/Fields.h              ++ describe me
+middlc/front/FileStack.c           ++ describe me
+middlc/front/FileStack.h           ++ describe me
+middlc/front/Globals.h             ++ describe me
+middlc/front/Grammar.y             ++ describe me
+middlc/front/Identifiers.c         ++ describe me
+middlc/front/Identifiers.h         ++ describe me
+middlc/front/Interfaces.c          ++ describe me
+middlc/front/Interfaces.h          ++ describe me
+middlc/front/Lexer.l               ++ describe me
+middlc/front/Main.c                ++ describe me
+middlc/front/Makefile              ++ describe me
+middlc/front/Middlc.h              ++ describe me
+middlc/front/Modes.h               ++ describe me
+middlc/front/Parser.h              ++ describe me
+middlc/front/ScopedNames.c         ++ describe me
+middlc/front/ScopedNames.h         ++ describe me
+middlc/front/Specs.c               ++ describe me
+middlc/front/Specs.h               ++ describe me
+middlc/front/SymbolTable.c         ++ describe me
+middlc/front/SymbolTable.h         ++ describe me
+middlc/front/Types.c               ++ describe me
+middlc/front/Types.h               ++ describe me
+middlc/front/strdup.c              ++ describe me
+middlc/front/strdup.c.d            ++ describe me
+middlc/front/test/A.if             ++ describe me
+middlc/front/test/B.if             ++ describe me
+middlc/front/test/BadRecurse.if    ++ describe me
+middlc/front/test/BadRecurse2.if   ++ describe me
+middlc/front/test/Beer.middl       ++ describe me
+middlc/front/test/BeerImpl.if      ++ describe me
+middlc/front/test/Bug.if           ++ describe me
+middlc/front/test/Bug2.if          ++ describe me
+middlc/front/test/C.if             ++ describe me
+middlc/front/test/D.if             ++ describe me
+middlc/front/test/Foo.middl        ++ describe me
+middlc/front/test/Interface.middl  ++ describe me
+middlc/front/test/Irefs.if         ++ describe me
+middlc/front/test/Local.if         ++ describe me
+middlc/front/test/ModEx.middl      ++ describe me
+middlc/front/test/ModExOne.middl   ++ describe me
+middlc/front/test/Module.middl     ++ describe me
+middlc/front/test/Mutable.middl    ++ describe me
+middlc/front/test/NoNeeds.if       ++ describe me
+middlc/front/test/NonLocal.if      ++ describe me
+middlc/front/test/Ping.if          ++ describe me
+middlc/front/test/Recurse.if       ++ describe me
+middlc/front/test/Recurse2.if      ++ describe me
+middlc/front/test/RichSymTbl.if    ++ describe me
+middlc/front/test/SymbolTable.if   ++ describe me
+middlc/front/test/SymbolTypes.if   ++ describe me
+middlc/front/test/Test.middl       ++ describe me
+middlc/front/test/TestMgmt.middl   ++ describe me
+middlc/front/test/TestMore.middl   ++ describe me
+middlc/front/test/Word.if          ++ describe me
+middlc/middlc                      ++ describe me
+middlc/python/Makefile             ++ describe me
+middlc/python/ModBE.py             ++ describe me
+middlc/python/ModBEIface.py        ++ describe me
+middlc/python/ModBEImports.py      ++ describe me
+middlc/python/ModBEOps.py          ++ describe me
+middlc/python/ModBETypes.py        ++ describe me
+mk/alpha_osf1_3.2.mk               ++ describe me
+mk/alpha_osf1_4.0.mk               ++ describe me
+mk/hp700_hpux_A.09.05.mk           ++ describe me
+mk/ix86_linux_rh4.0.mk             ++ describe me
+mk/ix86_linux_rh5.0.mk             ++ describe me
+mk/ix86_linux_rh5.1.mk             ++ describe me
+mk/linux_for_arm.mk                ++ describe me
+mk/rules.mk                        ++ describe me
+mkfs.simplefs/Makefile             ++ describe me
+mkfs.simplefs/mkfs.c               ++ describe me
+mkfs.simplefs/mkfs.h               ++ describe me
+mkfs.simplefs/nemfs.h              ++ describe me
+mkfs.simplefs/parseargs.c          ++ describe me
+multiboot-fixup/Makefile           ++ describe me
+multiboot-fixup/fixup.c            ++ describe me
+nembuild/Makefile                  ++ describe me
+nembuild/build.c                   ++ describe me
+nembuild/build.h                   ++ describe me
+nembuild/descrip.h                 ++ describe me
+nembuild/descrip.l                 ++ describe me
+nembuild/descrip.y                 ++ describe me
+nembuild/misc.c                    ++ describe me
+nmerge/Makefile                    ++ describe me
+nmerge/exec.h                      ++ describe me
+nmerge/load_ecoff.c                ++ describe me
+nmerge/load_exec.c                 ++ describe me
+nmerge/nmerge.c                    ++ describe me
+nmerge/nmerge.h                    ++ describe me
+nsplitd/Makefile                   ++ describe me
+nsplitd/nsplitd.c                  ++ describe me
+udptelnet/Makefile                 ++ describe me
+udptelnet/udptelnet.c              ++ describe me
+undefarm/Makefile                  ++ describe me
+undefarm/arm.a.out.h               ++ describe me
+undefarm/undefarm.c                ++ describe me
+

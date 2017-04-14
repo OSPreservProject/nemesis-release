@@ -1,0 +1,70 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Created an allocator for physical page frames.
+-- 
+-- DESCRIPTION:
+--
+--      Creates a Frames interface to manage a set of regions of the
+--      physical address space.
+-- 
+-- ID : $Id: FramesMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Memory}
+-- \section{Physical Memory Allocation}
+-- 
+
+-- The "Frames" interface is implemented by "FramesMod".
+
+FramesMod : LOCAL INTERFACE =
+  NEEDS FramesF;
+  NEEDS RamTab; 
+  NEEDS Mem;
+BEGIN
+
+  Reqd : PROC    [ allmem : Mem.PMem ]
+         RETURNS [ size   : WORD     ];
+  -- The creator of a "Frames" instance needs to provide a certain
+  -- amount of addressable contiguous memory which the instance may
+  -- use for its bookkeeping. This method returns the amount of memory
+  -- (in bytes) which is required for this purpose.
+
+
+  -- "New" returns a "FramesF" which will allocate from the pool of
+  -- all frames described by the set of physical memory descriptors
+  -- in "allmem". Regions which have already been allocated are given
+  -- by the physical memory descriptors "used". 
+  -- 
+  -- The state of the allocator is stored in the contiguous area
+  -- referred to by "state"; this area must be addressable, mutable,
+  -- and of at least the requisite size (see "Reqd" above).
+  --
+  -- The resultant "FramesF" may be used to allocate (and free)
+  -- regions of the physical address space, and to create per-domain
+  -- "Frames" interfaces. 
+
+  New :  PROC    [ allmem  : Mem.PMem, 
+		   used    : Mem.PMem, 
+		   rtab    : IREF RamTab,
+		   state   : ADDRESS       ]
+         RETURNS [ framesF : IREF FramesF  ];
+
+
+  -- Certain things (notably a heap) are not around when the inital 
+  -- "FramesF" is created. Hence once these things are available, 
+  -- the following routine is called to finish the initialistion of 
+  -- the interface. 
+  Done : PROC    [ framesF : IREF FramesF,
+                   heap    : IREF Heap     ]
+         RETURNS [];
+     -- Finish the initialisation of the FramesF
+          
+
+END.

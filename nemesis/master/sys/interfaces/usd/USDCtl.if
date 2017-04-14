@@ -1,0 +1,84 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      USDCtl
+-- 
+-- DESCRIPTION:
+--
+--      User Safe Disk management interface. 
+-- 
+-- ID : $Id: USDCtl.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+-- 
+-- \chapter{Devices}
+-- \section{Disks}
+
+-- 
+--      A privileged application may communicate with a USD via the
+--  USDCtl interface. This interface allows the the application then
+--  manage streams between other applications and the USD. Note that
+--  when USDCtl requested (from a USDDrive) it must provide a
+--  USDCallback closure to provide protection and translation. The
+--  interface also gives the application a way of synchronously
+--  requesting data from the filesystem.
+
+USDCtl : LOCAL INTERFACE = 
+  NEEDS USD;
+  NEEDS IDCOffer;
+  NEEDS FileIO;
+BEGIN
+  
+  Error : TYPE = { None, Failure, NoResources, DoesNotExist };
+    -- Return type of method calls, as we do not really want to be
+    -- raising exceptions over IDC.  
+
+
+
+  CreateStream : PROC [ cid : USD.ClientID ]
+	         RETURNS [ error : Error,
+                           sid   : USD.StreamID,
+                           offer : IREF IDCOffer ];
+    -- Creates a stream to the USD. The initial guarantee for this
+    -- stream is nothing. The QoS parameters should be adjusted with
+    -- AdjustQos. ``cid'' is a value that is used to identify clients to
+    -- the USD, and is used for access control.
+    -- The returned offer is for an IREF FileIO.
+
+
+  DestroyStream : PROC [ sid : USD.StreamID ]
+                  RETURNS [ error : Error ];
+    -- This destroys a stream for which was created with CreateStream.
+
+
+
+  AdjustQoS : PROC [ sid : USD.StreamID,
+                       q : USD.QoS ]
+              RETURNS [ error : Error ];
+    -- Adjusts the QoS parameters for a particular stream. 
+
+  GetLength : PROC    [ sid    : USD.StreamID ] 
+              RETURNS [ error  : Error,
+                        length : FileIO.Size  ];
+    -- Returns the length [in bytes] of the 'FileIO' associated 
+    -- with the stream identified by "sid". 
+   
+  SetLength : PROC    [ sid    : USD.StreamID, 
+                        length : FileIO.Size  ] 
+              RETURNS [ error  : Error        ];
+    -- Sets the length [in bytes] of the 'FileIO' associated 
+    -- with the stream identified by "sid". 
+
+
+  Request : PROC [ extent : USD.Extent,
+                   type   : FileIO.Op,
+                   buffer : ADDRESS ]
+            RETURNS [ error : Error ];
+    -- Synchronous disk access request.
+
+END.

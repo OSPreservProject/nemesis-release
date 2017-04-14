@@ -1,0 +1,56 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      SCSI.if
+-- 
+-- DESCRIPTION:
+--
+--      SCSI Types.
+-- 
+-- FILE :	SCSI.if
+-- CREATED :	Thu Jan 16 1997
+-- AUTHOR :	Paul Barham (Paul.Barham@cl.cam.ac.uk)
+-- ID : 	$Id: SCSI.if 1.1 Thu, 18 Feb 1999 14:19:15 +0000 dr10009 $
+-- 
+-- \chapter{Devices}
+-- \section{SCSI}
+
+SCSI : LOCAL INTERFACE =
+
+BEGIN
+
+    -- 
+    -- Types
+    -- 
+
+	Command : TYPE = SEQUENCE OF OCTET;
+
+	-- SCSI commands are just a sequence of OCTETS.
+
+	Target : TYPE = OCTET;
+	LUN    : TYPE = OCTET;
+
+	CommHandle : TYPE = ADDRESS;
+
+	-- Once a SCSI "Command" has been enqueued, clients can use a 
+	-- "CommHandle" to refer to it.
+
+	AbortCode : TYPE = { Snooze, Success, Pending, 
+	                     Busy, NotRunning, Error };
+
+	-- Return codes for "Abort".
+
+	ResultCode : TYPE = { OK, NoConnect, BusBusy,
+		  	     Timeout, BadTarget, Abort,
+			     Parity, Error, Reset };
+
+	-- Return codes for SCSI controller commands.
+
+END.

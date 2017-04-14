@@ -1,0 +1,10 @@
+RichSymTbl : INTERFACE = 
+  EXTENDS SymbolTable;
+BEGIN
+
+  Dump : PROC [ s : SymbolTable.T ] RETURNS [ r : IREF SymbolTable ]
+	 RAISES SymbolTable.Duplicate;
+
+--  MoreBogus : PROC [ ] RETURNS [ ] RAISES Duplicate; -- should barf
+
+END.

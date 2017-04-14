@@ -1,0 +1,66 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1996, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      IP.if
+-- 
+-- DESCRIPTION:
+--
+--      Encapsulates packets in IP datagrams
+-- 
+-- ID : $Id: IP.if 1.1 Thu, 18 Feb 1999 14:19:49 +0000 dr10009 $
+-- 
+-- \chapter{Networks}
+-- \section{Protocols}
+--
+
+-- Encapsulates packets in IP datagrams.
+
+IP: LOCAL INTERFACE =
+EXTENDS Protocol;
+NEEDS Net;
+NEEDS FlowMan;
+BEGIN
+
+	-- All the standard GetPkt/PutPkt etc methods from
+	-- Protocol.if.   Plus:
+
+	-- Set (or clear) the Don't Fragment bit (DF). If "df" is
+	-- true, then DF is set on all subsequently sent packets.
+        -- Returns the previous value of the DF bit.
+	SetDF: PROC [ df: BOOLEAN ] RETURNS [ orig: BOOLEAN ];
+
+	-- Set the destination IP address for the headers. Note that
+	-- unless a particularly lax packet filter is in operation,
+	-- this will probably produce invalid packets which will be
+	-- dropped on transmit.
+	SetDest: PROC [ destIP: Net.IPHostAddr ] RETURNS [];
+
+	-- "Retarget" is similar to "SetDest", except it also tells
+	-- the underlying transport layer.  If the new destination IP
+	-- would require going through a different interface, the
+	-- "NoRoute" exception is raised.
+	Retarget: PROC [ destIP: Net.IPHostAddr ] RETURNS []
+		RAISES FlowMan.NoRoute;
+
+	-- Set an IP option. XXX More thought required (as and when people
+	-- need to use IP options).
+	SetOption: PROC [ ] RETURNS [ ];
+
+	-- "GetLastPeer" asks which IP address the last received
+	-- datagram came from.  The result is 0.0.0.0 if no packets
+	-- have been received yet.
+	GetLastPeer: PROC [ OUT peeraddr : Net.IPHostAddr ] RETURNS [ ];
+
+	-- Returns the underlying flow handle, allowing clients to
+	-- modify parameters associated with the direct connection to
+	-- the device driver (e.g. changing the QoS for this flow).
+	GetFlow : PROC [ ] RETURNS [ flow: FlowMan.Flow ];
+
+END.

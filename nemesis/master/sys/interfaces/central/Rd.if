@@ -1,0 +1,264 @@
+-----------------------------------------------------------------------------
+-----------------------------------------------------------------------------
+-- 
+-- INTERFACE:
+-- 
+-- 	Rd
+-- 
+-- DESCRIPTION:
+-- 
+-- 	SRC Readers
+-- 
+-- ID : $Id: Rd.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+--
+-- \chapter{Readers and Writers}
+--
+
+-- The "Rd" interface is a near-wholesale steal of the SRC readers
+-- interface described in chapter~6 of \cite{nel:SPwM3}, which see.
+
+Rd : LOCAL INTERFACE = 
+  NEEDS Thread;
+BEGIN
+
+  -- An "IREF Rd" (or ``reader'') is a character input stream.  The basic
+  -- operation on a reader is "GetC", which returns the source
+  -- character at the ``current position'' and advances the current
+  -- position by one.  Some readers are ``seekable'', which means that
+  -- they also allow setting the current position anywhere in the
+  -- source.  For example, readers from random access files are
+  -- seekable; readers from terminals and sequential files are not.
+  -- 
+  -- Some readers are ``intermittent'', which means that the source of
+  -- the reader trickles in rather than being available to the
+  -- implementation all at once.  For example, the input stream from an
+  -- interactive terminal is intermittent.  An intermittent reader is
+  -- never seekable.
+  -- 
+  -- Abstractly, a reader "rd" consists of
+  -- 
+  --| len(rd)           `the number of source characters`
+  --| src(rd)           `a sequence of length "len(rd)+1"`
+  --| cur(rd)           `an integer in the range "[0..len(rd)]"`
+  --| avail(rd)         `an integer in the range "[cur(rd)..len(rd)+1]"`
+  --| seekable(rd)      `a boolean`
+  --| intermittent(rd)  `a boolean`
+  -- 
+  -- These values are not necessarily directly represented in the data
+  -- fields of a reader object.  In particular, for an intermittent
+  -- reader, "len(rd)" may be unknown to the implementation.  But in
+  -- principle the values determine the state of the reader.
+  -- 
+  -- The sequence "src(rd)" is zero-based: "src(rd)[i]" is valid for "i"
+  -- from 0 to "len(rd"). The first "len(rd)" elements of "src" are the
+  -- characters that are the source of the reader.  The final element is
+  -- a special value "eof" used to represent end-of-file.  The value
+  -- "eof" is not a character.
+  -- 
+  -- The value of "cur(rd)" is the index in "src(rd)" of the next
+  -- character to be returned by "GetC", unless "cur(rd) = len(rd)",
+  -- in which case a call to "GetC" will raise the exception
+  -- "EndOfFile".
+  -- 
+  -- The value of "avail(rd)" is important for intermittent readers: the
+  -- elements whose indexes in "src(rd)" are in the range
+  -- "[cur(rd)..avail(rd)-1]" are available to the implementation and
+  -- can be read by clients without blocking.  If the client tries to
+  -- read further, the implementation will block waiting for the other
+  -- characters.  If "rd" is not intermittent, then "avail(rd)" is equal
+  -- to "len(rd)+1".  If "rd" is intermittent, then "avail(rd)" can
+  -- increase asynchronously, although the procedures in this interface
+  -- are atomic with respect to such increases.
+  -- 
+  -- The definitions above encompass readers with infinite sources.  If
+  -- "rd" is such a reader, then "len(rd)" and "len(rd)+1" are both
+  -- infinity, and there is no final "eof" value.
+  -- 
+  -- Every reader is a monitor; that is, it contains an internal lock
+  -- that is acquired and held for each operation in this section, so
+  -- that concurrent operations will appear atomic.  For faster,
+  -- unmonitored access, see the next section.
+
+  Failure : EXCEPTION [ why: CARDINAL ];
+
+  -- The interpretation of "why" depends on the class of the reader.
+  -- The values "1" (reader unseekable), "2" (reader intermittent),
+  -- "3" (reader can't unget) and "4" (length unknown) are reserved.
+
+  EndOfFile : EXCEPTION [];
+
+  Buffer : TYPE = REF CHAR;
+
+  -- A "Buffer" is an area of memory used to transfer characters from the
+  -- reader. If the reader is being accessed using IDC, custom marshalling
+  -- may be arranged for this type.
+
+  GetC : PROC [] RETURNS [ ch: CHAR ]
+           RAISES EndOfFile, Failure, Thread.Alerted;
+    -- Return the next character from "rd".
+
+  -- More precisely, "GetC" is equivalent to the following:
+  -- 
+  --|  `Block until "avail(rd) > cur(rd)"`;
+  --|  IF cur(rd) = len(rd) THEN
+  --|    RAISE EndOfFile
+  --|  ELSE
+  --|    ch := src(rd)[cur(rd)]; INC(cur(rd)); RETURN ch
+  --|  END
+
+  EOF : PROC [] RETURNS [ b: BOOLEAN ]
+          RAISES Failure, Thread.Alerted;
+    -- Return "TRUE" iff "rd" is at end-of-file.
+
+  -- More precisely, this is equivalent to:
+  -- 
+  --|  `Block until "avail(rd) > cur(rd)"`;
+  --|  RETURN cur(rd) = len(rd)
+  -- 
+  -- Notice that on an intermittent reader, "EOF" can block. For example, if
+  -- there are no characters buffered in a terminal reader, "EOF" must wait
+  -- until the user types one before it can determine whether he typed the
+  -- special key signalling end-of-file. If you are using "EOF" in an
+  -- interactive input loop, the right sequence of operations is:
+  -- \begin{enumerate}
+  -- \item prompt the user;
+  -- \item call "EOF", which probably waits on user input;
+  -- \item presuming that "EOF" returned "FALSE", read the user's input.
+  -- \end{enumerate}
+
+  UnGetC : PROC [] RETURNS [] RAISES Failure;
+    -- ``Push back'' the last character read from "rd", so that the next
+    -- call to "GetC" will read it again.
+
+  -- More precisely, this is equivalent to the following:
+  -- 
+  --|  IF cur(rd) > 0 THEN DEC(cur(rd)) END
+  -- 
+  -- except there is a special rule: "UnGetC()" is guaranteed to
+  -- work only if "GetC()" was the last operation on this reader.  Thus
+  -- "UnGetC" cannot be called twice in a row, or after "Seek" or
+  -- "EOF". If this rule is violated, the implementation is allowed (but
+  -- not required) to cause a checked runtime error.
+
+  CharsReady : PROC [] RETURNS [ n: LONG CARDINAL ]
+                 RAISES Failure;
+    -- Return some number of characters that can be read without
+    -- indefinite waiting.
+
+  -- The ``end of file marker'' counts as one character for this
+  -- purpose, so "CharsReady" will return 1, not 0, if "EOF(rd)"
+  -- is true. More precisely, this is equivalent to the following:
+  -- 
+  --|  IF avail(rd) = cur(rd) THEN
+  --|    RETURN 0
+  --|  ELSE 
+  --|    RETURN `some number in the range "[1~..~avail(rd) - cur(rd)]"`
+  --|  END;
+  -- 
+  -- Warning: "CharsReady" can return a result less than
+  -- "avail(rd) - cur(rd)"; also, more characters might trickle in just as
+  -- "CharsReady" returns. So the code to flush buffered input without
+  -- blocking requires a loop:
+  -- 
+  --|  LOOP
+  --|    n := Rd_CharsReady(rd);
+  --|    IF n = 0 THEN EXIT END;
+  --|    FOR i := 1 TO n DO EVAL Rd_GetC(rd) END
+  --|  END;
+
+
+  GetChars : PROC [ buf: Buffer; nb: LONG CARDINAL ]
+               RETURNS [ nread: LONG CARDINAL ]
+               RAISES Failure, Thread.Alerted;
+    -- Read from this reader into "buf" until the reader is exhausted or
+    -- "buf" is filled.
+
+  -- More precisely, this is equivalent to the following,
+  -- in which "i" is a local variable:
+  -- 
+  --|  i := 0;
+  --|  WHILE i != nb AND NOT EOF(self) DO
+  --|    buf[i++] := GetC(self);
+  --|  END;
+  --|  RETURN i
+
+
+  GetLine : PROC [ buf: Buffer; nb: LONG CARDINAL ] 
+              RETURNS [ nread: LONG CARDINAL ]
+              RAISES Failure, Thread.Alerted;
+    -- Read from this reader into "buf" until a newline is read, the
+    -- reader is exhausted, or "buf" is filled.
+
+  -- More precisely, this is equivalent
+  -- to the following, in which "i" is a local variable:
+  -- 
+  --|  i := 0;
+  --|  WHILE
+  --|    i # nb AND
+  --|    (i = 0 OR str[i-1] != '\n') AND
+  --|    NOT EOF(self) 
+  --|  DO
+  --|    buf[i++] := GetC(self);
+  --|  END;
+  --|  RETURN i
+
+
+  Seek : PROC [ nb: LONG CARDINAL ] RETURNS []
+           RAISES Failure, Thread.Alerted;
+  -- "Seek" sets the current position of this reader to
+  --|   cur(self) := MIN(n, len(self)),
+  -- unless it is not seekable, in which case it raises
+  -- the appropriate "Failure".
+
+  Close : PROC [] RETURNS [] RAISES Failure, Thread.Alerted;
+    -- Release any resources associated with the reader. The closure
+    -- becomes invalid.
+
+  -- "Close" releases all of the resources associated with the reader
+  -- even if an exception is raised.
+
+  Length : PROC [] RETURNS [ len: LONG CARDINAL ]
+             RAISES Failure, Thread.Alerted;
+    -- Return "len(self)".
+
+  -- If "len(self)" is unknown to the implementation of an intermittent
+  -- reader, "Length()" raises Failure[4].
+
+  Index : PROC [] RETURNS [ n: LONG CARDINAL]
+            RAISES Failure;
+    -- Return "cur(self)", unless the reader is closed.
+
+  -- The next two operations respectively return whether the reader
+  -- is intermittent or seekable.
+
+  Intermittent : PROC [] RETURNS [ b: BOOLEAN ];
+  Seekable     : PROC [] RETURNS [ b: BOOLEAN ];
+
+
+  -- 
+  -- Unsafe (unlocked) operations
+  -- 
+
+  Lock   : PROC [] RETURNS [];
+    -- Wait until the reader is unlocked; lock it and make its state valid.
+
+  Unlock : PROC [] RETURNS [];
+    -- The reader must be locked and valid; unlock it and restore 
+    -- the private invariant of the reader implementation.
+
+  -- It is unsafe to use "Lock" and "Unlock" if the reader is being
+  -- accessed over IDC.
+
+  -- The "LGetC" and "LEOF" operations are like "GetC" and "EOF",
+  -- except that it is the client's responsibility to lock the reader
+  -- before calling them.  The lock can be acquired once and held for
+  -- several operations, which is faster than acquiring the lock for each
+  -- operation, and also makes the whole group atomic.
+
+  LGetC : PROC [] RETURNS [ ch: CHAR ]
+           RAISES EndOfFile, Failure, Thread.Alerted;
+
+  LEOF : PROC [] RETURNS [ b: BOOLEAN ]
+          RAISES Failure, Thread.Alerted;
+
+END.

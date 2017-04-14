@@ -1,0 +1,56 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1996, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      SAllocMod
+-- 
+-- DESCRIPTION:
+--
+--      A "SAllocMod" is what one uses to create a StretchAllocator.
+-- 
+-- \chapter{Memory}
+-- \section{Virtual Memory}
+-- 
+
+SAllocMod : LOCAL INTERFACE =
+  NEEDS Heap;
+  NEEDS Mem;
+  NEEDS MMU;
+  NEEDS ProtectionDomain;
+  NEEDS StretchAllocatorF;
+  NEEDS VP;
+BEGIN
+
+
+    NewF: PROC    [ heap   : IREF Heap,
+                    mmu    : IREF MMU,
+                    allvm  : Mem.VMem,
+                    used   : Mem.VMem               ] 
+          RETURNS [ sa     : IREF StretchAllocatorF ]
+          RAISES  Heap.NoMemory, Mem.Failure;
+    -- Creates the initial "StretchAllocatorF" which allocates the virtual
+    -- address regions described by "allvm". Any regions which have
+    -- been already 'allocated' (e.g. used by a bootloader or sim.)
+    -- are given in "used". 
+    -- 
+    -- Subsidiary storage (e.g. for closures and state) is taken from the
+    -- separately instantiated "Heap".
+
+
+    Done : PROC    [ sa : IREF StretchAllocatorF,
+                     vp : IREF VP, 
+		     pd : ProtectionDomain.ID  ]
+	   RETURNS [];
+
+    -- The inital "StretchAllocatorF" is created before a number of
+    -- things are available; most importantly we do not know the 
+    -- VP of our 'client' (viz. nemesis). 
+    -- Hence we call this routine after we have a valid vp to allow
+    -- the StretchAllocator to update it's internal information.
+END.

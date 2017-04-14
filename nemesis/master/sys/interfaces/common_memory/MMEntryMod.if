@@ -1,0 +1,42 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1997, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      MMEntryMod
+-- 
+-- DESCRIPTION:
+--
+--      Fabricates an MMEntry for a threaded domain.
+-- 
+-- \chapter{Memory}
+-- \section{Paging and Fault Handling}
+-- 
+
+MMEntryMod : LOCAL INTERFACE =
+  NEEDS Heap;
+  NEEDS MMEntry;
+  NEEDS MMNotify;
+  NEEDS ThreadF;
+BEGIN
+
+  -- "New" creates a new memory management entry to run over the 
+  -- mmmgt notify handler "mmnfy" and using the thread control
+  -- package "thdf". The new mmentry will allocate its state 
+  -- using the heap "heap", and be capable of dealing with at 
+  -- most "nf" concurrently outstanding faults.
+
+  New : PROC    [ mmnfy : IREF MMNotify, 
+                  thdf  : IREF ThreadF,
+                  heap  : IREF Heap, 
+                  nf    : CARDINAL      ]
+        RETURNS [ mme   : IREF MMEntry  ]
+        RAISES  Heap.NoMemory;
+    -- Create a new "MMEntry".
+
+END.

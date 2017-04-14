@@ -1,0 +1,79 @@
+
+patchman is an experimental web service for allowing people to upload
+patches to your archive remotely, through a web interface. It is
+written in Python, using:
+
+-  Bobo v1 (see http://www.digicool.com and
+http://www.zope.org) 
+- BoboHTTPServer.py (by Amos Latteier amos@aracnet.com) 
+- HTMLgen (by ROBIN FRIEDRICH email:Robin.Friedrich@pdq.net) 
+
+which are included. You'll probably need Python 1.5 or later.
+
+
+CONTENTS
+========
+
+The new files in patchman are:
+
+patchman.py		       -- patchman itself
+validator.py                   -- a program used by patchman to
+                                  check patches using dcheckin.py
+passwordgen.py                 -- a simple subroutine to generate passwords
+
+multiuser.py                   -- multiuser authentication routines
+authtest.py                    -- a simple test application for the
+                                  authentication stuff
+
+The files I've used from other packages are:
+
+BoboHTTPServer.py              -- the web server application
+
+CGIResponse.py                 -- Bobo
+bobo.py
+cgi_module_publisher.py
+bci.py
+
+HTMLcolors.py                  -- HTMLgen
+HTMLgen.py
+ImageFileH.py
+ImageH.py
+ImagePaletteH.py
+imgsize.py
+
+
+
+INSTALLATION
+============
+
+Mail me for more details. 
+
+Essentially, edit the part of patchman.py which looks something like:
+
+docrc = 'patchman.rc'
+patch_tree = '/usr/groups/pegasus/nemesis/patches'
+contrib_dir = '/usr/groups/pegasus/users/dr10009/patchman'
+passwordfile = '/usr/groups/pegasus/users/dr10009/patchman/passwd'
+
+passwordfile should point to an initially empty file (hint; which
+isn't world readable). 
+
+contrib_dir should point to a directory where you want patches to be
+uploaded in to. Create a file called Secretaries with the email
+addresses of people you want to be considered Secretaries (ie they can
+appoint tsars and hack anything). Create a file called SecretaryGeneral
+with your own email address in. Create subdirectories with the name of
+each package and branch concatenated together with a colon which you
+wish to export, and in these subdirectories create Tsar files, with
+lists of email addresses of people who are allowed to commit things to
+that branch. The files should contain one line per email address with
+no additional whitespace.
+
+patch_tree should point to your dpatch patch repository.
+
+
+
+Comments and queries to Dickon.Reed@cl.cam.ac.uk
+
+
+

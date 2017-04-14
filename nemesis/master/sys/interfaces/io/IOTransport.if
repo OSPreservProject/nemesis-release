@@ -1,0 +1,91 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      IO Transport
+-- 
+-- DESCRIPTION:
+--
+--      Interface to IO transport mechanisms
+-- 
+-- ID : $Id: IOTransport.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- 
+-- \chapter{Inter-Domain Communication}
+-- 
+
+-- An "IOTransport" interface represents a mechanism for "IO" channel
+-- connection setup.  To offer a particular channel, an application
+-- calls "IOTransport\$Offer" whch results in an "IOOffer" that 
+-- other applications can invoke in their own protection domains to 
+-- create their end of an "IO" connected to the server's domain.
+
+IOTransport : LOCAL INTERFACE =
+  NEEDS Gatekeeper;
+  NEEDS Heap;
+  NEEDS IDCCallback;
+  NEEDS IDCService;
+  NEEDS IOData;
+  NEEDS IOEntry;
+  NEEDS IOOffer;
+BEGIN
+
+  -- Create an "IOOffer" for an IO with a given set of
+  -- characteristics; the "heap" given is used to allocate space for
+  -- the resultant offer and should be readable by any domains which
+  -- might wish to bind to the offer. 
+  --
+  -- The "depth" parameter gives the number of "IO_Rec"s deep the 
+  -- resultant IO should be, while "proto" describes the requirements
+  -- (and, implicitly, number) of each "IO_Rec" within a packet. 
+  --
+  -- The manner of data transfer (Rx,Tx or Dx) is given by "mode";
+  -- note that the caller of "Offer" below will always become the
+  -- "Slave" of any resultant "IO". Hence "Rx" or "Dx"  means the 
+  -- caller needs R/W access to any shared memory, while "Tx" mode
+  -- means the caller will only require Read access.
+  --
+  -- The "alloc" parameter specifies who is expected to allocate the
+  -- memory for the data areas used by the channel, while the "shm" 
+  -- parameter gives the requirements of the caller on these data
+  -- areas. Note that currently all data areas must be allocated by
+  -- either the master or the slave of the channel; this should be
+  -- more flexible really. The "Gatekeeper" "gk" is used to arrange 
+  -- the allocation of any shared memory. 
+  --
+  -- The "IOCallback" "iocb" will be used to callback to the server at
+  -- various points before and during binding, and possiblly per Pkt
+  -- transferred on the IO.  The "entry" will be used to schedule
+  -- servicing of events on connections once they have been
+  -- established. Either or both of "entry" and "iocb" can be "NULL".
+  --
+  -- Finally the "hdl" is an opaque (server-specific) value which is
+  -- guaranteed to be the first word of the state of the "IO" created
+  -- at the server side on this binding. There is a macro provided in
+  -- "\texttt{IOMacros.h}", \textsc{IO\_HANDLE(\_io)}, which will
+  -- extract the handle from an io closure pointer.  
+  -- 
+  -- \textbf{Note}: the handle stuff is a nasty hack used because once
+  -- there were no callbacks on binding, and hence it was used for demuxing.
+  -- Hopefully can kill it soon.
+
+  Offer : PROC    [ heap    : IREF Heap,
+                    depth   : CARDINAL, 
+                    mode    : IO.Mode,
+                    alloc   : IO.Kind, 
+                    shm     : IOData.Shm,
+                    gk      : IREF Gatekeeper, 
+                    iocb    : IREF IDCCallback,
+                    entry   : IREF IOEntry, 
+                    hdl     : DANGEROUS WORD  ] 
+	  RETURNS [ offer   : IREF IOOffer, 
+                    service : IREF IDCService ]
+      	  RAISES Heap.NoMemory;
+
+END.

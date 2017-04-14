@@ -1,0 +1,51 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+-- 
+--	ThreadHooks
+--
+-- DESCRIPTION:
+--
+--	Thread hooks for Nemesis
+--
+-- ID : $Id: ThreadHooks.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{User Level Schedulers}
+-- 
+
+-- Libraries are informed of the creation and destruction of threads
+-- by callbacks on an instance of the "ThreadHooks" interface.
+
+ThreadHooks : LOCAL INTERFACE = 
+  NEEDS Pervasives;
+BEGIN
+
+  Fork : PROC [ new_pvs: REF Pervasives.Rec ] RETURNS [];
+
+  -- Each registered "ThreadHooks"' "Fork" procedure is called on the
+  -- \emph{parent} thread during its execution of the "Threads.Fork"
+  -- procedure, before the forkee thread becomes runnable.  The "new_pvs"
+  -- argument is a pointer to the (per-thread) pervasive state record of
+  -- the forkee thread.
+
+  Forked : PROC [] RETURNS [];
+
+  -- Each registered "ThreadHooks"' "Forked" procedure is called
+  -- on a newly forked thread before it calls its "entry".
+
+  ExitThread : PROC [] RETURNS [];
+
+  -- "ExitThread" is called on the dying thread during its destruction.
+
+  ExitDomain : PROC [] RETURNS [];
+
+  -- "ExitDomain" is called after "ExitThread" on the last thread in a
+  -- domain.
+
+END.

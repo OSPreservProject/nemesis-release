@@ -1,0 +1,50 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Glasgow                                   -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      WTimeUpdate
+-- 
+-- DESCRIPTION:
+--
+--      Standard functions for updating 
+--			wall-clock time. These functions directly access
+--      and update values in the PIP.
+-- 
+-- CREATED : January 1998
+-- AUTHOR :  Ian McDonald <ian@dcs.gla.ac.uk>
+--
+-- ID : $Id: WTimeUpdate.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- 
+
+
+WTimeUpdate : LOCAL INTERFACE =
+NEEDS WTime;
+BEGIN
+
+
+    InitTime : PROC []
+         RETURNS[];
+    -- Initialises wall-clock time
+
+    AdjustOffset : PROC [IN tcl : IREF WTime,
+                         IN delta : REF WTime.TimeVal,
+                         IN sign : SHORT INTEGER]
+         RETURNS [success : SHORT INTEGER];
+    -- Updates the current wall-clock time by delta
+
+    ShallowUpdate : PROC[IN tcl : IREF WTime,
+		 IN delta : REF WTime.TimeVal,
+		 IN sign : SHORT INTEGER]
+         RETURNS [];
+    -- Updates variables that wall-clock relies on
+    -- without recalculating the scaling factor
+
+		
+END.

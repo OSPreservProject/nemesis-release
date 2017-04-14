@@ -1,0 +1,182 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.                                                    -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Events.if
+-- 
+-- DESCRIPTION:
+--
+--      Operations for event counts, sequencers and channels.
+-- 
+-- ID : $Id: Events.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{User Level Schedulers}
+-- 
+
+-- Nemesis provides a simple mechanism by which threads in a domain
+-- can synchronise with the occurrence of events caused by agents
+-- either within or outside that domain.  The mechanism is based on
+-- \emph{event counts}, whose values may be used to affect the scheduling
+-- of threads.  Two event counts may be coupled with an event \emph{channel},
+-- which causes the value of the receiving (RX) count to be updated with
+-- the value of the the transmitting (TX) count at certain times.
+
+Events : LOCAL INTERFACE = 
+  NEEDS Channel;
+  NEEDS Event;
+  NEEDS Time;
+  NEEDS Thread;
+BEGIN
+
+
+  -- 
+  -- Exceptions
+  -- 
+
+  Invalid : EXCEPTION [ ec: Event.Count ];
+    -- Raised when "ec" does not denote a "Count".
+
+  NoResources : EXCEPTION [];
+    -- Raised when no further event counts are available.
+
+  -- 
+  -- Allocation
+  -- 
+
+  -- The procedures in the "Event" interface are implemented by a domain's
+  -- user-level scheduler, in order that it can schedule the calling
+  -- threads appropriately.
+  -- 
+  -- A domain's event counts are allocated and freed with "New"
+  -- and "Free":
+
+  New  : PROC [] RETURNS [ ec: Event.Count ] RAISES NoResources;
+    -- Return a count with "ec.val = 0", and no threads waiting
+    -- on "ec".
+
+  Free : PROC [ ec: Event.Count ] RETURNS [] RAISES Invalid;
+    -- Return "ec" to the free pool.
+
+  -- Threads waiting on "ec" during a call to "Free(ec)" will raise
+  -- the "Alerted" exception from "Await".  If "ec" was associated with
+  -- an open event channel, that channel is closed.
+
+  -- 
+  -- Event count operations
+  -- 
+
+  -- The primitive scheduling operations are those of Reed and
+  -- Kanodia \cite{reed:ecs}.
+
+  Read    : PROC   [ ec: Event.Count ] RETURNS [ val: Event.Val ]
+            RAISES Invalid, Channel.BadState, Channel.Invalid;
+    -- Return the ``current'' value of "ec.val".
+
+  -- More precisely, "Read" returns a value which includes the effects
+  -- of all the "Advance"s preceding this read, and may or may not include
+  -- the effects of those in progress during the read.
+
+  Advance : PROC   [ ec: Event.Count, inc: Event.Val ] RETURNS []
+            RAISES Invalid, Channel.BadState, Channel.Invalid;
+
+    -- Increase "ec.val" by "inc" atomically wrt. other calls of
+    -- "Advance" on "ec".
+
+  Await   : PROC    [ ec : Event.Count, val: Event.Val ]
+            RETURNS [ nv : Event.Val ]
+            RAISES  Invalid, Thread.Alerted, 
+                    Channel.BadState, Channel.Invalid;
+    -- Block the current thread until "ec.val >= val", then
+    -- return "Read(ec)".
+
+  AwaitUntil : PROC    [ ec : Event.Count, val: Event.Val, until: Time.T ]
+               RETURNS [ nv : Event.Val ]
+               RAISES  Invalid, Thread.Alerted, 
+                       Channel.BadState, Channel.Invalid;
+    -- Block the current thread until either "ec.val >= val"
+    -- or "Time.Now() >= until", then return "Read(ec)".
+
+  -- 
+  -- Sequencers
+  -- 
+
+  -- Threads can order their actions by waiting on counts for
+  -- values obtained from a \emph{sequencer}.
+
+  InvalidSeq : EXCEPTION [ sq: Event.Sequencer ];
+    -- Raised when "sq" does not denote a sequencer.
+
+  NewSeq  : PROC [] RETURNS [ sq: Event.Sequencer ]
+            RAISES NoResources;
+    -- Return a sequencer with "sq.val = 0".
+
+  FreeSeq : PROC [ sq: Event.Sequencer ] RETURNS []
+            RAISES InvalidSeq;
+    -- Return "sq" to the free pool.
+
+  ReadSeq : PROC [ sq: Event.Sequencer ] RETURNS [ val: Event.Val ]
+            RAISES InvalidSeq;
+    -- Return "sq.val".
+
+  Ticket  : PROC [ sq: Event.Sequencer ] RETURNS [ val: Event.Val ]
+            RAISES InvalidSeq;
+    -- Equivalent to
+    -- 
+    --|   << result := sq.val; sq.val++ >>; return result
+
+
+  -- 
+  -- Events and Channels
+  -- 
+
+  -- If a "Count" "ec" is associated with the TX endpoint of an open
+  -- event channel, then eventually the received value of that channel's
+  -- RX endpoint becomes "ec.val".  Similarly, if "ec" is associated
+  -- with the RX endpoint of an open event channel, then eventually
+  -- "ec.val" gets that endpoint's received value.
+
+  -- Event counts are associated with channel endpoints by the
+  -- following two procedures:
+
+  Attach     : PROC    [ event : Event.Count,
+                         chan  : Channel.Endpoint,
+                         type  : Channel.EPType     ]
+               RETURNS []
+               RAISES  Invalid, Channel.Invalid, Channel.BadState;
+
+  AttachPair : PROC    [ events: Event.Pair, chans: Channel.Pair ]
+               RETURNS []
+               RAISES  Invalid, Channel.Invalid, Channel.BadState;
+
+  -- If "event" is attached to a channel, "QueryEndpoint" returns the
+  -- endpoint and the channel type. If "event" is not attached, it
+  -- returns "NULL\_EP" for the "ep" and the "type" is undefined.
+
+  QueryEndpoint : PROC [ event : Event.Count ] 
+               RETURNS [ ep : Channel.Endpoint, type : Channel.EPType ]
+               RAISES  Invalid;
+
+  -- "Channel.EndPoint"s are allocated by the "VP" interface. The
+  -- following operations are provided as wrappers giving concurrency
+  -- control on the operations. 
+
+  AllocChannel : PROC [] RETURNS [ ep : Channel.Endpoint ] 
+               RAISES Channel.NoSlots;
+    -- Find an end-point in the "Free" state, set its state to
+    -- "Allocated" and return it.
+
+  FreeChannel : PROC [ ep : Channel.Endpoint ] 
+                RETURNS []
+                RAISES Channel.Invalid, Channel.BadState;
+    -- Take an end-point not in the "Connected" state, and set its
+    -- state to "Free".
+
+
+
+END.

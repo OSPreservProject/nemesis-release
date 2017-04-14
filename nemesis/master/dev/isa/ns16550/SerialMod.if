@@ -1,0 +1,39 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1998, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      SerialMod
+-- 
+-- DESCRIPTION:
+--
+--      Starts a serial port driver
+-- 
+-- ID : $Id: SerialMod.if 1.1 Thu, 18 Feb 1999 14:16:19 +0000 dr10009 $
+-- 
+-- \chapter{Serial ports}
+--
+
+-- Serial ports are useful because they are very easy to drive; a minimal
+-- driver can be just one line long. Efficient use requires a more involved,
+-- interrupt-driven driver.
+
+SerialMod : LOCAL INTERFACE =
+  NEEDS Context;
+BEGIN
+
+  New : PROC [ name : STRING, -- for error reporting only
+               base : CARDINAL, interrupt : CARDINAL,
+	       halt : BOOLEAN ]
+	RETURNS [ driver : IREF Context ];
+  -- Starts a driver for the UART at address "base". A Context is
+  -- constructed containing a reader, writer and control interface
+  -- for the driver. If "halt" is True then the
+  -- driver will halt the machine when it receives a Ctrl-D (0x04).
+
+END.

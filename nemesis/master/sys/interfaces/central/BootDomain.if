@@ -1,0 +1,60 @@
+-----------------------------------------------------------------------------
+--                                                                          -
+--  Copyright 1994, University of Cambridge Computer Laboratory             -
+--                                                                          -
+--  All Rights Reserved.					            -
+--                                                                          -
+-----------------------------------------------------------------------------
+--
+-- INTERFACE:
+--
+--      Boot Domain.
+-- 
+-- DESCRIPTION:
+--
+--      Type definition for boot domain information.
+--
+-- \chapter{Low-Level Interfaces}
+
+BootDomain: LOCAL INTERFACE =
+  NEEDS Closure;
+  NEEDS Context;
+  NEEDS ProtectionDomain;
+  NEEDS Time;
+BEGIN
+
+  -- The BootDomain Info type is used to store (in the ">progs>"
+  -- context) information regarding the domains to be started up.
+
+  -- "cl" is the closure representing the entry point of the domain, 
+  -- "name" is its name as a string, "stackBytes" is the size of 
+  -- the default stack for this domain, "aHeapBytes" is the size of 
+  -- the domains activation heap, "pHeapBytes" the (intial) size of
+  -- its pervasive heap. 
+  -- "nctxts" specifies the number of context slots, "neps" the number
+  -- of endpoints, and "nframes" the initial size of its frame stack.
+  -- "p", "s", "l", and "x" are the domain's requested 'QoS', while
+  -- the "k" flag determines kernel privilege or not. 
+  -- "priv_root" is a (possibly empty) context specific to this 
+  -- domain, and "pdid" is the requested protection domain (or NULL\_PDID).
+
+  Info : TYPE = RECORD [ 
+			cl         : IREF Closure,
+			name 	   : STRING,
+			stackWords : CARDINAL,
+			aHeapWords : CARDINAL,
+			pHeapWords : CARDINAL,
+			nctxts	   : CARDINAL,
+                        neps	   : CARDINAL,
+                        nframes	   : CARDINAL,
+                        p, s, l	   : Time.ns,
+                        x, k	   : BOOLEAN,
+			priv_root  : IREF Context,
+			pdid	   : ProtectionDomain.ID 
+               ];
+
+  InfoP   : TYPE = REF Info;
+
+  InfoSeq : TYPE = SEQUENCE OF InfoP;
+
+END.

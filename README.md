@@ -1,11 +1,9 @@
-&lt;BODY BGCOLOR=“\#FFFFFF”&gt;
-
 Welcome to Nemesis. This document describes the licensing of Nemesis and
 the procedures for obtaining it, working with it and contributing back
 to it that have been developed for the Nemesis release.
 
-&lt;a href=“http://www.cl.cam.ac.uk/Research/SRG/netos/nemesis/”&gt;
-Look at the Nemesis home page for news, new versions and documentation.
+Look at the [Nemesis home page](http://www.cl.cam.ac.uk/Research/SRG/netos/nemesis/)
+ for news, new versions and documentation.
 &lt;/a&gt;
 
 The Nemesis Free License
@@ -227,9 +225,7 @@ and then building it. It includes everything you need to get started.
 
 1.  Download the quickstart tar ball:
 
-    &lt;a
-    href=“http://www.cl.cam.ac.uk/Research/SRG/netos/nemesis/quickstart.tar.gz”&gt;
-    located here &lt;/a&gt;
+    located [here](http://www.cl.cam.ac.uk/Research/SRG/netos/nemesis/quickstart.tar.gz)
 
 2.  Extract the quickstart tar ball in to a scratch directory. If you
     want to use the bootfloppy mechanism (recommended for
@@ -592,9 +588,7 @@ try to write your patches by hand.
 See the dpatch manual for details of the dpatch format; it is present in
 the Nemesis quickstart tar ball.
 
-See the &lt;a
-href=“http://www.cl.cam.ac.uk/Research/SRG/netos/nemesis/dpatch/”&gt;
-dpatch manual for details&lt;/a&gt;.
+See the [dpatch](http://www.cl.cam.ac.uk/Research/SRG/netos/nemesis/dpatch/) manual for details.
 
 If you are modifying the contents of a Nemesis quickstart tar ball
 master directory directly:

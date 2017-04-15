@@ -115,7 +115,7 @@ void _writel(unsigned int b, unsigned long addr)
 #else 
 #define PORTTYPE short
 #endif /* __ALPHA__ */
-
+/*
 void insb (unsigned PORTTYPE port, void *dst, unsigned long count)
 {
 	while (((unsigned long)dst) & 0x3) {
@@ -143,7 +143,7 @@ void insb (unsigned PORTTYPE port, void *dst, unsigned long count)
 		((unsigned char *) dst)++;
 	}
 }
-
+*/
 
 /*
  * Read COUNT 16-bit words from port PORT into memory starting at
@@ -152,6 +152,7 @@ void insb (unsigned PORTTYPE port, void *dst, unsigned long count)
  * the interfaces seems to be slow: just using the inlined version
  * of the inw() breaks things.
  */
+/*
 void insw (unsigned PORTTYPE port, void *dst, unsigned long count)
 {
 	if (((unsigned long)dst) & 0x3) {
@@ -179,7 +180,7 @@ void insw (unsigned PORTTYPE port, void *dst, unsigned long count)
 		*(unsigned short*) dst = inw(port);
 	}
 }
-
+*/
 
 /*
  * Read COUNT 32-bit words from port PORT into memory starting at
@@ -188,6 +189,7 @@ void insw (unsigned PORTTYPE port, void *dst, unsigned long count)
  * the interfaces seems to be slow: just using the inlined version
  * of the inw() breaks things.
  */
+/*
 void insl (unsigned PORTTYPE port, void *dst, unsigned long count)
 {
 	if (((unsigned long)dst) & 0x3) {
@@ -201,13 +203,14 @@ void insl (unsigned PORTTYPE port, void *dst, unsigned long count)
 		((unsigned int *) dst)++;
 	}
 }
-
+*/
 /*
  * Like insb but in the opposite direction.
  * Don't worry as much about doing aligned memory transfers:
  * doing byte reads the "slow" way isn't nearly as slow as
  * doing byte writes the slow way (no r-m-w cycle).
  */
+/*
 void outsb(unsigned PORTTYPE port, const void * src, unsigned long count)
 {
 	while (count) {
@@ -216,13 +219,14 @@ void outsb(unsigned PORTTYPE port, const void * src, unsigned long count)
 		((char *) src)++;
 	}
 }
-
+*/
 /*
  * Like insw but in the opposite direction.  This is used by the IDE
  * driver to write disk sectors.  Performance is important, but the
  * interfaces seems to be slow: just using the inlined version of the
  * outw() breaks things.
  */
+/*
 void outsw (unsigned PORTTYPE port, const void *src, unsigned long count)
 {
 	if (((unsigned long)src) & 0x3) {
@@ -248,7 +252,7 @@ void outsw (unsigned PORTTYPE port, const void *src, unsigned long count)
 		outw(*(unsigned short *) src, port);
 	}
 }
-
+*/
 
 /*
  * Like insl but in the opposite direction.  This is used by the IDE
@@ -256,6 +260,7 @@ void outsw (unsigned PORTTYPE port, const void *src, unsigned long count)
  * interfaces seems to be slow: just using the inlined version of the
  * outw() breaks things.
  */
+/*
 void outsl (unsigned PORTTYPE port, const void *src, unsigned long count)
 {
 	if (((unsigned long)src) & 0x3) {
@@ -269,7 +274,7 @@ void outsl (unsigned PORTTYPE port, const void *src, unsigned long count)
 		((unsigned int *) src)++;
 	}
 }
-
+*/
 
 /*
  * Copy data from IO memory space to "real" memory space.
@@ -280,7 +285,7 @@ void _memcpy_fromio(void * to, unsigned long from, unsigned long count)
 	while (count) {
 		count--;
 		*(char *) to = readb(from);
-		((char *) to)++;
+		//((char *) to)++;
 		from++;
 	}
 }
@@ -294,7 +299,7 @@ void _memcpy_toio(unsigned long to, void * from, unsigned long count)
 	while (count) {
 		count--;
 		writeb(*(char *) from, to);
-		((char *) from)++;
+		//((char *) from)++;
 		to++;
 	}
 }

@@ -3,7 +3,7 @@
 /* Public domain */
 
 /* Restore the program's registers (including the stack pointer, which
- * means we get the right stack and don't have to worry about popping our
+ * means we get the right stack and don't have to worry about //popping our
  * return address and any stack frames and so on) and return.  */
 
 .text
@@ -22,11 +22,11 @@ return_to_prog:
 	movw registers+56, %fs
 	movw registers+60, %gs
 	movl registers+36, %eax
-	pushl %eax  /* saved eflags */
+	//pushl %eax  /* saved eflags */
 	movl registers+40, %eax
-	pushl %eax  /* saved cs */
+	//pushl %eax  /* saved cs */
 	movl registers+32, %eax
-	pushl %eax  /* saved eip */
+	//pushl %eax  /* saved eip */
 	movl registers, %eax
 	/* use iret to restore pc and flags together so
 	 * that trace flag works right.  */
@@ -53,18 +53,18 @@ return_to_prog:
 	movw %ax, registers+62
 
 #define SAVE_ERRCODE() \
-	popl %ebx		; \
+	//popl %ebx		; \
 	movl %ebx, gdb_i386errcode
 
 #define SAVE_REGISTERS2() \
-	popl %ebx /* old eip */	; \
+	//popl %ebx /* old eip */	; \
 	movl %ebx, registers+32	; \
-	popl %ebx /* old cs */	; \
+	//popl %ebx /* old cs */	; \
 	movl %ebx, registers+40	; \
 	movw %ax, registers+42	; \
-	popl %ebx /* old eflags */ ; \
+	//popl %ebx /* old eflags */ ; \
 	movl %ebx, registers+36	; \
-  /* Now that we've done the pops, we can save the stack pointer */ \
+  /* Now that we've done the //pops, we can save the stack pointer */ \
 	movw %ss, registers+44	; \
 	movw %ax, registers+46	; \
 	movl %esp, registers+16
@@ -86,7 +86,7 @@ return_to_prog:
 catchException##nr:		; \
 	SAVE_REGISTERS1()	; \
 	SAVE_REGISTERS2()	; \
-	pushl $nr		; \
+	//pushl $nr		; \
 	call remcomHandler
 
 #define exception_error(nr) \
@@ -96,7 +96,7 @@ catchException##nr:		; \
 	SAVE_REGISTERS1()	; \
 	SAVE_ERRCODE()		; \
 	SAVE_REGISTERS2()	; \
-	pushl $nr		; \
+	//pushl $nr		; \
 	call remcomHandler
 
 #define exception_fault(nr) \
@@ -106,7 +106,7 @@ catchException##nr:		; \
 	SAVE_REGISTERS1()	; \
 	SAVE_ERRCODE()		; \
 	SAVE_REGISTERS2()	; \
-	pushl $nr		; \
+	//pushl $nr		; \
 	call remcomHandler
 
 .text
@@ -128,8 +128,8 @@ catchException##nr:		; \
 
 .text
 remcomHandler:
-	popl %eax	/* pop off return address */
-	popl %eax	/* get exception number */
+	//popl %eax	/* //pop off return address */
+	//popl %eax	/* get exception number */
 	movl stackPtr, %esp	/* move to remcom stack area */
-	pushl %eax		/* pass argument */
+	//pushl %eax		/* pass argument */
 	call handle_exception /* NORETURN */

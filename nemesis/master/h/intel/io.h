@@ -39,7 +39,7 @@
  * make the kernel segment mapped at 0, we need to do translation
  * on the i386 as well)
  */
-extern INLINE unsigned long virt_to_phys(volatile void * address)
+/*extern INLINE*/static unsigned long virt_to_phys(volatile void * address)
 {
 #ifdef CONFIG_MEMSYS_EXPT
     word_t pte, pwidth;
@@ -55,7 +55,7 @@ extern INLINE unsigned long virt_to_phys(volatile void * address)
 #endif
 }
 
-extern INLINE void * phys_to_virt(unsigned long address)
+/*extern INLINE*/ static void * phys_to_virt(unsigned long address)
 {
     /* NB: phys_to_virt does NOT work on Nemesis (gives 121). */
     return (void *) address;
@@ -95,7 +95,7 @@ extern INLINE void * phys_to_virt(unsigned long address)
  */
 
 #define __OUT1(s,x) \
-extern INLINE void __out##s(unsigned x value, unsigned short port) {
+/*extern INLINE*/ static void __out##s(unsigned x value, unsigned short port) {
 
 #define __OUT2(s,s1,s2) \
 __asm__ __volatile__ ("out" #s " %" s1 "0,%" s2 "1"
@@ -107,7 +107,7 @@ __OUT1(s##_p,x) __OUT2(s,s1,"w") : : "a" (value), "d" (port)); } \
 __OUT1(s##c_p,x) __OUT2(s,s1,"") : : "a" (value), "id" (port)); }
 
 #define __IN1(s) \
-extern INLINE RETURN_TYPE __in##s(unsigned short port) { RETURN_TYPE _v;
+/*extern INLINE*/ static RETURN_TYPE __in##s(unsigned short port) { RETURN_TYPE _v;
 
 #define __IN2(s,s1,s2) \
 __asm__ __volatile__ ("in" #s " %" s2 "1,%" s1 "0"
@@ -119,12 +119,12 @@ __IN1(s##_p) __IN2(s,s1,"w") : "=a" (_v) : "d" (port) ,##i ); return _v; } \
 __IN1(s##c_p) __IN2(s,s1,"") : "=a" (_v) : "id" (port) ,##i ); return _v; }
 
 #define __INS(s) \
-extern INLINE void ins##s(unsigned short port, void * addr, unsigned long count) \
+/*extern INLINE*/ static void ins##s(unsigned short port, void * addr, unsigned long count) \
 { __asm__ __volatile__ ("cld ; rep ; ins" #s \
 : "=D" (addr), "=c" (count) : "d" (port),"0" (addr),"1" (count)); }
 
 #define __OUTS(s) \
-extern INLINE void outs##s(unsigned short port, const void * addr, unsigned long count) \
+/*extern INLINE*/ static void outs##s(unsigned short port, const void * addr, unsigned long count) \
 { __asm__ __volatile__ ("cld ; rep ; outs" #s \
 : "=S" (addr), "=c" (count) : "d" (port),"0" (addr),"1" (count)); }
 

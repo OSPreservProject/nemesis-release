@@ -40,12 +40,12 @@ name:						\
 	.align 16;                              \
 	.globl name;                            \
 name:						\
-	pushl %ebp;				\
+	//pushl %ebp;				\
 	movl %esp, %ebp;			\
 	movl 8(%ebp), %eax;			\
 	int $##num;				\
 	movl %ebp, %esp;			\
-	popl %ebp;				\
+	//popl %ebp;				\
 	ret
 
 
@@ -53,78 +53,78 @@ name:						\
 	.align 16;                              \
 	.globl name;                            \
 name:						\
-	pushl %ebp;				\
+	//pushl %ebp;				\
 	movl %esp, %ebp;			\
-	pushl %ebx;				\
+	//pushl %ebx;				\
 	movl 8(%ebp), %eax;			\
 	movl 12(%ebp), %ebx;			\
 	int $##num;				\
-	popl %ebx;				\
+	//popl %ebx;				\
 	movl %ebp, %esp;			\
-	popl %ebp;				\
+	//popl %ebp;				\
 	ret
 
 #define SYS3ARGS(name, num)                     \
 	.align 16;                              \
 	.globl name;                            \
 name:						\
-	pushl %ebp;				\
+	//pushl %ebp;				\
 	movl %esp, %ebp;			\
-	pushl %ebx;				\
-	pushl %ecx;				\
+	//pushl %ebx;				\
+	//pushl %ecx;				\
 	movl 8(%ebp), %eax;			\
 	movl 12(%ebp), %ebx;			\
 	movl 16(%ebp), %ecx;			\
 	int $##num;				\
-	popl %ecx;				\
-	popl %ebx;				\
+	//popl %ecx;				\
+	//popl %ebx;				\
 	movl %ebp, %esp;			\
-	popl %ebp;				\
+	//popl %ebp;				\
 	ret
 
 #define SYS4ARGS(name, num)                     \
 	.align 16;                              \
 	.globl name;                            \
 name:						\
-	pushl %ebp;				\
+	//pushl %ebp;				\
 	movl %esp, %ebp;			\
-	pushl %ebx;				\
-	pushl %ecx;				\
-	pushl %edx;				\
+	//pushl %ebx;				\
+	//pushl %ecx;				\
+	//pushl %edx;				\
 	movl 8(%ebp), %eax;			\
 	movl 12(%ebp), %ebx;			\
 	movl 16(%ebp), %ecx;			\
 	movl 20(%ebp), %edx;			\
 	int $##num;				\
-	popl %edx;				\
-	popl %ecx;				\
-	popl %ebx;				\
+	//popl %edx;				\
+	//popl %ecx;				\
+	//popl %ebx;				\
 	movl %ebp, %esp;			\
-	popl %ebp;				\
+	//popl %ebp;				\
 	ret
 
 #define SYS5ARGS(name, num)                     \
 	.align 16;                              \
 	.globl name;                            \
 name:						\
-	pushl %ebp;				\
+	//pushl %ebp;				\
 	movl %esp, %ebp;			\
-	pushl %ebx;				\
-	pushl %ecx;				\
-	pushl %edx;				\
-	pushl %edi;				\
+	//pushl %ebx;				\
+	//pushl %ecx;				\
+	//pushl %edx;				\
+	//pushl %edi;				\
 	movl 8(%ebp), %eax;			\
 	movl 12(%ebp), %ebx;			\
 	movl 16(%ebp), %ecx;			\
 	movl 20(%ebp), %edx;			\
 	movl 24(%ebp), %edi;			\
 	int $##num;				\
-	popl %edi;				\
-	popl %edx;				\
-	popl %ecx;				\
-	popl %ebx;				\
+	//popl %edi;				\
+	//popl %edx;				\
+	//popl %ecx;				\
+	//popl %ebx;				\
 	movl %ebp, %esp;			\
-	popl %ebp;				\
+	//popl %ebp;				\
 	ret
 
 	
@@ -132,15 +132,15 @@ name:						\
 	.align 16;                              \
 	.globl name;                            \
 name:						\
-	pushl %ebp;				\
+	//pushl %ebp;				\
 	movl %esp, %ebp;			\
-	pushl %ebx;				\
+	//pushl %ebx;				\
 	movl 8(%ebp), %eax;			\
 	movl 12(%ebp), %ebx;			\
 	int $##num;				\
-	popl %ebx;				\
+	//popl %ebx;				\
 	movl %ebp, %esp;			\
-	popl %ebp;				\
+	//popl %ebp;				\
 	ret
 		
 .text

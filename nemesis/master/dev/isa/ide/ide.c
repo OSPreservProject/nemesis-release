@@ -747,7 +747,7 @@ read_next:
 
 #ifdef MULTI_MODE
 	/* step on one block of sectors */
-	((char *)rq->buf) += nsect<<9;   /* move on 512 * nsect */
+	//((char *)rq->buf) += nsect<<9;   /* move on 512 * nsect */
 	rq->count-=nsect;
 	rq->block+=nsect;
 
@@ -809,7 +809,7 @@ static void do_write_intr(iface_t *st, int status)
 
     rq->block++;
     rq->count--;
-    ((char*)rq->buf) += 512;
+    //((char*)rq->buf) += 512;
 
     return;
 }
@@ -836,7 +836,7 @@ void multwrite_data (iface_t *st, int status)
       rq->block+=nsect;
       rq->count-=nsect;
 
-      ((char*)rq->buf) += nsect<<9;
+      //((char*)rq->buf) += nsect<<9;
       
       /* have we finished sending all the data we wanted? */
       if (rq->count == 0)
@@ -1228,7 +1228,7 @@ static bool_t Write_m(BlockDev_cl *self,
 	/* note we've sent it */
 	ide->rq.block++;
 	ide->rq.count--;
-	((char*)ide->rq.buf) += 512;
+	//((char*)ide->rq.buf) += 512;
       }
     /* and pass off to interrupt handler to complete the transaction */
     WAIT(&ide->mu, &ide->reqdone);

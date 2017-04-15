@@ -76,7 +76,7 @@ class Interface(BE.Interface):
 
           # Interface structure
 	  f.write('Intf_st ' + self.name + '__intf ={\n')
-	  f.write('  { { TypeSystem_Iref__code, (pointerval_t) &' +self.name +'__cl},\n')
+	  f.write('  { { TypeSystem_Iref__code, (pointerval_t)NULL},\n') #&' +self.name +'__cl},\n')
 	  #f.write('    TYPED_PTR(TCODE_NONE, NULL), \n')
 	  f.write('    { Type_Code__code, ' + self.name + '_clp__code },\n' )
 	  f.write('    "' + self.name + '",\n')
@@ -197,7 +197,7 @@ class Alias(BE.Alias):
 
 class Enumeration(BE.Enumeration):
 	def representation( self, t, f ) :
-	  f.write('  { TypeSystem_Enum__code, (pointerval_t) &' + t.name + '__cl },\n' )
+	  f.write('  { TypeSystem_Enum__code, (pointerval_t)NULL},\n') # &' + t.name + '__cl },\n' )
 	def repaux( self, t, f ) :
 	  
 	  # First the state record for the context
@@ -219,7 +219,7 @@ class Enumeration(BE.Enumeration):
 
 class Record(BE.Record):
 	def representation( self, t, f ) :
-	  f.write('  { TypeSystem_Record__code, (pointerval_t) &'+t.name+'__cl },\n' )
+	  f.write('  { TypeSystem_Record__code, (pointerval_t)NULL},\n') #&'+t.name+'__cl },\n' )
 	def repaux( self, t, f ) :
 	  
 	  # Write the individual Record_Fields
@@ -251,7 +251,7 @@ class RecordMember(BE.RecordMember):
 
     def repaux( self, f, parent ) :
 	f.write('  { { Record_Field__code, ' )
-	f.write('(pointerval_t) &' + parent.name + '_' + self.name + '__field }, "' + self.name + '" },\n')
+	f.write('(pointerval_t) NULL }, "' + self.name + '" },\n') #&' + parent.name + '_' + self.name + '__field }, "' + self.name + '" },\n')
 
 class Choice(BE.Choice):
  	def repaux( self, t, f ) :
@@ -275,19 +275,19 @@ class Choice(BE.Choice):
 	  f.write(' BADPTR /* => &choice_ops */, (void *) &' + t.name + '__state };\n' )
 
 	def representation( self, t, f ) :
-	  f.write('  { TypeSystem_Choice__code, (pointerval_t) &' )
-	  f.write( t.name + '__cl },\n' )
+	  f.write('  { TypeSystem_Choice__code, (pointerval_t)NULL},\n') #&' )
+	  #f.write( t.name + '__cl },\n' )
 
 class ChoiceElement(BE.ChoiceElement):
 	def rec( self, c, t, f ) :
-	  f.write('static const Choice_Field ' )
+	  f.write('static Choice_Field ' )
 	  f.write( t.name + '_' + self.name + '__crec = { ' )
 	  f.write( `c.elems.index( self )` + ', ' )
 	  f.write( self.type.name + '__code };\n' )
 
 	def rep( self, t, f ) :
-	    f.write('  {{ Choice_Field__code, (word_t)&' )
-	    f.write( t.name + '_' + self.name + '__crec,  }, "' )
+	    f.write('  {{ Choice_Field__code, (word_t)NULL, }, "' ) #&' )
+	    #f.write( t.name + '_' + self.name + '__crec,  }, "' )
 	    f.write( self.name + '" },\n')
 
     
@@ -307,8 +307,8 @@ class Array(BE.Array):
 	  f.write('  ' + self.base.name + '__code\n};\n' )
 
 	def representation( self, t, f ) :
-	  f.write('  { TypeSystem_Array__code, (pointerval_t)&'  )
-	  f.write( t.name + '__array },\n' )
+	  f.write('  { TypeSystem_Array__code, (pointerval_t)NULL},\n')#&'  )
+	  #f.write( t.name + '__array },\n' )
 
 
 class BitSet(BE.BitSet):
@@ -334,8 +334,8 @@ class ByteArray(BE.ByteArray):
 	  f.write('  ' + self.base.name + '__code\n};\n' )
 
 	def representation( self, t, f ) :
-	  f.write('  { TypeSystem_Array__code, (pointerval_t)&' )
-	  f.write( t.name + '__array },\n' )
+	  f.write('  { TypeSystem_Array__code, (pointerval_t)NULL},\n') #&' )
+	  #f.write( t.name + '__array },\n' )
 
 class Set(BE.Set):
 	def repaux( self, t, f ):

@@ -97,14 +97,14 @@ unsigned char * MGAInit(int Width, int Height, int Depth, int Mode)
 
     TRC(printf("MGA/FB: Init entered\n"));
 
-    TRY {
+    //TRY {
 	pcibios = NAME_FIND("sys>PCIBios", PCIBios_clp);
-    } 
-    CATCH_Context$NotFound(UNUSED name) {
-	printf("pci_probe: PCIBios not present\n");
-	return NULL;
-    }
-    ENDTRY;
+    //} 
+    //CATCH_Context$NotFound(UNUSED name) {
+//	printf("pci_probe: PCIBios not present\n");
+//	return NULL;
+    //}
+    //ENDTRY;
 
     ENTER_KERNEL_CRITICAL_SECTION();
     retcode = PCIBios$FindDevice(pcibios, 

@@ -55,24 +55,24 @@ endif
 # Per-directory C compiler flags 
 #CFLAGS_sys/Domains := -g
 #CFLAGS_ntsc/alpha/eb164 := -g
-CFLAGS_mod/clanger          := -Werror
-CFLAGS_mod/fs/buildfs       := -Werror
-CFLAGS_mod/fs/ramdisk       := -Werror
-CFLAGS_mod/fs/usd           := -Werror
+CFLAGS_mod/clanger          := #-Werror
+CFLAGS_mod/fs/buildfs       := #-Werror
+CFLAGS_mod/fs/ramdisk       := #-Werror
+CFLAGS_mod/fs/usd           := #-Werror
 #CFLAGS_mod/fs/ext2fs        := -Werror
-CFLAGS_mod/fs/util          := -Werror
-CFLAGS_mod/net/flowman      := -Werror
-CFLAGS_mod/net/protos/ether := -Werror
-CFLAGS_mod/net/protos/ip    := -Werror
-CFLAGS_mod/net/protos/udp   := -Werror
-CFLAGS_mod/net/arp          := -Werror
-CFLAGS_mod/net/lmpf         := -Werror
-CFLAGS_mod/net/socket/udp   := -Werror
-CFLAGS_mod/nemesis/builder  := -Werror
-CFLAGS_mod/nemesis/qosentry := -Werror
-CFLAGS_app/nash             := -Werror
-CFLAGS_app/test/qosentry    := -Werror
-CFLAGS_lib/static/system    := -Werror
+CFLAGS_mod/fs/util          := #-Werror
+CFLAGS_mod/net/flowman      := #-Werror
+CFLAGS_mod/net/protos/ether := #-Werror
+CFLAGS_mod/net/protos/ip    := #-Werror
+CFLAGS_mod/net/protos/udp   := #-Werror
+CFLAGS_mod/net/arp          := #-Werror
+CFLAGS_mod/net/lmpf         := #-Werror
+CFLAGS_mod/net/socket/udp   := #-Werror
+CFLAGS_mod/nemesis/builder  := #-Werror
+CFLAGS_mod/nemesis/qosentry := #-Werror
+CFLAGS_app/nash             := #-Werror
+CFLAGS_app/test/qosentry    := #-Werror
+CFLAGS_lib/static/system    := #-Werror
 
 
 # ASFLAGS_$(CURRENT_DIR)

@@ -778,8 +778,7 @@ static bool_t Down_m(Netcard_cl *self)
     printf("Netcard_Down: called\n");
 
     ioaddr=st->address;
-
-    USING(MUTEX, &st->mu, {
+    //USING(MUTEX, &st->mu, {
 	outw(StatsDisable, ioaddr + EL3_CMD);
 	outw(RxDisable, ioaddr + EL3_CMD);
 	outw(TxDisable, ioaddr + EL3_CMD);
@@ -800,7 +799,7 @@ static bool_t Down_m(Netcard_cl *self)
 
 	/* Update statistics here */
 	update_statistics(st);
-    });
+    //});
 
     /* XXX Unregister the interrupt stub here perhaps */
 

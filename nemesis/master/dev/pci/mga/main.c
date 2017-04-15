@@ -276,7 +276,7 @@ void Main (Closure_clp self)
     /* Launch WSSvr */
 
     TRC(printf("Trying to launch wssvr\n"));
-    TRY {
+  //  TRY {
 	Closure_clp wssvr;
 
 	wssvr = NAME_FIND("modules>WSSvr", Closure_clp);
@@ -284,10 +284,10 @@ void Main (Closure_clp self)
 	Threads$Fork(Pvs(thds), wssvr->op->Apply, wssvr->st, 0);
 
 	st->wssvr_shares_domain = True;
-    } CATCH_ALL {
-	printf("Couldn't launch WSSvr - exception %s\n",
-	       exn_ctx.cur_exception);
-    } ENDTRY;
+ //   } CATCH_ALL {
+//	printf("Couldn't launch WSSvr - exception %s\n",
+//	       exn_ctx.cur_exception);
+    //} ENDTRY;
 
     TRC(printf("FB/MGA: Init Done. (%ix%i %ibpp mode %i)\n",
 	       FB_WIDTH,FB_HEIGHT,FB_DEPTH,FB_MODE));
@@ -607,7 +607,7 @@ static void FB_ExposeWindow_m (
 		    *((word_t *)cp) = tagword;
 		}
 
-		((word_t *)cp)++;
+		//((word_t *)cp)++;
 		EX_DBG(*((uint32_t *)dodo)++ = 0xd0d0d0d0);
 		EX_DBG(*((uint32_t *)dodo)++ = 0xd0d0d0d0);
 	    }
@@ -731,13 +731,13 @@ static FB_StreamID FB_UpdateStream_m (
 #ifdef CONFIG_CALLPRIV
 
     TRC(fprintf(stderr, "Making Callpriv blit offer\n"));
-    TRY {
+    //TRY {
 	*blit = FBBlitMod$New(NAME_FIND("modules>FBBlitMod", FBBlitMod_clp),
 			      sid, st->blit_cps[p]);
-    } CATCH_Context$NotFound(n) {
-	fprintf(stderr, "Unable to locate '%s'\n", n);
-	RAISE_FB$Failure();
-    } ENDTRY;
+    //} CATCH_Context$NotFound(n) {
+	//fprintf(stderr, "Unable to locate '%s'\n", n);
+	//RAISE_FB$Failure();
+    //} ENDTRY;
 #else
 
     *blit = NULL;

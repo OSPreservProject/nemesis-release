@@ -708,13 +708,13 @@ static int resolv(const char *name, uint32_t *addr)
     int	NOCLOBBER	err;
 
     err = 0;
-    TRY {
+    //TRY {
 	rmod = NAME_FIND("modules>ResolverMod", ResolverMod_clp);
 	ns = NAME_FIND("svc>net>eth0>nameserver", Net_IPHostAddrP); 
 	resolv = ResolverMod$New(rmod, ns);
-    } CATCH_ALL {
-	err = 1;
-    } ENDTRY;
+    //} CATCH_ALL {
+//	err = 1;
+ //   } ENDTRY;
     if (err)
 	return err;
 

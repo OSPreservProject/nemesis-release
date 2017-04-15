@@ -82,7 +82,7 @@ void Main(Closure_clp cl)
     /*
      * Argument handling
      */
-    TRY {
+ //   TRY {
       uint32_t       i;
       Context_clp    ctx;
       uint32_t       num;
@@ -93,11 +93,13 @@ void Main(Closure_clp cl)
       for (i = 0, argc=0; i < num; i++) {
 	uchar_t name[32];
 	sprintf (name, "a%d", i);
+     } // added, remove when renabling
+/*
 	TRY {
 	  argv[argc] = NAME_LOOKUP (name, ctx, string_t);
 	  argc++;
 	} CATCH_ALL {
-	  /* one argument didn't have the right form, ignore it */
+	  // one argument didn't have the right form, ignore it 
 	} ENDTRY;
       }
       argv[argc] = (char *)NULL;
@@ -105,20 +107,20 @@ void Main(Closure_clp cl)
       argc = 0;
       argv = &null_arg;
     } ENDTRY;
-    
+*/
     /* Run the program with a correctly setup exit. */
-    CX_ADD("__atexit_stack", __atexit_stack, addr_t);
-    CX_ADD("__atexit_stack_length", &__atexit_stack_length, addr_t);
+    //CX_ADD("__atexit_stack", __atexit_stack, addr_t);
+    //CX_ADD("__atexit_stack_length", &__atexit_stack_length, addr_t);
 
 
 #ifdef SPEC
     /* For timing stuff */
-    CX_ADD("__spec_start_time", start_time, Time_T);
-    (void)posixmain_atexit(__print_time);
+    //CX_ADD("__spec_start_time", start_time, Time_T);
+    //(void)posixmain_atexit(__print_time);
 #endif
-    ret = main(argc, argv);
-    if (ret)
-	printf("main() exited with non-zero return code %d\n", ret);
+    //ret = main(argc, argv);
+    //if (ret)
+//	printf("main() exited with non-zero return code %d\n", ret);
 }
 
 

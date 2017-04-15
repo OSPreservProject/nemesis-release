@@ -22,6 +22,6 @@ name:	movl	$INFO_PAGE_ADDRESS, %eax;	\
 	movl	(%eax), %eax;			\
 	movl	perv*4(%eax), %eax;		\
 	movl	entry*4(%eax), %eax;		\
-	jmp	*%eax
+//	jmp	*%eax
 
 /* End of veneer.h */

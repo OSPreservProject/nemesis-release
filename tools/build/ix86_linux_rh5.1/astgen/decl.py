@@ -1,1 +1,1 @@
-list_decl= [ ('NULL',[]),("announcement",["n_integer"]),("exception",["n_list","n_cptr"]),("type",[]),("var",[]),("invar",[]),("outvar",[]),("inoutvar",[]),("procedure",["n_list","n_integer","n_cptr"]),("procedure_nr",["n_list","n_integer","n_cptr"]),("spec",["n_spec"])]
+../../../../tools/source/master/astgen/decl.py

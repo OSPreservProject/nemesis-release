@@ -23,7 +23,7 @@
 {\
      char out[256];\
      sprintf(out, args);\
-     fprintf(stream, "Otto: " __FUNCTION__ " : %s", out);\
+     fprintf(stream, "Otto: %s : %s", __FUNCTION__, out);\
 }
     
 #define DEBUG_OUT(args...) DEBUG_OUTPUT(stdout, args)

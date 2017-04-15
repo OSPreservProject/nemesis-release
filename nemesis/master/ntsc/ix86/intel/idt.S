@@ -29,7 +29,7 @@
  * in the process (saving the previous stack on the new stack).  If
  * the CPU is already running at ring 0 then it wont mess with stacks.
  *
- * Some of the exceptions also push a word of "status" / "error code"
+ * Some of the exceptions also //push a word of "status" / "error code"
  * onto the stack.
  *
  * Other points to note.  For security reasons we have to prevent
@@ -99,27 +99,27 @@
 /* IDT Entry with error code on stack */
 #define idt_exception_err(nr)	\
 idt_##nr:			; \
-	pushl	%edx		; \
-	pushl	%ecx		; \
-	pushl	%ebx		; \
-	pushl	%eax		; \
+	//pushl	%edx		; \
+	//pushl	%ecx		; \
+	//pushl	%ebx		; \
+	//pushl	%eax		; \
 	call	save_context	; \
 	addl	$16, %esp	; \
-	pushl	$nr		; \
+	//pushl	$nr		; \
 	call	k_exception
 
 /* IDT Entry without an error code on stack */
 #define idt_exception(nr) 	\
 	.align 16		; \
 idt_##nr:			; \
-	pushl	$0x0		; \
-	pushl	%edx		; \
-	pushl	%ecx		; \
-	pushl	%ebx		; \
-	pushl	%eax		; \
+	//pushl	$0x0		; \
+	//pushl	%edx		; \
+	//pushl	%ecx		; \
+	//pushl	%ebx		; \
+	//pushl	%eax		; \
 	call	save_context	; \
 	addl	$16, %esp	; \
-	pushl	$nr		; \
+	//pushl	$nr		; \
 	call	k_exception
 
 /* 
@@ -134,11 +134,11 @@ idt_##nr:			; \
 	.align 16		; \
 idt_##nr:			; \
 	addl	$4, %esp	; \
-        pushl   $why	        ; \
-	pushl	%edx		; \
-	pushl	%ecx		; \
-	pushl	%ebx		; \
-	pushl	%eax		; \
+        //pushl   $why	        ; \
+	//pushl	%edx		; \
+	//pushl	%ecx		; \
+	//pushl	%ebx		; \
+	//pushl	%eax		; \
         jmp     k_mmfault
 
 	.align 16
@@ -196,8 +196,8 @@ k_mmfault:
         movl    $0, DCBRW_L_MMSTR(%ecx) 
 
 
-        pushl   %ebx
-        pushl   %eax
+        //pushl   %ebx
+        //pushl   %eax
         call    k_dispatch_fault
 
 /* 
@@ -211,10 +211,10 @@ k_mmfault:
  */
 	.align 16
 idt_14:
-	pushl	%edx
-	pushl	%ecx
-	pushl	%ebx
-	pushl	%eax
+	//pushl	%edx
+	//pushl	%ecx
+	//pushl	%ebx
+	//pushl	%eax
 
 	movl    16(%esp), %eax        /* get the error code */
 	testl   $1, %eax              /* is it a protection error? */
@@ -277,36 +277,36 @@ idt_14:
         movl    $MM_K_PAGE, %edx          /* otherwise => a page fault  */
 2:
         movl    %edx, DCBRW_L_MMCODE(%ecx)
-	movl    %cr2, %edx
+	//movl    %cr2, %edx
         movl    %edx, DCBRW_L_MMVA(%ecx)
 
         /* XXX SMH: Lookup the stretch in the sstab */
-        movl    $0, DCBRW_L_MMSTR(%ecx) 
+        //movl    $0, DCBRW_L_MMSTR(%ecx) 
 
-        pushl   %ebx
-        pushl   %eax
+        //pushl   %ebx
+        //pushl   %eax
         call    k_dispatch_fault
 
 ntsc_fiddle:
-	pushl	%edi
-	pushl	%esi
-	pushl	%ebp
-	movl	%cr2, %eax          /* cr2 = linear address we faulted on */
-	pushl	%eax
+	//pushl	%edi
+	//pushl	%esi
+	//pushl	%ebp
+	//movl	%cr2, %eax          /* cr2 = linear address we faulted on */
+	//pushl	%eax
 	call	k_prot_fault
 	addl    $4, %esp            /* skip over the linear address */
-	popl	%ebp
-	popl	%esi
-	popl	%edi
+	//popl	%ebp
+	//popl	%esi
+	//popl	%edi
 	testl   %eax, %eax          /* check return val                */
         jnz     1f                  /* If 'true', we're ok             */
 	movl    $MM_K_ACV, 16(%esp) /* else: patch up the error code   */
 	jmp     k_mmfault           /* go try to dispatch it to domain */
 1:
-	popl	%eax
-	popl	%ebx
-	popl	%ecx
-	popl	%edx
+	//popl	%eax
+	//popl	%ebx
+	//popl	%ecx
+	//popl	%edx
 	/* Add 4 to esp to dispose of error code */
 	addl	$4, %esp
 	iret
@@ -331,28 +331,28 @@ ntsc_mmgmt:
 #define idt_interrupt(nr)	\
 	.align 16		; \
 idt_##nr:			; \
-	pushl	$0 /* Fake error code */; \
-	pushl	%edx		; \
-	pushl	%ecx		; \
-	pushl	%ebx		; \
-	pushl	%eax		; \
+	//pushl	$0 /* Fake error code */; \
+	//pushl	%edx		; \
+	//pushl	%ecx		; \
+	//pushl	%ebx		; \
+	//pushl	%eax		; \
 	call	save_context	; \
 	addl	$16, %esp	; \
-	pushl	$(nr-0x20)	; \
+	//pushl	$(nr-0x20)	; \
 	call	k_irq
 	
 /* k_syscall (int nr); */
 #define idt_syscall(nr)	\
 	.align 16		; \
 idt_##nr:			; \
-	pushl	$0 /* Fake error code */; \
-	pushl	%edx		; \
-	pushl	%ecx		; \
-	pushl	%ebx		; \
-	pushl	%eax		; \
+	//pushl	$0 /* Fake error code */; \
+	//pushl	%edx		; \
+	//pushl	%ecx		; \
+	//pushl	%ebx		; \
+	//pushl	%eax		; \
 	call	save_context	; \
 	addl	$16, %esp	; \
-	pushl	$(nr-0x30)	; \
+	//pushl	$(nr-0x30)	; \
 	call	k_syscall
 
 /* k_sc_whatever (void); */
@@ -361,23 +361,23 @@ idt_##nr:			; \
 #define idt_syscall_d(nr,name)	\
 	.align 16		; \
 idt_##nr:			; \
-	pushl	$0 /* Fake error code */; \
-	pushl	%edx		; \
-	pushl	%ecx		; \
-	pushl	%ebx		; \
-	pushl	%eax		; \
+	//pushl	$0 /* Fake error code */; \
+	//pushl	%edx		; \
+	//pushl	%ecx		; \
+	//pushl	%ebx		; \
+	//pushl	%eax		; \
 	call	save_context	; \
-	pushl	%edi		; \
-	pushl	%esi		; \
-	pushl	%ebp		; \
+	//pushl	%edi		; \
+	//pushl	%esi		; \
+	//pushl	%ebp		; \
 	call	name		; \
-	popl	%ebp		; \
-	popl	%esi		; \
-	popl	%edi		; \
-	popl	%eax		; \
-	popl	%ebx		; \
-	popl	%ecx		; \
-	popl	%edx		; \
+	//popl	%ebp		; \
+	//popl	%esi		; \
+	//popl	%edi		; \
+	//popl	%eax		; \
+	//popl	%ebx		; \
+	//popl	%ecx		; \
+	//popl	%edx		; \
 	addl	$4, %esp	; \
 	iret
 	
@@ -413,14 +413,14 @@ idt_##nr:			; \
 idt_75:			
 	cmpl	$N_CALLPRIVS, %eax	; /* In valid range? */
 	jge     callpriv_out_of_range	
-	pushl	k_st + KST_DCB          ;  /* dcb */
-	pushl   %edi			;  /* arg4 */	
-	pushl   %edx			;  /* arg3 */
-	pushl   %ecx			;  /* arg2 */
-	pushl   %ebx			;  /* arg1 */
+	//pushl	k_st + KST_DCB          ;  /* dcb */
+	//pushl   %edi			;  /* arg4 */	
+	//pushl   %edx			;  /* arg3 */
+	//pushl   %ecx			;  /* arg2 */
+	//pushl   %ebx			;  /* arg1 */
 	movl	k_st + KST_CALLPRIV, %ebx; 
 	lea	(%ebx, %eax, 8), %eax	; /* callpriv entry */
-	pushl   4(%eax)			; /* state */ 
+	//pushl   4(%eax)			; /* state */ 
 	call	*(%eax)			; /* vector */
 	addl	$24, %esp		
 	iret
@@ -432,11 +432,11 @@ callpriv_unused_vector:
 	addl	$28, %esp		; /* pull garbage off stack */ 
 	/* XXX fall through to callpriv_out_of_range */ 
 callpriv_out_of_range:			; /* Vector is out of range */
-	pushl	$0			; /* fake error code */
-	pushl	%edx			
-	pushl	%ecx			
-	pushl	%ebx			
-	pushl	%eax			
+	//pushl	$0			; /* fake error code */
+	//pushl	%edx			
+	//pushl	%ecx			
+	//pushl	%ebx			
+	//pushl	%eax			
 	call	save_context		
 	addl	$16, %esp
 	call	k_bad_callpriv
@@ -444,21 +444,21 @@ callpriv_out_of_range:			; /* Vector is out of range */
 /* Custom 'send' syscall stub */
 	.align 16
 idt_54:
-	pushl	%edi
-	pushl	%esi
-	pushl	%ebp /* Is this necessary? */
-	pushl	%edx
-	pushl	%ecx /* How about this? */
-	pushl	%ebx
-	pushl	%eax
+	//pushl	%edi
+	//pushl	%esi
+	//pushl	%ebp /* Is this necessary? */
+	//pushl	%edx
+	//pushl	%ecx /* How about this? */
+	//pushl	%ebx
+	//pushl	%eax
 	call	k_dsc_send
 	addl	$4, %esp /* Don't restore eax - retval */
-	popl	%ebx
-	popl	%ecx
-	popl	%edx
-	popl	%ebp
-	popl	%esi
-	popl	%edi
+	//popl	%ebx
+	//popl	%ecx
+	//popl	%edx
+	//popl	%ebp
+	//popl	%esi
+	//popl	%edi
 	iret
 
  		
@@ -477,11 +477,11 @@ idt_54:
    one of these, so we may as well put it in the text segment now. */
 	.align 16
 idt_32:
-	pushl	$0
-	pushl	%edx
-	pushl	%ecx
-	pushl	%ebx
-	pushl	%eax
+	//pushl	$0
+	//pushl	%edx
+	//pushl	%ecx
+	//pushl	%ebx
+	//pushl	%eax
 	movb	$0x20, %al
 	outb	%al, $0x20	/* Ack interrupt */
 	movl	INFO_PAGE_ADDRESS+PIP_TIMELSW, %eax
@@ -500,14 +500,14 @@ idt_32:
 	/* Yes. */
 	call	save_context
 	movl	INFO_PAGE_ADDRESS+PIP_DCBRO, %eax
-	pushl	%eax
-	pushl	$k_st
+	//pushl	%eax
+	//pushl	$k_st
 	call ksched_scheduler
 	/* Doesn't return */
-1:	popl	%eax
-	popl	%ebx
-	popl	%ecx
-	popl	%edx
+1:	//popl	%eax
+	//popl	%ebx
+	//popl	%ecx
+	//popl	%edx
 	addl	$4, %esp
 	iret
 #endif /* 0 */
@@ -517,7 +517,7 @@ idt_32:
 /* This is the device-unavailable exception handler, now unused */
 	.align 16
 idt_7:
-	pushl %eax
+	//pushl %eax
 	/* Someone tried to use the fpu, but it's disabled */
 	/* I hate to have to do this here, but we should really set a flag
 	 * in their DCB to say that the domain now has floating point
@@ -542,7 +542,7 @@ idt_7:
 	   the right domain, so any exception delivery mechanism will work.
 	   If the exception handler returns we'll dtrt as well. Wow. */
 1:	
-        popl %eax
+        //popl %eax
 	iret
 #endif /* 0 */
 

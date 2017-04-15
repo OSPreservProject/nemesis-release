@@ -1321,13 +1321,13 @@ static void de4x5_transmit(SimpleIO_cl *self,
 
 /*----------------------------------------------------- Entry Point ---*/
 
-void
-Main(Closure_clp self)
-{
 #ifdef STATS_THREAD
     static void StatsThread_m( struct device *dev );
 #endif
     static void proto_int_thd(struct device *dev);
+void
+Main(Closure_clp self)
+{
     int rc;
     struct device *dev;
     struct de4x5_private *st;
@@ -1383,11 +1383,11 @@ Main(Closure_clp self)
     /* pick up any args in our namespace */
     {
 	volatile char *p;
-	TRY {
+	//TRY {
 	    p = NAME_FIND("args", string_t);
-	} CATCH_ALL {
-	    p = NULL;
-	} ENDTRY;
+	//} CATCH_ALL {
+	//    p = NULL;
+	//} ENDTRY;
 	args = (char*)p;
 	if (args)
 	    args = strdup(args);
@@ -1451,10 +1451,10 @@ Main(Closure_clp self)
     TRC(printf ("de4x5: done\n"));
 }
 
+static void InterruptThread_m( struct device *dev );
 
 static void proto_int_thd(struct device *dev)
 {
-    static void InterruptThread_m( struct device *dev );
 
     /* wait until the media probe has completed */
     if (!EC_AWAIT_UNTIL(dev->cardReady, 1, NOW() + SECONDS(10)))
@@ -2948,15 +2948,15 @@ pci_probe(struct device *_dev, u_long ioaddr))
 	return;          /* No PCI bus in this machine! */
     }
 #endif
-    TRY {
+    //TRY {
       dev->pcibios = NAME_FIND("sys>PCIBios", PCIBios_clp);
-    } 
-    CATCH_Context$NotFound(UNUSED name) {
-      printf("pci_probe: PCIBios not present\n");
-      lastPCI = NO_MORE_PCI;
-      return; /* XXX return from TRY block is _very_ bad */
-    }
-    ENDTRY;
+    //} 
+    //CATCH_Context$NotFound(UNUSED name) {
+    //  printf("pci_probe: PCIBios not present\n");
+    //  lastPCI = NO_MORE_PCI;
+    //  return; /* XXX return from TRY block is _very_ bad */
+    //}
+    //ENDTRY;
     
     lp->bus = PCI;
     lp->bus_num = 0;

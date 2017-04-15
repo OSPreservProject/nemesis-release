@@ -249,9 +249,9 @@ static bool_t Rd_EOF_m ( Rd_cl *self )
 #ifdef WHY
     Serial_st *st = self->st;
 
-    USING(MUTEX, &(st->rd.mu),
+    //USING(MUTEX, &(st->rd.mu),
 	  st->rd.ungetted = st->rd.lastread; /* Nobble further UnGetCs */
-	);
+//	);
 #endif 
 
     return False;
@@ -264,14 +264,14 @@ static void Rd_UnGetC_m ( Rd_cl	*self )
 {
     Serial_st *st = self->st;
 
-    USING (MUTEX, &(st->rd.mu),
+    //USING (MUTEX, &(st->rd.mu),
 	 
 	   if ( st->rd.ungetted == UNGETC_NOCHAR ) {
 	       RAISE_Rd$Failure( 3 ); /* 3 = can't UnGetC */
 	   }
 	 
 	   st->rd.ungetted = st->rd.lastread;
-	);
+//	);
 }
 
 /*
@@ -445,27 +445,27 @@ static void Wr_PutC_m(Wr_cl *self, int8_t ch)
 {
     Serial_st *st = self->st;
 
-    USING(MUTEX, &(st->wr.mu),
+//    USING(MUTEX, &(st->wr.mu),
 	  Wr_LPutC_m(self, ch);
-	);
+//	);
 }
 
 static void Wr_PutStr_m(Wr_cl *self, string_t string)
 {
     Serial_st *st = self->st;
 
-    USING(MUTEX, &(st->wr.mu),
+    //USING(MUTEX, &(st->wr.mu),
 	  Wr_LPutStr_m(self, string);
-	);
+//	);
 }
 
 static void Wr_PutChars_m(Wr_cl *self, Wr_Buffer s, uint64_t nb)
 {
     Serial_st *st = self->st;
 
-    USING(MUTEX, &(st->wr.mu),
+ //   USING(MUTEX, &(st->wr.mu),
 	  Wr_LPutChars_m(self, s, nb);
-	);
+//	);
 }
 
 static void Wr_Seek_m(Wr_cl *self, uint64_t n)
@@ -479,9 +479,9 @@ static void Wr_Flush_m(Wr_cl *self)
 
     /* Push for transmission of the buffer contents. Wait until the
        buffer is empty. */
-    USING(MUTEX, &(st->wr.mu),
+    //USING(MUTEX, &(st->wr.mu),
 	  Wr_LFlush_m(self);
-	);
+//	);
 }
 
 static void Wr_Close_m(Wr_cl *self)

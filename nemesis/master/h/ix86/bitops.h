@@ -131,6 +131,7 @@ extern __inline__ int find_first_zero_bit(void * addr, unsigned size)
 
 	if (!size)
 		return 0;
+/*
 	__asm__("cld\n\t"
 		"movl $-1,%%eax\n\t"
 		"xorl %%edx,%%edx\n\t"
@@ -145,6 +146,7 @@ extern __inline__ int find_first_zero_bit(void * addr, unsigned size)
 		:"=d" (res)
 		:"c" ((size + 31) >> 5), "D" (addr), "b" (addr)
 		:"ax", "cx", "di");
+*/
 	return res;
 }
 
@@ -157,12 +159,14 @@ extern __inline__ int find_next_zero_bit (void * addr, int size, int offset)
 		/*
 		 * Look for zero in first byte
 		 */
+/*
 		__asm__("bsfl %1,%0\n\t"
 			"jne 1f\n\t"
 			"movl $32, %0\n"
 			"1:"
 			: "=r" (set)
 			: "r" (~(*p >> bit)));
+*/
 		if (set < (32 - bit))
 			return set + offset;
 		set = 32 - bit;
@@ -181,9 +185,11 @@ extern __inline__ int find_next_zero_bit (void * addr, int size, int offset)
  */
 extern __inline__ unsigned long ffz(unsigned long word)
 {
+/*
 	__asm__("bsfl %1,%0"
 		:"=r" (word)
 		:"r" (~word));
+*/
 	return word;
 }
 

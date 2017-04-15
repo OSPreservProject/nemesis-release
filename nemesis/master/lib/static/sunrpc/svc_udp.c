@@ -177,6 +177,7 @@ svcudp_stat(xprt)
 	return (XPRT_IDLE); 
 }
 
+static int cache_get();
 static bool_t
 svcudp_recv(xprt, msg)
 	register SVCXPRT *xprt;
@@ -187,7 +188,6 @@ svcudp_recv(xprt, msg)
 	register int rlen;
 	char *reply;
 	u_long replylen;
-	static int cache_get();
 
 #ifndef NEMESIS
     again:
@@ -216,6 +216,8 @@ svcudp_recv(xprt, msg)
 	return (TRUE);
 }
 
+static void cache_set();
+
 static bool_t
 svcudp_reply(xprt, msg)
 	register SVCXPRT *xprt; 
@@ -225,7 +227,6 @@ svcudp_reply(xprt, msg)
 	register XDR *xdrs = &(su->su_xdrs);
 	register int slen;
 	register bool_t stat = FALSE;
-	static void cache_set();
 
 	xdrs->x_op = XDR_ENCODE;
 	XDR_SETPOS(xdrs, 0);

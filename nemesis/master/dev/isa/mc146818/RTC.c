@@ -51,8 +51,8 @@
 #define TRC(_x)
 #endif
 
-#define UNIMPLEMENTED printf("%s: UNIMPLEMENTED
-", __FUNCTION__);
+//#define UNIMPLEMENTED printf("%s: UNIMPLEMENTED
+//", __FUNCTION__);
 
 
 static	RTC_GetCMOSTime_fn 		RTC_GetCMOSTime_m;
@@ -85,16 +85,17 @@ static WTime_clp getTimeClosure()
 {
     WTime_clp tcl;
 
-    TRY{
+ //   TRY{
 	tcl = (WTime_clp)malloc(sizeof(WTime_cl));
 	tcl = NAME_FIND("modules>WTime", WTime_clp);
-    }
+  //  }
+/*
     CATCH_ALL
 	{
 	    printf("### Error: Failed to attain WTime Closure in RTC.c ###\n");
 	    return NULL;
 	}
-    ENDTRY;
+    ENDTRY; */
     return tcl;
 }
 
@@ -171,7 +172,7 @@ static void RTC_SetCMOSTime_m (
     const WTime_TM	*tmptr	/* IN */ )
 {
 
-    UNIMPLEMENTED;
+    //UNIMPLEMENTED;
 }
 
 /*

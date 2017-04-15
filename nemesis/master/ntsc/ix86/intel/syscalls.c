@@ -637,7 +637,7 @@ static void k_psc_chain(void)
     *(uint32_t *)0x80002=0x80006;  /* Base address of gdt */
 
     /* Jump at it */
-    __asm__ __volatile__ ("jmp *%0" : : "r" (0x90208) );
+    //__asm__ __volatile__ ("jmp *%0" : : "r" (0x90208) );
     k_printf("Bogosity: notreached in chain()\n");
 }
 
@@ -660,21 +660,21 @@ static void k_psc_evsel(void)
 
     if(mode & 2) {
 	/* This is evsel1  */
-	__asm__ __volatile__ (
-	    "movl $0x187, %%ecx; movl %0, %%eax; wrmsr;" 
-	    :                     /* no outputs */
-	    : "a" (ev1)           /* inputs */
-	    : "eax", "ecx"        /* clobbers */);
+	//__asm__ __volatile__ (
+	//    "movl $0x187, %%ecx; movl %0, %%eax; wrmsr;" 
+	//    :                     /* no outputs */
+	//    : "a" (ev1)           /* inputs */
+	//    : "eax", "ecx"        /* clobbers */);
     }
 
     if(mode & 1) { 
 	/* This is evsel0: or in 'EN' at top.  */
 	ev0 |= 0x400000; 
-	__asm__ __volatile__ (
-	    "movl $0x186, %%ecx; movl %0, %%eax; wrmsr;" 
-	    :                     /* no outputs */
-	    : "a" (ev0)           /* inputs */
-	    : "eax", "ecx"        /* clobbers */);
+	//__asm__ __volatile__ (
+	//    "movl $0x186, %%ecx; movl %0, %%eax; wrmsr;" 
+	//    :                     /* no outputs */
+	//    : "a" (ev0)           /* inputs */
+	//    : "eax", "ecx"        /* clobbers */);
     } 
 
     

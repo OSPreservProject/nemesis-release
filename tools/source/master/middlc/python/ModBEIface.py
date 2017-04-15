@@ -258,7 +258,7 @@ class Interface :
 
           # Interface structure
 	  f.write('Intf_st ' + self.name + '__intf ={\n')
-	  f.write('  { { Interface_clp__code, (pointerval_t) &' +self.name +'__cl},\n')
+	  f.write('  { { Interface_clp__code, (pointerval_t)NULL},\n') #&' +self.name +'__cl},\n')
 	  #f.write('    TYPED_PTR(TCODE_NONE, NULL), \n')
 	  f.write('    { Type_Code__code, ' + self.name + '_clp__code },\n' )
 	  f.write('    "' + self.name + '",\n')

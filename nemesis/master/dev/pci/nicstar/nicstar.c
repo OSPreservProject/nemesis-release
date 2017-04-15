@@ -124,7 +124,7 @@ int nicstar_send_aal5(Nicstar_st* st, int vci, struct rbuf* r, bool_t raw) {
     st->tx_count++;
 
     if(!(st->tx_count % 16384)) {
-	PRINT_STATS("Queued %d PDUs\n", st->tx_count);
+	//PRINT_STATS("Queued %d PDUs\n", st->tx_count);
     }
 
     sindex = st->scq_next - st->scq;

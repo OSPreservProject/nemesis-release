@@ -1235,7 +1235,7 @@ void k_mmgmt (int nr, uint32_t eip, uint32_t stack_cs)
 
     context_t *cx = k_st.ccxs;
     
-    __asm__ __volatile__ ("movl %%cr2, %0" : "=r" (badva) :);
+    //__asm__ __volatile__ ("movl %%cr2, %0" : "=r" (badva) :);
 
     if(stub_debug_flag) {
 	/* We're already in the kernel debugger, and we've barfed on

@@ -21,10 +21,10 @@
 
 PLATFORM	= ix86_linux_1.99.4
 
-CC		= gcc --std=c99 -fdollars-in-identifiers
+CC		= gcc --std=c99 -fdollars-in-identifiers #-m32
 CPP		= gcc -E
 AS		= gcc -c
-LD		= ld
+LD		= ld  #-melf_i386
 AR		= ar
 RANLIB		= ranlib
 NM		= nm -Bn

@@ -210,9 +210,9 @@ struct _exn {
 /* 
  * End the whole TRY clause
  */
-#define ENDTRY \
+#define ENDTRY  \
 	}						\
-    if (exn_ctx.exn_state == exn_active_c)		\
+     if (exn_ctx.exn_state == exn_active_c)		\
     {							\
 	/* preserve trace on stack */			\
 	/* XXX assumes stack grows downwards */		\
@@ -230,10 +230,10 @@ struct _exn {
     if (exn_ctx.exn_state == exn_none_c			\
 	    || exn_ctx.exn_state == exn_active_c) {	\
 	exn_pop_ctx (&exn_ctx);				\
-    } \
+    } \ 
 }
-
-
+#undef ENDTRY
+#define ENDTRY }}
 /* Because the normal ENDTRY macro uses alloca(), gcc refuses to
  * inline it.  Use this one instead, however, note that it cauterises
  * the backtrace at this level. */

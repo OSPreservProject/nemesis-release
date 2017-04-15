@@ -56,7 +56,7 @@
 {\
      char out[256];\
      sprintf(out, args);\
-     fprintf(stream, "Nicstar: " __FUNCTION__ " : %s", out);\
+     fprintf(stream, "Nicstar: %s : %s", __FUNCTION__, out);\
 }
     
 #define DEBUG_OUT(args...) DEBUG_OUTPUT(stdout, args)

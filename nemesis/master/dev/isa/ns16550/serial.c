@@ -447,9 +447,9 @@ static void SerialRx_m (Serial_st *st)
 
     STAT(++(st->n_rx));
 
-    USING(MUTEX, &(st->rd.mu),
+    //USING(MUTEX, &(st->rd.mu),
 	  SerialPutcBuffer ( &st->rxbuf, c);
-	);
+//	);
     SIGNAL(&st->rd.cv);
 }
 

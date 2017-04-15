@@ -66,7 +66,7 @@
  * ACK an IRQ in the PICs
  * (uses PIC's rotating mode: round-robin processing of interrupts)
  */
-extern INLINE void ack_irq(int irq)
+/*extern INLINE*/ static void ack_irq(int irq)
 {
 #if 0
     if (irq > 7) {

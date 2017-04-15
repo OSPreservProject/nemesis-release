@@ -21,7 +21,7 @@
 
 PLATFORM	= ix86_linux_1.99.4
 
-CC		= gcc -fdollars-in-identifiers
+CC		= gcc --std=c99 -fdollars-in-identifiers
 CPP		= gcc -E
 AS		= gcc -c
 LD		= ld

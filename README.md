@@ -1,13 +1,13 @@
+The Nemesis Operating System
+=========================
 Welcome to Nemesis. This document describes the licensing of Nemesis and
 the procedures for obtaining it, working with it and contributing back
 to it that have been developed for the Nemesis release.
 
 Look at the [Nemesis home page](http://www.cl.cam.ac.uk/Research/SRG/netos/nemesis/)
  for news, new versions and documentation.
-&lt;/a&gt;
 
-The Nemesis Free License
-========================
+## The Nemesis Free License
 
 The intent of this document is to state the conditions under which a
 Package may be copied, such that the Copyright Holder maintains some
@@ -152,69 +152,37 @@ code repository.
 
 The standard, publicly available Nemesis packages are currently:
 
-ccore
+* *ccore*:   contains the Heart Of Nemesis; the low level code, IDC system, startup, build system and so on. You always have to have a version of this.
 
-:   contains the Heart Of Nemesis; the low level code, IDC system,
-    startup, build system and so on. You always have to have a version
-    of this.
+* *tgtx86*:   contains x86 support.
 
-tgtx86
+* *cnet*:   contains networking support.
 
-:   contains x86 support.
+* *cws*:   contains windowing system support.
 
-cnet
+* *catm*:   contains ATM support.
 
-:   contains networking support.
+* *caudio*:   contains audio support.
 
-cws
+* *dpatch*:   contains the source code management scripts we use for Nemesis.
 
-:   contains windowing system support.
+* *nemtools*:   contains the new tools necessary to build Nemesis, such as fancy linkers and IDL compilers.
 
-catm
-
-:   contains ATM support.
-
-caudio
-
-:   contains audio support.
-
-dpatch
-
-:   contains the source code management scripts we use for Nemesis.
-
-nemtools
-
-:   contains the new tools necessary to build Nemesis, such as fancy
-    linkers and IDL compilers.
-
-releasemisc
-
-:   contains the skeleton of the quickstart tar ball.
+* *releasemisc*:   contains the skeleton of the quickstart tar ball.
 
 The following packages may become available in the future:
 
-tgtarm
-
-:   contains ARM support. This package is not publically available yet,
+* tgtarm:   contains ARM support. This package is not publically available yet,
     pending a copyright review.
 
-tgtalpha
-
-:   contains Alpha support. This package is not publically available
+* *tgtalpha*:   contains Alpha support. This package is not publically available
     yet, pending a copyright review.
 
-snet
+* *snet*:   will contain extended networking support from SICS.
 
-:   will contain extended networking support from SICS.
+* *gnemx*:   will contain X11 support for the windowing system in cws from Glasgow..
 
-gnemx
-
-:   will contain X11 support for the windowing system in cws
-    from Glasgow..
-
-gxopen
-
-:   will contain X/Open support from Glasgow.
+* *gxopen*:   will contain X/Open support from Glasgow.
 
 Quickstart
 ==========
